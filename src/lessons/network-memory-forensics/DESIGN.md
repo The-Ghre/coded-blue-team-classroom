@@ -11,15 +11,15 @@ All shipping CSS is inside screen media and the lesson root selector.
 
 | Role | Token / value |
 | --- | --- |
-| Ground | `--bg: #f1f7f4` |
-| Paper | `--bg-raised: #ffffff` |
-| Process surface | `--surface: #e3eee8` |
-| Primary ink | `--text: #142e28` |
-| Secondary ink | `--text-muted: #29483d` |
-| Labels | `--text-dim: #29483d` |
-| Packets and actions | `--accent: #005b50` |
-| Volatile memory and focus | `--focus: #713868` |
-| Rules | `--line: #bfd0c6` |
+| Ground | `--bg: #080f24` |
+| Raised ink-blue | `--bg-raised: #101b34` |
+| Process surface | `--surface: #14213c` |
+| Primary ink | `--text: #f4f8ff` |
+| Secondary ink | `--text-muted: #c5d5ef` |
+| Labels | `--text-dim: #c5d5ef` |
+| Packets and actions | `--accent: #91eaff` |
+| Volatile memory and focus | `--focus: #c7adff` |
+| Rules | `--line: #354968` |
 
 Headings use IBM Plex Sans Condensed. Prose uses IBM Plex Sans. Addresses,
 intervals, bytes and page indices use IBM Plex Mono. No fonts or dependencies
@@ -54,7 +54,7 @@ is `.impeccable/surfaces/src-lessons-network-memory-forensics-index-ts.md`.
 
 ## Verified delivery
 
-The fresh finish reviewer returned **ship** for the reviewed correction scope.
+The original composition finish reviewer returned **ship** for its correction scope.
 The 78-state viewport sweep plus focused final checks found no desktop stage
 overflow and no horizontal overflow at either viewport. All six expanded malfind
 notes fit without internal note overflow. The native range, four jitter presets,
@@ -65,9 +65,33 @@ returned `[]` in its single initial pass; final fit changes were reviewed from
 source and refreshed screenshots. GUI browser control was unavailable, so all
 rendered checks used installed headless Chrome through Playwright.
 
-Primary ink contrast is 13.33:1 on mint. Secondary ink is 9.26:1 on mint and at
-least 7.22:1 on all local surfaces. Dense phone views intentionally scroll
+Primary near-white text is 17.86:1 on ink blue and at least 12.24:1 on
+local surfaces. Secondary text is 12.80:1 on ink blue and at least 8.78:1
+on local surfaces. Cyan actions use ink-blue text (13.96:1); the violet MZ
+page uses ink-blue text (9.83:1). Dense phone views intentionally scroll
 vertically; projection at 1440×900 fits without scrolling.
 
 Evidence lives locally in `.impeccable/review/`: `final-verification.json`,
 `final-interaction-states.json`, viewport PNGs, and `study-print.pdf`.
+
+## Integrator palette correction
+
+Deep ink-blue ground, icy cyan packet strokes and actions, violet memory pages,
+and bright near-white primary text replace mint, teal and plum. The accepted
+Packet / Page composition, reading panes, controls and timing remain intact.
+Canvas lanes, SVG strokes/fills, chart series, semantic evidence surfaces, native
+controls, selection and focus share the screen-only palette. Print stays white.
+The existing 78-state evidence is the layout baseline; refreshed captures and
+palette-sensitive interaction checks are in `.impeccable/review/`.
+
+Fresh palette finish reviewer: **ship**, no material palette findings. Reviewed
+source diff, required desktop/mobile surfaces and representative slide captures,
+six expanded malfind notes, feedback, contrast and `palette-verification.json`.
+All 78 presentation states were recaptured at 1440×900 and 390×844: no desktop
+stage overflow or horizontal overflow. All six notes fit; quiz state survives
+pane changes. Range keys, jitter presets, 3px focus, reduced motion, white
+print/PDF and restored home palette pass. Sampled rendered text has a minimum
+5.39:1 (labels); prose tokens exceed 7:1. Final TypeScript/build pass; detector
+returns `[]`. Review is based on screenshots/source and headless Chrome evidence,
+with no independent live replay or physical projector assessment. No palette
+findings remain open. Existing accepted composition was not reopened.
