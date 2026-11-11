@@ -19,3 +19,11 @@ Network retry restored catalog. Challengers declined on audience identification 
 Risk: a familiar email envelope needs actual routing structure to avoid becoming a generic mail illustration. Preserve source field names, connected hops and differing sender/destination. No real-brand imitation; new specimen uses only defanged .example data and explicit synthetic label. Existing lesson facts remain untouched.
 
 Verification: see final report. Review captures are local ignored artifacts, not lesson code.
+
+## Verification record
+2026-11-11: `npx tsc -b` and `npm run build` passed (escalated only for shared node_modules cache). `impeccable detect --json src/lessons/phishing-investigation` returned `[]`. Browser host unavailable through both Chrome and IAB; no rendered screenshot, slide-by-slide, viewport, keyboard, reduced-motion or print-preview claim is made. Source inspection: all theme rules are screen-only and lesson-scoped; the backdrop has no frame loop; reduced motion removes transition animation; shared content and interactions unchanged. New SVG specimen is explicitly synthetic and uses defanged .example only. Visual acceptance remains open. Dev server port 5183.
+
+## Finish review
+Independent Impeccable finish reviewer: **recapture**. Missing `.impeccable/review/desktop.png` (1440×900) and `mobile.png` (390×844), including every slide and interaction state. Browser host unavailable on Chrome and IAB. No visual acceptance issued. Checks pending: clipping/overlap and slide fit, rendered contrast, keyboard flows, reduced-motion behavior, study print preview, runtime console, and home palette after navigation. No screenshots fabricated. No fix rounds performed because the evidence gate requires recapture first.
+
+Static contrast calculation (sRGB): primary text ≥11.45:1 across five defined surfaces; secondary text 9.11:1 on page and 8.34:1 on normal surface (6.89:1 on surface-3, which remains a rendered-usage check); label text ≥5.18:1; evidence foregrounds against their respective washes ≥5.66:1; white primary-action text 9.02:1; source sheet text 13.22:1. These are token calculations, not rendered measurements.
