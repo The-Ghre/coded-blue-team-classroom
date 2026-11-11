@@ -345,11 +345,18 @@ export function InteractionBlock({ block, mode, Default }: BlockOverrideProps<In
   if (block.component !== 'triage-console') return <Default block={block} mode={mode} />
   return (
     <section className="block block--interaction soc-ix">
-      <BlockHead block={block} kicker="Interactive exercise" />
-      {block.lead && <p className="lead">{block.lead}</p>}
-      <div className="interaction__teaches">
-        <MonoLabel>What this teaches</MonoLabel>
-        <p>{block.teaches}</p>
+      {/* The exercise's own header is a work-order tag; the rack below is
+          the desk the alert tags lie on. */}
+      <div className="soc-ix__header">
+        <span className="soc-ix__eyelet" aria-hidden="true" />
+        <div className="soc-ix__intro">
+          <BlockHead block={block} kicker="Interactive exercise" />
+          {block.lead && <p className="lead">{block.lead}</p>}
+        </div>
+        <div className="interaction__teaches">
+          <MonoLabel>What this teaches</MonoLabel>
+          <p>{block.teaches}</p>
+        </div>
       </div>
       <TriageRack data={block.data} />
       <Detail detail={block.detail} mode={mode} />

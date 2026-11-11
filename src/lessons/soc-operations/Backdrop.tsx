@@ -68,6 +68,45 @@ function DeskBackdrop({ slideIndex, direction, focusMode, reducedMotion }: Stage
     drop.current = { index: slideIndex, t0: clock.current }
   }, [slideIndex, direction])
 
+  /* A tag longer than the projector scrolls inside itself. Mark it so the
+     tag can print a "continues" cue, and make it reachable by keyboard
+     (Tab to it, then the arrow-down / arrow-up keys scroll it). */
+  useEffect(() => {
+    const slide = document.querySelector<HTMLElement>('.present__slide')
+    const body = slide?.querySelector<HTMLElement>(':scope > .block')
+    if (!slide || !body) return
+    const update = () => {
+      const overflows = body.scrollHeight > body.clientHeight + 4
+      const atEnd = body.scrollTop + body.clientHeight >= body.scrollHeight - 4
+      slide.dataset.socMore = overflows && !atEnd ? 'true' : 'false'
+      if (overflows) {
+        body.tabIndex = 0
+        body.setAttribute('role', 'region')
+        body.setAttribute('aria-label', `${body.querySelector('h1, h2')?.textContent ?? 'Slide'} — scrollable`)
+      } else {
+        body.removeAttribute('tabindex')
+        body.removeAttribute('role')
+        body.removeAttribute('aria-label')
+      }
+    }
+    update()
+    /* Watch the content as well as the box: once the body sits at its
+       max-height, an annotation opening inside it changes neither. */
+    const ro = new ResizeObserver(update)
+    ro.observe(body)
+    Array.from(body.children).forEach((child) => ro.observe(child))
+    const later = () => requestAnimationFrame(update)
+    body.addEventListener('scroll', update, { passive: true })
+    body.addEventListener('click', later)
+    body.addEventListener('toggle', later, true)
+    return () => {
+      ro.disconnect()
+      body.removeEventListener('scroll', update)
+      body.removeEventListener('click', later)
+      body.removeEventListener('toggle', later, true)
+    }
+  }, [slideIndex])
+
   if (spikes.current.length === 0) {
     const rnd = mulberry(1)
     spikes.current = Array.from({ length: 40 }, () => ({

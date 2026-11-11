@@ -1,12 +1,12 @@
 import type { HeroProps } from '../types'
-import { RouteStrips, Stamp } from './parts'
+import { Stamp } from './parts'
 
 /* =========================================================================
    HERO — the session's own triage tag, lying under the desk lamp
    =========================================================================
    Study, workshop and overview open on the desk at night: one tag, its
    string running off the edge, its fields filled in from the session
-   itself. The routing strips are the three decisions this session teaches.
+   itself. Its strips stay unprinted: no decision is made on this page.
    ========================================================================= */
 
 export function Hero({ session, eyebrow, lead, actions, surface }: HeroProps) {
@@ -61,7 +61,13 @@ export function Hero({ session, eyebrow, lead, actions, surface }: HeroProps) {
         </dl>
 
         <Stamp className="soc-hero__stamp">S·{num}</Stamp>
-        <RouteStrips className="soc-hero__strips" />
+        {/* Unprinted strips: the tag's silhouette without a decision. Routing
+            colour belongs only where a routing decision lives. */}
+        <span className="soc-strips soc-strips--blank soc-hero__strips" aria-hidden="true">
+          <span className="soc-strip" />
+          <span className="soc-strip" />
+          <span className="soc-strip" />
+        </span>
       </div>
       </div>
     </header>

@@ -33,7 +33,9 @@ export function TitleBlock({ block, mode }: BlockOverrideProps<TitleBlockType>) 
       <Heading className="block--title__h soc-title__h">{block.title}</Heading>
       {block.lead && <p className="block--title__lead soc-title__lead">{block.lead}</p>}
       {num && <Stamp className="soc-title__stamp">S·{num}</Stamp>}
-      <RouteStrips className="soc-title__strips" />
+      {/* On the reading page the hero already carries the session's strips;
+          routing colour appears once per view. */}
+      {mode === 'slide' && <RouteStrips className="soc-title__strips" />}
     </section>
   )
 }
