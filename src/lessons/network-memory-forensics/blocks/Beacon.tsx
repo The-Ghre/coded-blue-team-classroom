@@ -2,21 +2,21 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import type { InteractionBlock } from '@/types/content'
 import type { BlockOverrideProps } from '../../types'
 import { EvidenceChip, MonoLabel, SyntheticBadge } from '@/components/brand/Brand'
-import { useReducedMotion } from '@/motion'
 import { Detail, Footer, Head } from '../parts'
 
 /* =========================================================================
-   BEACON ANALYZER — as an exposure print
+   BEACON ANALYZER — as a pinned cylinder
    =========================================================================
-   The shared Beacon Analyzer, rebuilt in the darkroom's vocabulary with its
-   teaching behaviour intact: the same seeded series, the same statistics,
-   the same presets, notes, verdict, signals table and port list.
+   The shared Beacon Analyzer, rebuilt in the music box's vocabulary with
+   its teaching behaviour intact: the same seeded series, the same
+   statistics, the same presets, notes, verdict, signals table and ports.
 
-   What the darkroom adds is one more way of seeing the same numbers. Each
-   interval exposes the paper at its own length on a log scale, so intervals
-   that cluster stack their silver into one dark band. A timer prints a
-   band; a person prints a smear. One control re-exposes everything: the
-   roll, the frame heights and the print all answer the jitter preset.
+   What the music box adds is two more ways of meeting the same numbers.
+   The pin print sets each interval as a pin at its own length on a log
+   scale: a timer stacks one tall column, a person scatters. And the two
+   series can be heard, opt-in, time-compressed: a beat against a stutter.
+   One control re-pins everything: arrivals, teeth, print and sound all
+   answer the jitter preset.
    ========================================================================= */
 
 interface JitterPreset {
@@ -128,7 +128,12 @@ function Roll({
   )
 }
 
-/* ---------- The exposure print --------------------------------------------- */
+/* ---------- The pin print ---------------------------------------------------
+   Each interval is a pin set at its own length on a log scale, one second
+   to one hour. Pins that land on the same beat stack on each other: the
+   beacon stacks above the line, the user below it. A timer builds one tall
+   column; a person scatters pins along the whole scale.
+   --------------------------------------------------------------------------- */
 
 const LOG_MAX = Math.log10(3600)
 const AXIS = [
@@ -140,93 +145,62 @@ const AXIS = [
   { s: 3600, label: '1 h' },
 ]
 const xOf = (sec: number) => Math.log10(Math.max(1, sec)) / LOG_MAX
+const BINS = 56
+/* Half the plate's height in px, kept in step with the CSS (the smaller,
+   phone value), so the tallest possible stack always fits. */
+const HALF_PX = 108
 
-function exposure(values: number[], width: number) {
-  const acc = new Float32Array(width)
-  const sigma = 0.012 * width
-  for (const v of values) {
-    const cx = xOf(v) * (width - 1)
-    const lo = Math.max(0, Math.floor(cx - sigma * 3))
-    const hi = Math.min(width - 1, Math.ceil(cx + sigma * 3))
-    for (let x = lo; x <= hi; x++) acc[x] += Math.exp(-((x - cx) ** 2) / (2 * sigma * sigma))
-  }
-  return acc
+function stacks(values: number[]) {
+  const count = new Array(BINS).fill(0)
+  return values.map((v) => {
+    const b = Math.min(BINS - 1, Math.floor(xOf(v) * BINS))
+    return { b, k: count[b]++ }
+  })
 }
 
-function ExposurePrint({ beacon, user }: { beacon: number[]; user: number[] }) {
-  const canvas = useRef<HTMLCanvasElement>(null)
-  const reduced = useReducedMotion()
-  const raf = useRef(0)
-
-  useEffect(() => {
-    const el = canvas.current
-    if (!el) return
-    const ctx = el.getContext('2d')
-    if (!ctx) return
-    const styles = getComputedStyle(el)
-    const paper = styles.getPropertyValue('--nmf-paper').trim() || '#efe6d6'
-    const ink = styles.getPropertyValue('--nmf-ink').trim() || '#1c1410'
-
-    let start = 0
-    const paint = (progress: number) => {
-      const rect = el.getBoundingClientRect()
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      const w = Math.max(1, Math.round(rect.width * dpr))
-      const h = Math.max(1, Math.round(rect.height * dpr))
-      if (el.width !== w || el.height !== h) {
-        el.width = w
-        el.height = h
-      }
-      ctx.fillStyle = paper
-      ctx.fillRect(0, 0, w, h)
-      const rows = [beacon, user]
-      const rowH = h / 2
-      /* A developer curve: nothing, then density climbs and settles. */
-      const dev = 1 - Math.pow(1 - progress, 3)
-      rows.forEach((values, r) => {
-        const acc = exposure(values, w)
-        for (let x = 0; x < w; x++) {
-          const d = (1 - Math.exp(-acc[x] * 0.22)) * dev
-          if (d < 0.01) continue
-          ctx.globalAlpha = Math.min(1, d)
-          ctx.fillStyle = ink
-          ctx.fillRect(x, r * rowH + 4 * dpr, 1, rowH - 8 * dpr)
-        }
-      })
-      ctx.globalAlpha = 1
-    }
-
-    const draw = (now: number) => {
-      if (!start) start = now
-      const p = Math.min(1, (now - start) / 520)
-      paint(p)
-      if (p < 1) raf.current = requestAnimationFrame(draw)
-    }
-
-    cancelAnimationFrame(raf.current)
-    if (reduced) paint(1)
-    else raf.current = requestAnimationFrame(draw)
-
-    const ro = new ResizeObserver(() => paint(1))
-    ro.observe(el)
-    return () => {
-      cancelAnimationFrame(raf.current)
-      ro.disconnect()
-    }
-  }, [beacon, user, reduced])
-
+function PinPrint({ beacon, user }: { beacon: number[]; user: number[] }) {
+  const sb = stacks(beacon)
+  const su = stacks(user)
+  const tallest = Math.max(1, ...sb.map((p) => p.k + 1), ...su.map((p) => p.k + 1))
+  const pitch = Math.min(10, (HALF_PX - 10) / tallest)
+  const size = Math.max(4, Math.min(8, pitch * 0.85))
+  const left = (b: number) => `${((b + 0.5) / BINS) * 100}%`
   return (
-    /* Screen only: `hidden` keeps it off paper, the screen stylesheet reveals it. */
-    <figure className="nmf-xprint nmf-decor" hidden>
-      <div className="nmf-xprint__plate" aria-hidden="true">
-        <span className="nmf-xprint__row-label">Beacon</span>
-        <span className="nmf-xprint__row-label">User</span>
-        <canvas ref={canvas} className="nmf-xprint__canvas" />
-        <div className="nmf-xprint__axis">
+    <figure className="nmf-pinprint nmf-decor" hidden>
+      <div className="nmf-pinprint__plate" aria-hidden="true">
+        <span className="nmf-pinprint__label nmf-pinprint__label--beacon">Beacon</span>
+        <span className="nmf-pinprint__label nmf-pinprint__label--user">User</span>
+        <div className="nmf-pinprint__field" style={{ '--pin': `${size}px` } as CSSProperties}>
+          {AXIS.map((a) => (
+            <span key={a.s} className="nmf-pinprint__grid" style={{ left: `${xOf(a.s) * 100}%` }} />
+          ))}
+          <span className="nmf-pinprint__line" />
+          {sb.map((p, i) => (
+            <span
+              key={`b${i}`}
+              className="nmf-pinprint__pin nmf-pinprint__pin--beacon"
+              style={
+                {
+                  left: left(p.b),
+                  transform: `translateY(${-6 - p.k * pitch}px)`,
+                  '--i': i,
+                } as CSSProperties
+              }
+            />
+          ))}
+          {su.map((p, i) => (
+            <span
+              key={`u${i}`}
+              className="nmf-pinprint__pin nmf-pinprint__pin--user"
+              style={{ left: left(p.b), transform: `translateY(${6 + p.k * pitch}px)` } as CSSProperties}
+            />
+          ))}
+        </div>
+        <div className="nmf-pinprint__axis">
           {AXIS.map((a) => (
             <span
               key={a.s}
-              className="nmf-xprint__tick"
+              className="nmf-pinprint__tick"
               data-minor={a.s === 10 || a.s === 600}
               style={{ '--x': xOf(a.s) } as CSSProperties}
             >
@@ -235,12 +209,101 @@ function ExposurePrint({ beacon, user }: { beacon: number[]; user: number[] }) {
           ))}
         </div>
       </div>
-      <figcaption className="nmf-xprint__caption">
-        Exposure print. Each interval adds density at its own length, on a log scale from one second to one
-        hour. Intervals that cluster stack into one dark band; intervals with no central value spread into a
-        smear.
+      <figcaption className="nmf-pinprint__caption">
+        Pin print. Each interval is a pin set at its own length, on a log scale from one second to one hour; pins
+        on the same length stack. Intervals that cluster build one tall column; intervals with no central value
+        scatter along the scale.
       </figcaption>
     </figure>
+  )
+}
+
+/* ---------- Listening ------------------------------------------------------
+   Opt-in sonification of the same two series. Time is compressed so the
+   beacon's 240-second beat becomes a quarter of a second, and the user's
+   intervals are compressed by the same factor: the beacon ticks evenly, the
+   user's traffic stutters, pauses and bursts. Nothing plays until asked.
+   --------------------------------------------------------------------------- */
+
+type Playing = 'beacon' | 'user' | null
+
+function useListen() {
+  const ctxRef = useRef<AudioContext | null>(null)
+  const stopAt = useRef(0)
+  const timer = useRef(0)
+  const [playing, setPlaying] = useState<Playing>(null)
+
+  const stop = () => {
+    window.clearTimeout(timer.current)
+    const ctx = ctxRef.current
+    if (ctx) {
+      void ctx.close()
+      ctxRef.current = null
+    }
+    setPlaying(null)
+  }
+
+  const play = (which: Exclude<Playing, null>, intervals: number[], base: number) => {
+    stop()
+    const AC = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+    if (!AC) return
+    const ctx = new AC()
+    ctxRef.current = ctx
+    const scale = 0.25 / base
+    const freq = which === 'beacon' ? 1046.5 : 783.99
+    let t = ctx.currentTime + 0.15
+    for (const v of intervals) {
+      t += v * scale
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'triangle'
+      osc.frequency.value = freq
+      gain.gain.setValueAtTime(0.0001, t)
+      gain.gain.exponentialRampToValueAtTime(0.22, t + 0.005)
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.32)
+      osc.connect(gain).connect(ctx.destination)
+      osc.start(t)
+      osc.stop(t + 0.34)
+    }
+    stopAt.current = t + 0.4
+    setPlaying(which)
+    timer.current = window.setTimeout(stop, (stopAt.current - ctx.currentTime) * 1000)
+  }
+
+  useEffect(() => stop, [])
+  return { playing, play, stop }
+}
+
+function Listen({ beacon, user, base }: { beacon: number[]; user: number[]; base: number }) {
+  const { playing, play, stop } = useListen()
+  const seconds = (v: number[]) => Math.round(v.reduce((a, b) => a + b, 0) * (0.25 / base))
+  return (
+    <div className="nmf-listen" role="group" aria-label="Listen to the two series">
+      <span className="nmf-listen__label">Listen</span>
+      <button
+        type="button"
+        className="nmf-listen__btn"
+        aria-pressed={playing === 'beacon'}
+        onClick={() => (playing === 'beacon' ? stop() : play('beacon', beacon, base))}
+      >
+        {playing === 'beacon' ? 'Stop' : 'Beacon'}
+      </button>
+      <button
+        type="button"
+        className="nmf-listen__btn"
+        aria-pressed={playing === 'user'}
+        onClick={() => (playing === 'user' ? stop() : play('user', user, base))}
+      >
+        {playing === 'user' ? 'Stop' : 'User traffic'}
+      </button>
+      <span className="nmf-listen__note" aria-live="polite">
+        {playing === 'beacon'
+          ? `Playing the beacon: 40 connections in about ${seconds(beacon)} seconds.`
+          : playing === 'user'
+            ? `Playing user traffic: 40 connections in about ${seconds(user)} seconds.`
+            : 'Sound plays only when you press. Time is compressed: one 240-second beat becomes a quarter second.'}
+      </span>
+    </div>
   )
 }
 
@@ -296,7 +359,8 @@ function BeaconDarkroom({ data }: { data: unknown }) {
         </p>
       </div>
 
-      <ExposurePrint beacon={beacon} user={user} />
+      <PinPrint beacon={beacon} user={user} />
+      <Listen beacon={beacon} user={user} base={base} />
 
       <div className="beacon__charts nmf-beacon__rolls">
         <Roll values={beacon} label="C2 beacon — interval between connections" tone="beacon" max={max} span={span} />

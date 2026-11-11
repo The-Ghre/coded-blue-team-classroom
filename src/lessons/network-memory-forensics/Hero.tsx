@@ -1,60 +1,59 @@
 import type { HeroProps } from '../types'
-import { Decor, FilmStrip, type Frame } from './parts'
+import { Cylinder, Decor, beaconPins } from './parts'
 
 /* =========================================================================
-   HERO — the contact sheet header
+   HERO — the cylinder plate
    =========================================================================
-   Study, workshop and overview open on a contact sheet: one strip of the
-   session's roll printed across the top, its edge print carrying the page's
-   place in the course, and the session title developing beneath it.
+   Study, workshop and overview open on the cylinder, unrolled: the
+   session's three themes engraved on their rows, one tooth set on a fixed
+   beat, a person's pins scattered around it. The page's place in the
+   course is engraved on the plate above, and the title sits below.
    ========================================================================= */
 
 export function Hero({ session, half, surface, eyebrow, lead, actions }: HeroProps) {
-  const themes = session.themes
-  const frames: Frame[] =
-    half === 'practical'
-      ? [
-          { image: 'label', label: 'Network', edge: 'LANE 1' },
-          { image: 'burst', seed: 3, edge: '00:00' },
-          { image: 'label', label: 'Memory', edge: 'LANE 2' },
-          { image: 'payload', edge: '03:00' },
-          { image: 'label', label: 'Endpoint', edge: 'LANE 3' },
-          { image: 'burst', seed: 11, edge: '06:00' },
-          { image: 'fog' },
-          { image: 'payload', edge: '09:00' },
-        ]
-      : [
-          { image: 'label', label: themes[0] ?? 'Beaconing', edge: '00:00' },
-          { image: 'payload', edge: '00:04' },
-          { image: 'payload', edge: '00:08' },
-          { image: 'label', label: themes[1] ?? 'DNS', edge: '00:12' },
-          { image: 'payload', edge: '00:16' },
-          { image: 'burst', seed: 5, edge: 'USER' },
-          { image: 'label', label: themes[2] ?? 'Injection', edge: '00:24' },
-          { image: 'payload', edge: '00:28' },
-          { image: 'fog' },
-        ]
+  const rows = 7
+  const cols = 44
+  const practical = half === 'practical'
+  /* Theory: the beat on the Beaconing row, scattered plucks on DNS, a
+     cluster set where no score has notes on Injection. Workshop: three
+     lanes that strike together at one moment. */
+  const beaconRow = practical ? 3 : 1
+  const pins = practical
+    ? [
+        ...beaconPins(rows, cols, beaconRow, 6, 41),
+        { row: 0, col: 29, kind: 'inject' as const },
+        { row: 3, col: 29, kind: 'inject' as const },
+        { row: 6, col: 29, kind: 'inject' as const },
+      ]
+    : [
+        ...beaconPins(rows, cols, beaconRow, 4, 23).filter((p) => p.row !== 5),
+        ...[30, 31, 32].map((col) => ({ row: 5, col, kind: 'inject' as const })),
+      ]
+  const rowLabels = practical
+    ? [
+        { row: 0, label: 'NETWORK' },
+        { row: 3, label: 'MEMORY' },
+        { row: 6, label: 'ENDPOINT' },
+      ]
+    : session.themes.slice(0, 3).map((t, i) => ({ row: [1, 3, 5][i], label: t.toUpperCase() }))
+  const bracket = practical ? { row: 3, col: 29 } : { row: beaconRow, col: 23 }
 
   return (
     <header className="nmf-hero" data-surface={surface} data-half={half}>
-      <div className="nmf-hero__sheet">
-        <p className="nmf-hero__edge">
-          <span>{eyebrow}</span>
-          <span className="nmf-hero__edge-mark nmf-decor" aria-hidden="true" hidden>
-            ▸
-          </span>
-        </p>
-        <Decor className="nmf-hero__strip">
-          <FilmStrip
-            frames={frames}
-            topEdge="SAFETY FILM"
-            startNumber={session.number}
-            ring={half === 'practical' ? 3 : 1}
+      <div className="nmf-hero__plate">
+        <p className="nmf-hero__engraving">{eyebrow}</p>
+        <Decor className="nmf-hero__band">
+          <Cylinder
+            rows={rows}
+            cols={cols}
+            pins={pins}
+            rowLabels={rowLabels}
+            bracket={bracket}
           />
         </Decor>
       </div>
       <div className="nmf-hero__body">
-        <h1 className="nmf-hero__title nmf-develop">{session.title}</h1>
+        <h1 className="nmf-hero__title nmf-rise">{session.title}</h1>
         {surface !== 'overview' && <p className="nmf-hero__caption">{session.summary}</p>}
         {lead &&
           (typeof lead === 'string' ? (

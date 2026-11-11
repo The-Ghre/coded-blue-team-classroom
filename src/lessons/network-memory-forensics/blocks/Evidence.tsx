@@ -3,15 +3,15 @@ import type { EvidenceBlock } from '@/types/content'
 import { EVIDENCE_META } from '@/types/content'
 import type { BlockOverrideProps } from '../../types'
 import { EvidenceChip, MonoLabel, SyntheticBadge } from '@/components/brand/Brand'
-import { Detail, Footer, Head, MarkerRing } from '../parts'
+import { Detail, Footer, Head, IndexBracket } from '../parts'
 
 /* =========================================================================
-   EVIDENCE — the print on the inspection table
+   EVIDENCE — the cylinder, read pin by pin
    =========================================================================
-   The annotated excerpt is a developed print: silver-black text on fibre
-   paper, each line in a fixed cell with its frame number in the margin.
-   Selecting a line rings it with the china marker and develops its note.
-   Only the developed note changes; the lines never move.
+   The annotated excerpt is written out on manuscript paper, each line in a
+   fixed cell with its bar number in the margin. Selecting a line sets the
+   blued index bracket on it and raises its note. Only the note changes;
+   the lines never move.
 
    Behaviour matches the shared annotator — buttons with aria-expanded and
    aria-controls, one note open at a time, proves / does-not-prove. Every
@@ -29,7 +29,7 @@ export function Evidence({ block, mode }: BlockOverrideProps<EvidenceBlock>) {
       {block.lead && <p className="lead">{block.lead}</p>}
       <SyntheticBadge>{block.source}</SyntheticBadge>
 
-      <div className="evidence nmf-ev__print">
+      <div className="evidence nmf-ev__sheet">
         <div className="evidence__head nmf-ev__head">
           <MonoLabel>{block.caption}</MonoLabel>
           <span className="evidence__hint">Select a line to annotate it</span>
@@ -41,9 +41,8 @@ export function Evidence({ block, mode }: BlockOverrideProps<EvidenceBlock>) {
             const note = line.note
             return (
               <li key={i} className="evidence__line-wrap nmf-ev__cell" style={{ '--i': i } as CSSProperties}>
-                <span className="nmf-ev__frame" aria-hidden="true">
+                <span className="nmf-ev__bar" aria-hidden="true">
                   {i + 1}
-                  <span className="nmf-ev__frame-a">{i + 1}A</span>
                 </span>
                 {note ? (
                   <button
@@ -58,7 +57,7 @@ export function Evidence({ block, mode }: BlockOverrideProps<EvidenceBlock>) {
                       {EVIDENCE_META[note.kind].glyph}
                     </span>
                     <code>{line.text}</code>
-                    <MarkerRing active={isOpen} />
+                    <IndexBracket active={isOpen} />
                   </button>
                 ) : (
                   <div className="evidence__line nmf-ev__line">
