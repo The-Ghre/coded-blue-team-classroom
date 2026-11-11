@@ -92,8 +92,8 @@ export function LureRig({ className, interactive = true, lineAbove = 2400, curve
     let targetAngle = Math.sin(t * 0.7) * 2.4 + Math.sin(t * 1.9) * 0.6
     // Idle lens: a slow pass down the body and back, so the wire shows even
     // to a visitor who never moves the pointer.
-    let tx = 106 + Math.sin(t * 0.45) * 22
-    let ty = 210 + Math.sin(t * 0.31) * 130
+    let tx = 104 + Math.sin(t * 0.45) * 10
+    let ty = 214 + Math.sin(t * 0.31) * 78
     const p = pointer.current
     const fresh = p && performance.now() - p.at < 2600
     if (p && fresh && g) {
@@ -110,8 +110,9 @@ export function LureRig({ className, interactive = true, lineAbove = 2400, curve
         targetAngle += Math.max(-1, Math.min(1, dx / 600)) * -11
         // The lens only takes over when the pointer is near the lure.
         if (local.x > -60 && local.x < VIEW.w + 60 && local.y > -20 && local.y < VIEW.h + 40) {
-          tx = local.x
-          ty = local.y
+          // Follow the pointer, but keep the lens's centre on the body.
+          tx = Math.max(62, Math.min(140, local.x))
+          ty = Math.max(70, Math.min(340, local.y))
         }
       }
     }
@@ -158,7 +159,7 @@ export function LureRig({ className, interactive = true, lineAbove = 2400, curve
           </clipPath>
           <mask id={mask} maskUnits="userSpaceOnUse" x="-200" y="-200" width="600" height="900">
             <rect x="-200" y="-200" width="600" height="900" fill="#fff" />
-            <circle ref={lensRef} cx="112" cy="228" r="54" fill="#000" />
+            <circle ref={lensRef} cx="112" cy="228" r="46" fill="#000" />
           </mask>
         </defs>
 
@@ -210,7 +211,7 @@ export function LureRig({ className, interactive = true, lineAbove = 2400, curve
           <Treble x={158} y={220} />
           <Treble x={100} y={398} />
 
-          <circle ref={ringRef} cx="112" cy="228" r="54" className="pi-lure__lens" />
+          <circle ref={ringRef} cx="112" cy="228" r="46" className="pi-lure__lens" />
         </g>
       </svg>
     </div>

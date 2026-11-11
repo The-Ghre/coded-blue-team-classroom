@@ -38,14 +38,14 @@ export function TitlePlate({ block, mode }: BlockOverrideProps<TitleBlock>) {
     <section className="block block--title pi-title" data-mode={mode}>
       <div className="pi-title__text">
         <h1 className="block--title__h pi-title__h">
+          {/* The block title ("Session 3") stays in the heading for assistive
+              technology; on screen the overline already says it. */}
+          {session && <span className="sr-only">{block.title}: </span>}
           <span className="pi-title__name">{session?.title ?? block.title}</span>
         </h1>
         {block.lead && <p className="block--title__lead pi-title__lead">{block.lead}</p>}
         <p className="pi-title__plate">
-          <span>
-            {session ? `${block.title} · ` : ''}
-            {block.overline}
-          </span>
+          <span>{block.overline}</span>
         </p>
       </div>
       <div className="pi-title__rig">
