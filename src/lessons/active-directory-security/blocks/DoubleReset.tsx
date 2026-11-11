@@ -38,7 +38,7 @@ function skipWarning(block: ConceptBlock): string | null {
 function retainedWhy(block: ConceptBlock): string | null {
   const text = block.callout?.text ?? ''
   const sentences = text.match(/[^.]+\./g) ?? []
-  return sentences.find((s) => /retains the previous/i.test(s))?.trim() ?? null
+  return sentences.find((s) => /retains the previous/i.test(s))?.trim().replace(/^[^:]{1,24}:\s*/, '') ?? null
 }
 
 export function DoubleReset({ block, mode }: { block: ConceptBlock; mode: RenderMode }) {
@@ -119,9 +119,9 @@ export function DoubleReset({ block, mode }: { block: ConceptBlock; mode: Render
       rev === 1
         ? {
             tone: 'warn',
-            text: `Revision 1 issued. The ticket forged from revision 0 still works: ${retainedWhy(block) ?? 'the previous key is retained.'}`,
+            text: `Revision 1 issued. A ticket forged with revision 0 still works. ${retainedWhy(block) ?? 'the previous key is retained.'}`,
           }
-        : { tone: 'ok', text: 'Revision 2 issued. Revision 0 is no longer held anywhere, so the forged ticket no longer validates.' },
+        : { tone: 'ok', text: 'Revision 2 issued. Revision 0 is now neither the current nor the retained key, so a ticket forged with it no longer validates.' },
     )
   }
 

@@ -17,7 +17,7 @@ import { PlanSvg } from './PlanSvg'
 export default function Hero({ surface, session, half, eyebrow, lead, actions }: HeroProps) {
   const slides = getSlides(session)
   const sheet =
-    surface === 'overview' ? 'Sheet index' : half === 'practical' ? 'Workshop' : 'Theory'
+    surface === 'overview' ? 'Index' : half === 'practical' ? 'Workshop' : 'Theory'
   const keyPlan =
     surface === 'overview'
       ? { route: true, pull: true, highlight: [] as string[], caption: 'Whole building' }

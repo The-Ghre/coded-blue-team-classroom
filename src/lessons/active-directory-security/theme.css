@@ -385,6 +385,35 @@
       text-decoration-color: var(--adw-red-pencil);
     }
 
+
+    & .brief__scenario,
+    & .debrief__landing,
+    & .scenario__driver,
+    & .interaction__teaches,
+    & .query__assumes {
+      border-left: 1px solid var(--line-strong);
+      border-radius: 0;
+      background: rgba(255, 255, 255, 0.4);
+      box-shadow: inset 0 0 0 3px var(--adw-paper), inset 0 0 0 4px var(--line);
+    }
+    & .study .adw-hero__h {
+      font-size: clamp(2.1rem, 1.1rem + 2.4vw, 3.7rem);
+    }
+    /* No side-stripes anywhere on this sheet: one weight of rule all round. */
+    & .redblue__pane,
+    & .retrieval__a,
+    & .proves__col,
+    & .check__feedback,
+    & .dg-flow__node {
+      border-left-width: 1px;
+    }
+    & .proves__col--yes {
+      border-color: rgba(23, 102, 59, 0.5);
+    }
+    & .proves__col--no {
+      border-color: rgba(132, 35, 106, 0.45);
+      border-style: dashed;
+    }
     /* Knowledge check: checker's marks. */
     & .check__option {
       border-radius: 0;
@@ -417,8 +446,8 @@
     & .block__head {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
-      column-gap: var(--s-4);
-      align-items: baseline;
+      column-gap: 0;
+      align-items: start;
     }
     & .block__head > .block__title {
       grid-column: 1 / -1;
@@ -431,6 +460,7 @@
     }
     & .block__head > .eyebrow {
       order: 2;
+      line-height: 1.4;
       margin-top: 3px;
       padding-top: 0.45em;
       border-top: 1px solid var(--adw-ink);
@@ -439,6 +469,9 @@
     & .block__head > .block__meta {
       order: 3;
       margin-top: 3px;
+      min-height: 100%;
+      padding-left: var(--s-4);
+      line-height: 1.4;
       padding-top: 0.45em;
       border-top: 1px solid var(--adw-ink);
       text-align: right;
@@ -533,8 +566,9 @@
       font-family: var(--font-mono);
       font-size: 0.9em;
       font-weight: 600;
-      white-space: nowrap;
-      padding: 0 0.28em;
+      padding: 0 0.08em;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
       color: var(--adw-ink);
       box-shadow: inset 0 -0.42em 0 var(--adw-yellow-wash);
     }
@@ -783,8 +817,13 @@
 
     & .overview__outcomes li::before,
     & .overview__prereq li::before {
-      background: var(--adw-red);
-      border-radius: 0;
+      content: '';
+      top: 0.5em;
+      background: none;
+      border: 1.5px solid var(--adw-red);
+      border-radius: 50%;
+      width: 0.6rem;
+      height: 0.6rem;
     }
     & .structure__half,
     & .structure__item a {
@@ -870,6 +909,83 @@
       min-height: clamp(3.3rem, 2.4rem + 1.4vw, 4.4rem);
     }
 
+    /* Content sheets lie on a vellum overlay: the plan shows through, the
+       words sit on a clear surface. The title sheet is the plan itself. */
+    & .present__slide:not([data-kind='title']) {
+      padding: var(--s-5) var(--s-6) var(--s-6);
+      background: rgba(242, 241, 246, 0.86);
+      border: 1px solid rgba(var(--adw-ink-rgb), 0.28);
+      box-shadow: 0 18px 40px -26px rgba(27, 23, 71, 0.45);
+    }
+    & .study__content {
+      position: relative;
+    }
+    & .study__section,
+    & .overview__grid,
+    & .overview__structure,
+    & .overview__source,
+    & .overview__terms,
+    & .overview__legend {
+      background: rgba(242, 241, 246, 0.84);
+      box-shadow: 0 0 0 1px rgba(var(--adw-ink-rgb), 0.16);
+      padding-inline: var(--s-5);
+    }
+    & .overview__grid {
+      padding-block: var(--s-5);
+    }
+    & .study__section {
+      padding-top: var(--s-5);
+      padding-bottom: var(--s-6);
+      margin-bottom: var(--s-6);
+    }
+    & .study__rail-inner {
+      background: rgba(242, 241, 246, 0.84);
+      box-shadow: 0 0 0 1px rgba(var(--adw-ink-rgb), 0.16);
+      padding: var(--s-4);
+    }
+    & .present__slide {
+      min-width: 0;
+      max-width: min(78rem, 100%);
+    }
+    & .block__title,
+    & .adw-hero__h {
+      overflow-wrap: break-word;
+    }
+    @media (max-width: 52rem) {
+      & .present__slide:not([data-kind='title']) {
+        padding: var(--s-4) var(--s-3);
+      }
+      /* On a phone the plan is too dense to letter over: the cover sheet
+         gets the vellum too. */
+      & .present__slide[data-kind='title'] {
+        padding: var(--s-4) var(--s-3);
+        background: rgba(242, 241, 246, 0.88);
+        border: 1px solid rgba(var(--adw-ink-rgb), 0.28);
+      }
+      & .adw-rights td:nth-child(2) {
+        white-space: normal;
+        word-break: break-word;
+      }
+      & .adw-rights {
+        padding: var(--s-2);
+      }
+      & .adw-rights th:first-child,
+      & .adw-rights td:first-child {
+        display: none;
+      }
+      & .adw-rights table {
+        font-size: var(--fs-micro);
+      }
+      & .study__section,
+      & .overview__grid,
+      & .overview__structure,
+      & .overview__source,
+      & .overview__terms,
+      & .overview__legend {
+        padding-inline: var(--s-3);
+      }
+    }
+
     /* Sheet frame (Overlay). */
     & .adw-sheet {
       position: absolute;
@@ -884,6 +1000,7 @@
     & .adw-sheet__border {
       position: absolute;
       inset: 10px 10px 10px 30px;
+      transition: inset 600ms var(--adw-ease);
       border: 1.5px solid var(--adw-ink);
       box-shadow: inset 0 0 0 4px transparent, inset 0 0 0 5px rgba(var(--adw-ink-rgb), 0.5);
     }
@@ -966,6 +1083,28 @@
       font-style: normal;
       font-size: 0.62rem;
       color: var(--text-dim);
+    }
+
+    /* While the chrome is up the frame stands clear of the bars; when the
+       room is reading the sheet alone it opens to the full page. */
+    & .present.chrome-on .adw-sheet__border {
+      inset: 64px 10px 98px 30px;
+    }
+    & .present.chrome-on .adw-sheet__strip {
+      top: 64px;
+      bottom: 98px;
+    }
+    & .present.chrome-on .adw-sheet__rows {
+      top: 64px;
+      bottom: 98px;
+    }
+    & .present.chrome-on .adw-sheet__cols {
+      opacity: 0;
+    }
+    & .adw-sheet__strip,
+    & .adw-sheet__rows,
+    & .adw-sheet__cols {
+      transition: top 600ms var(--adw-ease), bottom 600ms var(--adw-ease), opacity 400ms var(--adw-ease);
     }
     @media (max-width: 52rem) {
       & .adw-sheet {
@@ -1142,6 +1281,7 @@
     }
     & .adw-rights__tag {
       display: inline-grid;
+      white-space: nowrap;
       place-items: center;
       padding: 0.1rem 0.4rem;
       font-family: var(--font-mono);
@@ -1171,7 +1311,8 @@
 
     /* Persistence: revision clouds. */
     & .adw-concept--clouded .concept__points {
-      gap: var(--s-5);
+      gap: var(--s-6);
+      padding-top: var(--s-3);
     }
     & .adw-cloud {
       position: relative;
@@ -1383,7 +1524,8 @@
       color: var(--adw-red);
     }
     & .adw-climb__row[data-current='true'] > .evidence__line {
-      box-shadow: inset 3px 0 0 var(--adw-red-pencil);
+      outline: 1.5px solid var(--adw-red-pencil);
+      outline-offset: -1.5px;
     }
 
     & .adw-climb__rule {
@@ -1535,7 +1677,8 @@
     & .adw-reset__steps li[data-state='now'] {
       background: #fff;
       color: var(--adw-ink);
-      box-shadow: inset 3px 0 0 var(--adw-red-pencil);
+      outline: 1.5px solid var(--adw-red-pencil);
+      outline-offset: -1.5px;
     }
     & .adw-reset__steps li[data-state='now'] .adw-reset__num {
       border-color: var(--adw-red);
@@ -1717,7 +1860,7 @@
       & .adw-climb__stage,
       & .adw-title,
       & .adw-title--study {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
       }
       & .adw-title {
         grid-template-areas: 'letters' 'note' 'block';
@@ -1845,9 +1988,9 @@
 
 @keyframes adw-letter {
   from {
-    opacity: 0;
-    transform: translateY(0.35em);
-    filter: blur(3px);
+    opacity: 0.3;
+    transform: translateY(0.3em);
+    filter: blur(1.5px);
   }
 }
 
@@ -1859,7 +2002,7 @@
 
 @keyframes adw-rise {
   from {
-    opacity: 0;
+    opacity: 0.35;
     transform: translateY(10px);
   }
 }
@@ -1879,4 +2022,52 @@
     opacity: 0;
   }
 }
+}
+
+/* Paper: the shared print system owns ink and layout (no lesson palette
+   reaches it). These rules only stop this world's drawings, which have no
+   screen styling on paper, from printing as solid shapes, and keep its
+   simulations legible in plain ink. */
+@media print {
+  :root[data-lesson='active-directory-security'] .adw-bubble,
+  :root[data-lesson='active-directory-security'] .adw-hero__keyplan,
+  :root[data-lesson='active-directory-security'] .adw-climb__section,
+  :root[data-lesson='active-directory-security'] .adw-climb__ruler,
+  :root[data-lesson='active-directory-security'] .adw-climb__cols,
+  :root[data-lesson='active-directory-security'] .adw-cloud__svg,
+  :root[data-lesson='active-directory-security'] .adw-cloud__delta svg,
+  :root[data-lesson='active-directory-security'] .adw-rights__door,
+  :root[data-lesson='active-directory-security'] .adw-climb__controls .btn,
+  :root[data-lesson='active-directory-security'] .adw-reset__actions {
+    display: none !important;
+  }
+  :root[data-lesson='active-directory-security'] .adw-hero {
+    display: block;
+  }
+  :root[data-lesson='active-directory-security'] .adw-hero__block {
+    margin-top: 1rem;
+  }
+  :root[data-lesson='active-directory-security'] .adw-hero__fields div,
+  :root[data-lesson='active-directory-security'] .adw-title__block div {
+    display: inline-block;
+    margin-right: 1.5rem;
+  }
+  :root[data-lesson='active-directory-security'] .adw-climb__code,
+  :root[data-lesson='active-directory-security'] .adw-climb__fields span {
+    display: inline;
+  }
+  :root[data-lesson='active-directory-security'] .adw-cloud__delta b::before {
+    content: 'Δ';
+  }
+  :root[data-lesson='active-directory-security'] .adw-reset__num {
+    display: none;
+  }
+  :root[data-lesson='active-directory-security'] .adw-reset__steps {
+    list-style: decimal;
+    padding-left: 1.4rem;
+  }
+  :root[data-lesson='active-directory-security'] .adw-head__scale {
+    display: flex;
+    gap: 1rem;
+  }
 }

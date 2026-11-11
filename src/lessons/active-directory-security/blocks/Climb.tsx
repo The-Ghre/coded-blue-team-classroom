@@ -66,9 +66,15 @@ export function Climb({ block, mode }: BlockOverrideProps<EvidenceBlock>) {
   const span = Math.max(1, end - start)
   const n = rows.length
 
+  /* The line the reader is on, kept in a ref so quick repeated presses of
+     the step controls each move one line from the latest position. */
+  const pos = useRef(-1)
   const choose = (i: number | null) => {
     setOpen(i)
-    if (i !== null) setReached(i + 1)
+    if (i !== null) {
+      pos.current = i
+      setReached(i + 1)
+    }
   }
 
   /* Replay: open each line in turn on one shared clock. Any press of a line
@@ -86,6 +92,7 @@ export function Climb({ block, mode }: BlockOverrideProps<EvidenceBlock>) {
       const b = rows[Math.min(n - 1, i + 1)].minutes
       setClock(a + (b - a) * k)
       setOpen((cur) => (cur === i ? cur : i))
+      pos.current = i
       setReached((r) => Math.max(r, i + 1))
       if (step >= n) {
         setPlaying(false)
@@ -222,9 +229,9 @@ export function Climb({ block, mode }: BlockOverrideProps<EvidenceBlock>) {
             className="btn btn--sm"
             onClick={() => {
               stop()
-              choose(Math.max(0, (open ?? reached - 1) - 1))
+              choose(Math.max(0, pos.current - 1))
             }}
-            disabled={(open ?? reached - 1) <= 0}
+            disabled={reached <= 1}
           >
             Previous event
           </button>
@@ -233,9 +240,9 @@ export function Climb({ block, mode }: BlockOverrideProps<EvidenceBlock>) {
             className="btn btn--sm btn--primary"
             onClick={() => {
               stop()
-              choose(Math.min(n - 1, (open ?? reached - 1) + 1))
+              choose(Math.min(n - 1, pos.current + 1))
             }}
-            disabled={(open ?? reached - 1) >= n - 1}
+            disabled={reached >= n && open !== null}
           >
             Next event
           </button>
