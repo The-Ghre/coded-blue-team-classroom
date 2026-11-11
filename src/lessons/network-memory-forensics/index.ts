@@ -9,19 +9,21 @@ import { Evidence } from './blocks/Evidence'
 import './theme.css'
 
 /**
- * Lesson world: network-memory-forensics — the darkroom.
+ * Lesson world: network-memory-forensics — the music box.
  *
- * Evidence here is a latent image: it exists until the light comes on, and
- * has to be developed before isolation fogs it. A beacon is a roll shot by
- * an interval timer; on the contact sheet its frames line up identical and
- * evenly spaced, where a person's roll is bursts and gaps.
+ * You can hear a music box from across the room and its beat never wavers:
+ * that is the network, and regularity is the signature of a machine. To
+ * know what it will play you must open the lid and read the cylinder: that
+ * is memory. The printed score is the disk; it shows the tune but not the
+ * pin someone added.
  *
- * Backdrop  the developing tray (WebGL): the slide's argument develops out
- *           of grain under an amber safelight.
- * Overlay   the roll: film rebate down the left edge, one frame per slide.
- * Hero      a contact sheet header for study, workshop and overview.
- * blocks    title (contact sheet), scenario / concept (one print each),
- *           beacon analyzer (exposure print), evidence (marked print).
+ * Backdrop  the mechanism (canvas): a pinned cylinder turning, each pin
+ *           plucking a tooth, the slide's argument set in pins.
+ * Overlay   the comb: one tuned tooth per slide down the left edge.
+ * Hero      the cylinder plate for study, workshop and overview.
+ * blocks    title (the cylinder unrolled), scenario / concept (one score
+ *           each), beacon analyzer (pin print and sound), evidence (bracketed
+ *           manuscript).
  */
 const kit: LessonKit = {
   slug: 'network-memory-forensics',

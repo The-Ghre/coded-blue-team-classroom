@@ -1,409 +1,356 @@
-import { useEffect, useRef, useState } from 'react'
-import { Mesh, Program, Renderer, Texture, Triangle } from 'ogl'
+import { useEffect, useRef } from 'react'
 import type { StageProps } from '../types'
+import type { Block } from '@/types/content'
 import { useFrameLoop, useIsVisible } from '@/motion'
-import { drawMotif, motifFor, MOTIF_H, MOTIF_W, type Motif } from './motifs'
+import { rng } from './parts'
 
 /* =========================================================================
-   THE TRAY
+   THE MECHANISM
    =========================================================================
-   The lesson's ambient layer is a developing tray under an amber safelight.
-   The developer rocks slowly; a latent image builds density out of grain;
-   every slide change sends one wave across the tray and the next image
-   begins to develop. What develops is the slide's argument, drawn without
-   words (see motifs.ts) — the timer's roll beside the person's roll, the
-   one query that resolved, the region of memory that holds a binary.
+   Behind every surface of this lesson a pinned cylinder turns under one
+   raking lamp. Each pin that reaches the comb plucks a tooth, which
+   trembles and settles. What is pinned is the slide's argument, set
+   without words:
 
-   Cheap by construction: one full-screen triangle, two small textures, a
-   capped pixel ratio, paused when hidden, one still frame under reduced
-   motion. If WebGL is unavailable, a static safelight wash stands in.
+     pulse   one tooth plucked on a fixed beat (one destination, a timer),
+             the rest plucked irregularly by a person (many destinations)
+     dga     tooth after tooth plucked and damped silent, then one rings
+     volume  scattered plucks, then one tooth trilled for a long run
+     memory  the drum slows to a stop and the lamp finds a cluster of pins
+             in blued steel that no score contains
+     lanes   three groups of teeth that strike together at one moment
+
+   The mechanism keeps to a strip along the foot of the room no taller than
+   the player's bottom bar, so it lies behind the controls and can never
+   sit under a line of slide text. On
+   reading pages the room is the lamp alone: the cylinder appears there as
+   the page header's band, not behind the prose.
+
+   Plain 2D canvas, a capped pixel ratio, paused when hidden, and one
+   composed still under reduced motion.
    ========================================================================= */
 
-const vertex = /* glsl */ `
-attribute vec2 uv;
-attribute vec2 position;
-varying vec2 vUv;
-void main() {
-  vUv = uv;
-  gl_Position = vec4(position, 0.0, 1.0);
-}
-`
+type Motif = 'pulse' | 'dga' | 'volume' | 'memory' | 'lanes'
 
-const fragment = /* glsl */ `
-precision highp float;
-varying vec2 vUv;
-uniform float uTime;
-uniform vec2 uRes;
-uniform sampler2D uA;
-uniform sampler2D uB;
-uniform float uMix;
-uniform float uDense;
-uniform float uAgit;
-uniform float uDir;
-uniform float uPage;
-uniform float uStill;
-uniform sampler2D uMask;
-uniform float uMaskOn;
-
-float hash(vec2 p) {
-  p = fract(p * vec2(443.897, 441.423));
-  p += dot(p, p.yx + 19.19);
-  return fract((p.x + p.y) * p.x);
-}
-
-float vnoise(vec2 p) {
-  vec2 i = floor(p);
-  vec2 f = fract(p);
-  vec2 u = f * f * (3.0 - 2.0 * f);
-  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
-             mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
-}
-
-vec2 coverUv(vec2 uv) {
-  float va = uRes.x / uRes.y;
-  float ma = ${(MOTIF_W / MOTIF_H).toFixed(4)};
-  vec2 s = va > ma ? vec2(1.0, ma / va) : vec2(va / ma, 1.0);
-  return (uv - 0.5) * s + 0.5;
-}
-
-void main() {
-  vec2 uv = vUv;
-  float aspect = uRes.x / uRes.y;
-  float t = uTime;
-  float moving = 1.0 - uStill;
-
-  // The tray rocks: two slow waves across the developer.
-  vec2 p = vec2(uv.x * aspect, uv.y);
-  float rock = sin(t * 0.55) * moving;
-  float w1 = sin(p.x * 5.0 + p.y * 2.0 - t * 0.8 + rock * 1.5);
-  float w2 = sin(p.y * 7.0 - p.x * 2.6 + t * 0.63);
-  vec2 disp = vec2(w1, w2) * 0.0035 * moving;
-
-  // One wave crosses the tray after each slide change, in the direction of travel.
-  float front = uDir > 0.0 ? uv.x : 1.0 - uv.x;
-  float band = sin(front * 14.0 - (1.0 - uAgit) * 18.0);
-  disp.x += band * 0.007 * uAgit * uDir;
-  vec2 q = coverUv(uv + disp);
-
-  // The safelight, above and to the right.
-  vec2 d = (uv - vec2(0.66, 1.18)) * vec2(aspect, 1.0);
-  float lamp = exp(-dot(d, d) * 1.35);
-  vec3 room = vec3(0.071, 0.035, 0.024);
-  vec3 amber = vec3(1.0, 0.56, 0.2);
-  vec3 col = room + amber * lamp * mix(0.2, 0.12, uPage);
-
-  // Latent image to silver: an induction period, then density climbs.
-  float a = texture2D(uA, q).r;
-  float b = texture2D(uB, q).r;
-  float dev = smoothstep(0.08, 1.0, uMix);
-  float clear = 1.0 - smoothstep(0.0, 0.45, uMix);
-  float m = max(a * clear, b * dev);
-  float clump = vnoise(gl_FragCoord.xy * 0.45 + 3.0) * 0.5 + vnoise(gl_FragCoord.xy * 0.09) * 0.5;
-  float silver = smoothstep(0.12, 0.85, m * (0.7 + 0.6 * clump)) * uDense;
-  // The reading plane stays clear: no silver develops under text. On a
-  // projected slide the mask is measured from the slide's own text blocks;
-  // on a reading page the image keeps to the empty right-hand margin.
-  silver *= 1.0 - 0.96 * texture2D(uMask, uv).r * uMaskOn;
-  silver *= mix(1.0, smoothstep(0.76, 0.9, uv.x) * step(1.25, aspect), uPage);
-  col += amber * silver * mix(0.24, 0.14, uPage) * (0.5 + lamp);
-
-  // Glints where the liquid catches the lamp.
-  float glint = pow(max(0.0, w1 * w2), 6.0) * lamp;
-  col += amber * glint * 0.05 * moving;
-
-  // Grain at film rate. Tiny amplitude, so it reads as texture, never flicker.
-  float gt = floor(t * 12.0) * moving;
-  col += (hash(gl_FragCoord.xy + gt * 37.0) - 0.5) * 0.028;
-
-  // The tray's walls.
-  vec2 v = (uv - 0.5) * vec2(1.0, 1.15);
-  col *= 1.0 - 0.55 * dot(v, v);
-  gl_FragColor = vec4(max(col, 0.0), 1.0);
-}
-`
-
-interface Tray {
-  renderer: Renderer
-  program: Program
-  mesh: Mesh
-  canvasA: HTMLCanvasElement
-  canvasB: HTMLCanvasElement
-  texA: Texture
-  texB: Texture
-  mask: HTMLCanvasElement
-  texMask: Texture
-  motif: Motif | null
-  mixStart: number
-  agitAt: number
-  dir: number
-}
-
-const DEVELOP_SECONDS = 2.4
-const MASK_SCALE = 1 / 6
-
-/* Elements that carry words. Their boxes are kept clear of silver. */
-const TEXT_SELECTOR =
-  'h1,h2,h3,h4,p,li,dt,dd,th,td,figcaption,summary,button,label,code,.mono-label,.duration,.ev,.nmf-print,.nmf-xprint,.evidence,.code'
-
-/** Paint the boxes of every text element on the slide into the mask. */
-function paintMask(mask: HTMLCanvasElement, host: HTMLElement) {
-  const ctx = mask.getContext('2d')
-  if (!ctx) return
-  const hr = host.getBoundingClientRect()
-  const w = Math.max(1, Math.round(hr.width * MASK_SCALE))
-  const h = Math.max(1, Math.round(hr.height * MASK_SCALE))
-  if (mask.width !== w || mask.height !== h) {
-    mask.width = w
-    mask.height = h
+function motifFor(surface: StageProps['surface'], half: StageProps['half'], block?: Block): Motif {
+  if (half === 'practical') return 'lanes'
+  if (surface !== 'present' || !block) return 'pulse'
+  switch (block.id) {
+    case 'dns':
+      return 'dga'
+    case 'exfil':
+      return 'volume'
+    case 'volatility':
+    case 'malfind':
+    case 'check':
+    case 'theory-recap':
+      return 'memory'
+    default:
+      return 'pulse'
   }
-  ctx.filter = 'none'
-  ctx.fillStyle = '#000'
-  ctx.fillRect(0, 0, w, h)
-  const slide = host.closest('.present')?.querySelector('.present__slide')
-  if (!slide) return
-  ctx.filter = 'blur(3px)'
-  ctx.fillStyle = '#fff'
-  const pad = 18
-  slide.querySelectorAll(TEXT_SELECTOR).forEach((el) => {
-    const r = el.getBoundingClientRect()
-    if (r.width < 1 || r.height < 1 || r.bottom < hr.top || r.top > hr.bottom) return
-    ctx.fillRect(
-      (r.left - hr.left - pad) * MASK_SCALE,
-      (r.top - hr.top - pad) * MASK_SCALE,
-      (r.width + pad * 2) * MASK_SCALE,
-      (r.height + pad * 2) * MASK_SCALE,
-    )
-  })
-  ctx.filter = 'none'
 }
 
-export function Backdrop(props: StageProps) {
-  const { surface, half, block, slideIndex, direction, focusMode, reducedMotion } = props
-  const host = useRef<HTMLDivElement>(null)
-  const tray = useRef<Tray | null>(null)
-  /* Seconds on the tray's clock. Starts at 3 so the frame loop (which
-     reports t + 3) continues it rather than jumping, and the first image
-     develops from blank paper on arrival. */
-  const clock = useRef(3)
-  const visible = useIsVisible(host)
-  const [failed, setFailed] = useState(false)
+interface DrumPin {
+  tooth: number
+  angle: number
+  kind: 'beacon' | 'human' | 'damped' | 'ring' | 'inject'
+}
+
+const TEETH = 44
+const TAU = Math.PI * 2
+const PLUCK_AT = 1.32 // drum angle (rad from the front) where the comb catches a pin
+
+function pinsFor(motif: Motif): DrumPin[] {
+  const r = rng(motif.length * 977 + 3)
+  const pins: DrumPin[] = []
+  const human = (count: number, avoid: number[] = []) => {
+    for (let i = 0; i < count; i++) {
+      let tooth = Math.floor(r() * TEETH)
+      if (avoid.includes(tooth)) tooth = (tooth + 3) % TEETH
+      pins.push({ tooth, angle: r() * TAU, kind: 'human' })
+    }
+  }
+  switch (motif) {
+    case 'pulse':
+      for (let i = 0; i < 12; i++) pins.push({ tooth: 27, angle: (i / 12) * TAU, kind: 'beacon' })
+      human(46, [27])
+      break
+    case 'dga':
+      for (let i = 0; i < 60; i++) pins.push({ tooth: Math.floor(r() * TEETH), angle: r() * TAU, kind: 'damped' })
+      pins.push({ tooth: 31, angle: 0.4, kind: 'ring' })
+      break
+    case 'volume':
+      human(30, [12])
+      for (let i = 0; i < 26; i++) pins.push({ tooth: 12, angle: 1.2 + i * 0.09, kind: 'beacon' })
+      break
+    case 'memory':
+      for (let t = 0; t < TEETH; t++)
+        for (let k = 0; k < 18; k++) if (r() < 0.32) pins.push({ tooth: t, angle: (k / 18) * TAU, kind: 'human' })
+      for (let t = 29; t <= 33; t++)
+        for (let k = 0; k < 3; k++) pins.push({ tooth: t, angle: -0.3 + k * 0.17, kind: 'inject' })
+      break
+    case 'lanes':
+      for (const g of [6, 22, 38]) {
+        for (let i = 0; i < 9; i++) pins.push({ tooth: g - 2 + Math.floor(r() * 5), angle: r() * TAU, kind: 'human' })
+        pins.push({ tooth: g, angle: 0.9, kind: 'beacon' })
+      }
+      break
+  }
+  return pins
+}
+
+interface Mech {
+  w: number
+  h: number
+  dpr: number
+  angle: number
+  speed: number
+  pins: DrumPin[]
+  motif: Motif
+  amp: Float32Array
+  sweepAt: number
+  sweepDir: number
+  t: number
+  /** Height the strip may occupy: the player's bottom bar. */
+  stripMax: number
+}
+
+export function Backdrop({ surface, half, block, slideIndex, direction, focusMode, reducedMotion }: StageProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const layerRef = useRef<HTMLCanvasElement | null>(null)
+  const visible = useIsVisible(canvasRef)
   const motif = motifFor(surface, half, block)
-  const page = surface === 'present' ? 0 : 1
+  const page = surface !== 'present'
+  const focusRef = useRef(focusMode)
+  focusRef.current = focusMode
 
-  /* Build once. */
-  useEffect(() => {
-    const el = host.current
-    if (!el) return
-    let renderer: Renderer
-    try {
-      renderer = new Renderer({
-        dpr: Math.min(window.devicePixelRatio || 1, 1.5) * 0.6,
-        alpha: false,
-        antialias: false,
-        powerPreference: 'low-power',
-      })
-    } catch {
-      setFailed(true)
-      return
-    }
-    const gl = renderer.gl
-    gl.clearColor(0.071, 0.035, 0.024, 1)
-    const makeCanvas = () => {
-      const c = document.createElement('canvas')
-      c.width = MOTIF_W
-      c.height = MOTIF_H
-      const ctx = c.getContext('2d')
-      if (ctx) {
-        ctx.fillStyle = '#000'
-        ctx.fillRect(0, 0, MOTIF_W, MOTIF_H)
+  const state = useRef<Mech>({
+    w: 0,
+    h: 0,
+    dpr: 1,
+    angle: 0.6,
+    speed: 0.16,
+    pins: pinsFor(motif),
+    motif,
+    amp: new Float32Array(TEETH),
+    sweepAt: -10,
+    sweepDir: 1,
+    t: 0,
+    stripMax: 100,
+  })
+
+  function draw(dt: number, still: boolean) {
+    const canvas = canvasRef.current
+    const ctx = canvas?.getContext('2d')
+    if (!canvas || !ctx) return
+    const s = state.current
+    const { w, h, dpr } = s
+    if (!w || !h) return
+
+    /* ---- advance ---- */
+    const target = still || s.motif === 'memory' ? 0 : focusRef.current ? 0.22 : 0.16
+    s.speed += (target - s.speed) * Math.min(1, dt * 1.4)
+    const prev = s.angle
+    if (still && s.motif === 'memory') s.angle = 0.42
+    if (!still) {
+      s.angle += s.speed * dt
+      for (const p of s.pins) {
+        const a0 = (((p.angle + prev) % TAU) + TAU) % TAU
+        const a1 = (((p.angle + s.angle) % TAU) + TAU) % TAU
+        if (a0 < PLUCK_AT && a1 >= PLUCK_AT) {
+          s.amp[p.tooth] = p.kind === 'damped' ? 0.12 : p.kind === 'ring' ? 1.4 : p.kind === 'beacon' ? 1 : 0.7
+        }
       }
-      return c
-    }
-    const canvasA = makeCanvas()
-    const canvasB = makeCanvas()
-    const texOpts = {
-      generateMipmaps: false,
-      minFilter: gl.LINEAR,
-      magFilter: gl.LINEAR,
-      wrapS: gl.CLAMP_TO_EDGE,
-      wrapT: gl.CLAMP_TO_EDGE,
-    }
-    const texA = new Texture(gl, { image: canvasA, ...texOpts })
-    const texB = new Texture(gl, { image: canvasB, ...texOpts })
-    const mask = document.createElement('canvas')
-    mask.width = 1
-    mask.height = 1
-    const texMask = new Texture(gl, { image: mask, ...texOpts })
-    const program = new Program(gl, {
-      vertex,
-      fragment,
-      uniforms: {
-        uTime: { value: 0 },
-        uRes: { value: [1, 1] },
-        uA: { value: texA },
-        uB: { value: texB },
-        uMix: { value: 0 },
-        uDense: { value: 0.75 },
-        uAgit: { value: 0 },
-        uDir: { value: 1 },
-        uPage: { value: page },
-        uStill: { value: 0 },
-        uMask: { value: texMask },
-        uMaskOn: { value: page ? 0 : 1 },
-      },
-    })
-    const mesh = new Mesh(gl, { geometry: new Triangle(gl), program })
-    const canvas = gl.canvas as HTMLCanvasElement
-    canvas.className = 'nmf-tray__gl'
-    el.appendChild(canvas)
-
-    const resize = () => {
-      const r = el.getBoundingClientRect()
-      renderer.setSize(Math.max(1, r.width), Math.max(1, r.height))
-      program.uniforms.uRes.value = [r.width, r.height]
-    }
-    resize()
-    const ro = new ResizeObserver(() => {
-      resize()
-      // A resize clears the buffer; a still frame must be redrawn.
-      if (tray.current) {
-        refreshMask(tray.current)
-        renderOnce(tray.current)
+      const g = (s.t - s.sweepAt) / 0.55
+      if (g >= 0 && g <= 1) {
+        const k = Math.floor(g * TEETH)
+        const tooth = s.sweepDir > 0 ? k : TEETH - 1 - k
+        if (tooth >= 0 && tooth < TEETH && s.amp[tooth] < 0.5) s.amp[tooth] = 0.55
       }
-    })
-    ro.observe(el)
-
-    tray.current = {
-      renderer,
-      program,
-      mesh,
-      canvasA,
-      canvasB,
-      texA,
-      texB,
-      mask,
-      texMask,
-      motif: null,
-      mixStart: 0,
-      agitAt: -100,
-      dir: 1,
+      for (let i = 0; i < TEETH; i++) s.amp[i] *= Math.exp(-dt * 2.4)
     }
 
-    return () => {
-      ro.disconnect()
-      canvas.remove()
-      gl.getExtension('WEBGL_lose_context')?.loseContext()
-      tray.current = null
+    /* ---- the room ---- */
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.fillStyle = '#0b0c0f'
+    ctx.fillRect(0, 0, w, h)
+    const lamp = ctx.createRadialGradient(w * 0.12, -h * 0.25, 0, w * 0.12, -h * 0.25, Math.max(w, h) * 1.1)
+    lamp.addColorStop(0, 'rgba(214, 222, 236, 0.11)')
+    lamp.addColorStop(1, 'rgba(214, 222, 236, 0)')
+    ctx.fillStyle = lamp
+    ctx.fillRect(0, 0, w, h)
+
+    /* A reading page: the lamp alone. */
+    if (page) return
+
+    /* ---- the mechanism, on its own layer ---- */
+    let layer = layerRef.current
+    if (!layer) {
+      layer = document.createElement('canvas')
+      layerRef.current = layer
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  function uniformsAt(tr: Tray, t: number, still: boolean) {
-    const u = tr.program.uniforms
-    u.uTime.value = t
-    u.uStill.value = still ? 1 : 0
-    /* Development and agitation run on the wall clock, not the frame clock:
-       a throttled or backgrounded tab still finishes developing. */
-    const wall = performance.now() / 1000
-    u.uMix.value = still ? 1 : Math.min(1, (wall - tr.mixStart) / DEVELOP_SECONDS)
-    u.uAgit.value = still ? 0 : Math.max(0, 1 - (wall - tr.agitAt) / 1.1)
-    u.uDir.value = tr.dir
-    u.uPage.value = page
-    let dense = page ? 0.62 : focusMode ? 1 : 0.8
-    if (page && !still) {
-      /* On a reading page the print develops further the deeper you read. */
-      const max = document.documentElement.scrollHeight - window.innerHeight
-      dense += 0.3 * (max > 0 ? window.scrollY / max : 0)
+    if (layer.width !== canvas.width || layer.height !== canvas.height) {
+      layer.width = canvas.width
+      layer.height = canvas.height
     }
-    u.uDense.value = dense
+    const lc = layer.getContext('2d')
+    if (!lc) return
+    lc.setTransform(1, 0, 0, 1, 0, 0)
+    lc.clearRect(0, 0, layer.width, layer.height)
+    lc.setTransform(dpr, 0, 0, dpr, 0, 0)
+    lc.filter = 'none'
+    paintMechanism(lc, w, h, s, still)
+    lc.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+    /* the strip's upper edge falls off into the room */
+    lc.setTransform(dpr, 0, 0, dpr, 0, 0)
+    lc.globalCompositeOperation = 'destination-in'
+    const fade = lc.createLinearGradient(0, h - stripHeight(h, s.stripMax), 0, h - stripHeight(h, s.stripMax) + 24)
+    fade.addColorStop(0, 'rgba(0,0,0,0)')
+    fade.addColorStop(1, 'rgba(0,0,0,1)')
+    lc.fillStyle = fade
+    lc.fillRect(0, 0, w, h)
+    lc.globalCompositeOperation = 'source-over'
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+    ctx.drawImage(layer, 0, 0)
   }
 
-  function refreshMask(tr: Tray) {
-    const el = host.current
-    if (!el || page) return
-    paintMask(tr.mask, el)
-    tr.texMask.image = tr.mask
-    tr.texMask.needsUpdate = true
-  }
-
-  function renderOnce(tr: Tray) {
-    uniformsAt(tr, clock.current, reducedMotion)
-    tr.renderer.render({ scene: tr.mesh })
-  }
-
-  /* A new latent image: the old one clears while the new one develops. */
+  /* New argument: re-pin the drum. */
   useEffect(() => {
-    const tr = tray.current
-    if (!tr || tr.motif === motif) return
-    const ctxA = tr.canvasA.getContext('2d')
-    const ctxB = tr.canvasB.getContext('2d')
-    if (!ctxA || !ctxB) return
-    if (tr.motif) drawMotif(ctxA, tr.motif)
-    drawMotif(ctxB, motif)
-    tr.texA.image = tr.canvasA
-    tr.texA.needsUpdate = true
-    tr.texB.image = tr.canvasB
-    tr.texB.needsUpdate = true
-    tr.motif = motif
-    tr.mixStart = performance.now() / 1000
-    if (reducedMotion || !visible) renderOnce(tr)
+    const s = state.current
+    if (s.motif !== motif) {
+      s.motif = motif
+      s.pins = pinsFor(motif)
+      s.amp.fill(0)
+      /* Opening the lid: the drum coasts to a stop with the blued cluster
+         facing the lamp. */
+      if (motif === 'memory') s.angle = reducedMotion ? 0.42 : 0.3
+    }
+    if (reducedMotion) draw(0, true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [motif, failed])
+  }, [motif])
 
-  /* Each slide change sends one wave across the tray. */
+  /* Each slide change runs a glissando across the comb, in the direction of travel. */
   useEffect(() => {
-    const tr = tray.current
-    if (!tr || direction === 0) return
-    tr.agitAt = performance.now() / 1000
-    tr.dir = direction
+    if (direction === 0) return
+    const s = state.current
+    s.sweepAt = s.t
+    s.sweepDir = direction
   }, [slideIndex, direction])
 
-  /* Keep the clear field under the text current: after each slide change
-     (once the DOM has swapped and again once transitions settle), when the
-     slide scrolls, and after any click that may open or close content. */
+  /* Size. */
   useEffect(() => {
-    if (page) return
-    let raf = 0
-    const schedule = () => {
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => {
-        const tr = tray.current
-        if (!tr) return
-        refreshMask(tr)
-        if (reducedMotion || !visible) renderOnce(tr)
-      })
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect()
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
+      canvas.width = Math.max(1, Math.round(rect.width * dpr))
+      canvas.height = Math.max(1, Math.round(rect.height * dpr))
+      const s = state.current
+      s.w = rect.width
+      s.h = rect.height
+      s.dpr = dpr
+      const bar = canvas.closest('.present')?.querySelector('.present__bottom')
+      if (bar) s.stripMax = Math.max(48, bar.getBoundingClientRect().height)
+      draw(0, reducedMotion)
     }
-    const timers = [0, 120, 720].map((ms) => window.setTimeout(schedule, ms))
-    const stage = host.current?.closest('.present')?.querySelector('.present__stage')
-    const onClick = () => {
-      window.setTimeout(schedule, 40)
-      window.setTimeout(schedule, 520)
-    }
-    stage?.addEventListener('scroll', schedule, { passive: true })
-    document.addEventListener('click', onClick, true)
-    return () => {
-      timers.forEach(clearTimeout)
-      cancelAnimationFrame(raf)
-      stage?.removeEventListener('scroll', schedule)
-      document.removeEventListener('click', onClick, true)
-    }
+    resize()
+    const ro = new ResizeObserver(resize)
+    ro.observe(canvas)
+    return () => ro.disconnect()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slideIndex, page, reducedMotion])
+  }, [reducedMotion])
 
-  /* Still frame under reduced motion, and whenever focus mode changes it. */
-  useEffect(() => {
-    const tr = tray.current
-    if (tr && reducedMotion) renderOnce(tr)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reducedMotion, focusMode, motif])
+  useFrameLoop((t, dt) => {
+    state.current.t = t
+    draw(dt, false)
+  }, !reducedMotion && visible)
 
-  useFrameLoop((t) => {
-    clock.current = t + 3
-    const tr = tray.current
-    if (!tr) return
-    uniformsAt(tr, clock.current, false)
-    tr.renderer.render({ scene: tr.mesh })
-  }, !reducedMotion && visible && !failed)
+  return <canvas ref={canvasRef} className={`nmf-mech nmf-mech--${surface}`} />
+}
 
-  return <div ref={host} className={`nmf-tray nmf-tray--${surface}${failed ? ' nmf-tray--fallback' : ''}`} />
+/* ---------------------------------------------------------------------------
+   The drum and comb, in a frame w×h with the drum lying along the bottom
+   --------------------------------------------------------------------------- */
+
+/** Height of the strip the mechanism occupies at the foot of the frame. */
+export function stripHeight(h: number, max: number) {
+  return drumRadius(h, max) * 1.27 + 9
+}
+
+function drumRadius(h: number, max: number) {
+  return Math.max(16, Math.min(h * 0.11, 96, (max - 12) / 1.27))
+}
+
+function paintMechanism(c: CanvasRenderingContext2D, w: number, h: number, s: Mech, still: boolean) {
+  const R = drumRadius(h, s.stripMax)
+  const cy = h + R * 0.18
+  const x0 = w * 0.04
+  const x1 = w * 0.96
+  const pitch = (x1 - x0) / (TEETH - 1)
+  const xs = (i: number) => x0 + i * pitch
+
+  /* the drum, shaded by its own curvature in bands */
+  const bands = 24
+  for (let b = 0; b < bands; b++) {
+    const a0 = -Math.PI / 2 + (b / bands) * Math.PI
+    const a1 = -Math.PI / 2 + ((b + 1) / bands) * Math.PI
+    const y0 = cy - R * Math.sin(a1)
+    const y1 = cy - R * Math.sin(a0)
+    const light = Math.pow(Math.max(0, Math.cos((a0 + a1) / 2 - 0.35)), 2)
+    const v = Math.round(14 + light * 26)
+    c.fillStyle = `rgb(${v}, ${v + 3}, ${v + 9})`
+    c.fillRect(x0 - pitch, y0, x1 - x0 + pitch * 2, y1 - y0 + 0.5)
+  }
+
+  /* pins on the visible face */
+  for (const p of s.pins) {
+    const a = (((p.angle + s.angle) % TAU) + TAU) % TAU
+    const phi = a > Math.PI ? a - TAU : a
+    if (Math.abs(phi) >= Math.PI / 2) continue
+    const y = cy - R * Math.sin(phi)
+    const face = Math.cos(phi)
+    const size = (p.kind === 'human' ? 2.2 : 3.2) * (0.55 + 0.45 * face)
+    let col: string
+    switch (p.kind) {
+      case 'beacon':
+        col = `rgba(236, 240, 246, ${0.5 + 0.5 * face})`
+        break
+      case 'ring':
+      case 'inject':
+        col = `rgba(138, 162, 255, ${0.55 + 0.45 * face})`
+        break
+      case 'damped':
+        col = `rgba(160, 166, 176, ${0.16 + 0.18 * face})`
+        break
+      default:
+        col = `rgba(190, 196, 206, ${0.2 + 0.28 * face})`
+    }
+    c.fillStyle = col
+    c.beginPath()
+    c.ellipse(xs(p.tooth), y, size, size * (0.45 + 0.55 * face), 0, 0, TAU)
+    c.fill()
+  }
+
+  /* the comb: a steel bar with one tuned tooth per column, plucked at the crown */
+  const barY = cy - R - R * 0.45
+  const tipY = cy - R * Math.sin(PLUCK_AT) - 2
+  c.fillStyle = 'rgba(110, 117, 127, 0.35)'
+  c.fillRect(x0 - pitch, barY - 9, x1 - x0 + pitch * 2, 9)
+  c.lineCap = 'round'
+  c.lineWidth = Math.max(1, Math.min(4, pitch * 0.14))
+  for (let i = 0; i < TEETH; i++) {
+    const len = tipY - barY
+    const tune = 0.86 + 0.14 * Math.sin(i * 0.7)
+    const sway = still ? 0 : s.amp[i] * Math.sin(s.t * (38 - i * 0.4)) * 3.2
+    const lit = Math.min(1, s.amp[i])
+    c.strokeStyle = `rgba(${Math.round(150 + lit * 90)}, ${Math.round(157 + lit * 85)}, ${Math.round(
+      170 + lit * 80,
+    )}, ${0.22 + lit * 0.6})`
+    c.beginPath()
+    c.moveTo(xs(i), barY)
+    c.quadraticCurveTo(xs(i), barY + len * 0.6, xs(i) + sway, barY + len * tune)
+    c.stroke()
+  }
 }

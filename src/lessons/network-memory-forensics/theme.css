@@ -1,96 +1,101 @@
 /* =========================================================================
-   LESSON WORLD — network-memory-forensics: THE DARKROOM
+   LESSON WORLD — network-memory-forensics: THE MUSIC BOX
    =========================================================================
-   A warm blackout room under an amber safelight. Evidence is developed onto
-   fibre paper in silver-black ink; film rebate, sprocket holes and edge
-   print order everything; a china marker rings what matters.
+   Cool black lacquer under one raking work-lamp. A nickel-steel mechanism:
+   the pinned cylinder and its tuned comb. Heat-blued steel is the one
+   accent; its violet sheen is the uncertain kind. Anything written down is
+   written on white manuscript paper. A selection is marked with a
+   blued-steel index bracket.
 
    Every rule lives inside @media screen and under
    :root[data-lesson='network-memory-forensics'], so this world never leaks
    into another lesson or onto a printed handout.
 
    Measured contrast (WCAG):
-     on the room   (#140a07)  text 16.6  muted 12.0  dim 7.3  amber 8.8
-     on surfaces   (#241410)  text 15.1  muted 11.0  dim 6.7
-     on paper      (#efe6d6)  ink 14.7   ink-muted 8.5  ink-dim 5.8
-     evidence kinds ≥ 7.6 on the room, ≥ 5.2 on paper
+     on lacquer (#0b0c0f)   text 17.1  muted 11.6  dim 7.5  blued 8.1
+     on surfaces (#16181d)  text 15.6  muted 10.6  dim 6.8
+     on paper (#f4f3ef)     ink 16.2   ink-muted 8.8  ink-dim 5.5
+     white on blued fill (#3350c8) 6.7
+     evidence kinds ≥ 7.0 on surfaces, ≥ 5.3 on paper
    ========================================================================= */
 
 @media screen {
   :root[data-lesson='network-memory-forensics'] {
-    /* ---- The room ---------------------------------------------------- */
-    --nmf-room: #140a07;
-    --nmf-room-2: #1b0f0a;
-    --nmf-safelight: #f39a3d;
-    --nmf-safelight-soft: #ffbe7a;
-    --nmf-safelight-deep: #a8521a;
-    --nmf-glow: rgba(243, 154, 61, 0.14);
+    /* ---- The box ------------------------------------------------------ */
+    --nmf-lacquer: #0b0c0f;
+    --nmf-lacquer-2: #111318;
+    --nmf-steel: #c9ced6;
+    --nmf-steel-dim: #8b929c;
+    --nmf-nickel: #eef1f5;
+    --nmf-blued: #8aa2ff;
+    --nmf-blued-soft: #b4c3ff;
+    --nmf-blued-deep: #3350c8;
+    --nmf-blued-ink: #2c47b0;
+    --nmf-sheen: #c4b0f2;
+    --nmf-glow: rgba(138, 162, 255, 0.12);
 
-    /* ---- Paper and silver ------------------------------------------- */
-    --nmf-paper: #efe6d6;
-    --nmf-paper-2: #e4d8c4;
-    --nmf-ink: #1c1410;
-    --nmf-ink-muted: #4a3c33;
-    --nmf-ink-dim: #65544a;
-    --nmf-rebate: #0d0806;
-    --nmf-edge: #e9dcc6;
-    --nmf-marker: #c7281c;
-    --nmf-marker-dark: #ff7a66;
+    /* ---- Manuscript paper -------------------------------------------- */
+    --nmf-paper: #f4f3ef;
+    --nmf-paper-2: #e8e7e1;
+    --nmf-ink: #15171b;
+    --nmf-ink-muted: #3f444c;
+    --nmf-ink-dim: #5d636c;
+    --nmf-rule: rgba(21, 23, 27, 0.2);
 
-    /* ---- Semantic tokens -------------------------------------------- */
-    --bg: var(--nmf-room);
-    --bg-raised: var(--nmf-room-2);
-    --surface: #241410;
-    --surface-2: #2c1912;
-    --surface-3: #361f16;
-    --surface-panel: #2a1711;
+    /* ---- Semantic tokens --------------------------------------------- */
+    --bg: var(--nmf-lacquer);
+    --bg-raised: var(--nmf-lacquer-2);
+    --surface: #16181d;
+    --surface-2: #1c1f25;
+    --surface-3: #23272e;
+    --surface-panel: #181b21;
 
-    --text: #f5ebdd;
-    --text-muted: #dcc8b2;
-    --text-dim: #b49a83;
+    --text: #eef0f3;
+    --text-muted: #c3c8d0;
+    --text-dim: #9aa1ab;
 
-    --line: rgba(245, 222, 196, 0.13);
-    --line-strong: rgba(245, 222, 196, 0.24);
-    --card: rgba(245, 214, 180, 0.045);
-    --card-brd: rgba(245, 214, 180, 0.12);
+    --line: rgba(210, 218, 230, 0.12);
+    --line-strong: rgba(210, 218, 230, 0.22);
+    --card: rgba(210, 218, 230, 0.04);
+    --card-brd: rgba(210, 218, 230, 0.11);
 
-    --accent: var(--nmf-safelight);
-    --accent-deep: var(--nmf-safelight-deep);
-    --accent-soft: var(--nmf-safelight-soft);
-    --focus: #ffd08a;
+    --accent: var(--nmf-blued);
+    --accent-deep: var(--nmf-blued-deep);
+    --accent-soft: var(--nmf-blued-soft);
+    --focus: var(--nmf-blued-soft);
 
-    /* Evidence in darkroom terms. Observation is the edge print (what the
-       film recorded); hypothesis the film-box yellow of an untested idea;
-       confirmed the full white of a fixed, washed print; uncertain the
-       grey-rose of fogged paper; response the safelight; adversary the
-       china marker. Shape, glyph and word still carry every kind. */
-    --ev-observation: #bfa98e;
-    --ev-hypothesis: #eed36b;
-    --ev-confirmed: #fbf3e6;
-    --ev-uncertain: #d2aeb8;
-    --ev-response: #f6a250;
-    --ev-attack: #ff7a66;
-    --ev-observation-bg: rgba(191, 169, 142, 0.07);
-    --ev-hypothesis-bg: rgba(238, 211, 107, 0.08);
-    --ev-confirmed-bg: rgba(251, 243, 230, 0.07);
-    --ev-uncertain-bg: rgba(210, 174, 184, 0.08);
-    --ev-response-bg: rgba(246, 162, 80, 0.09);
-    --ev-attack-bg: rgba(255, 122, 102, 0.08);
+    /* Evidence in the box's materials. Observation is bare steel (what was
+       recorded); hypothesis a pale pencil yellow; confirmed is struck clean
+       white, a pin set for good; uncertain the violet sheen of blued steel;
+       response the blued steel itself; adversary is red, and red appears
+       nowhere else. Shape, glyph and word carry every kind. */
+    --ev-observation: #c9ced6;
+    --ev-hypothesis: #e6dc8c;
+    --ev-confirmed: #ffffff;
+    --ev-uncertain: var(--nmf-sheen);
+    --ev-response: var(--nmf-blued);
+    --ev-attack: #ff7a6e;
+    --ev-observation-bg: rgba(201, 206, 214, 0.07);
+    --ev-hypothesis-bg: rgba(230, 220, 140, 0.08);
+    --ev-confirmed-bg: rgba(255, 255, 255, 0.07);
+    --ev-uncertain-bg: rgba(196, 176, 242, 0.09);
+    --ev-response-bg: rgba(138, 162, 255, 0.1);
+    --ev-attack-bg: rgba(255, 122, 110, 0.09);
 
-    --pillar-endpoint: #bfa98e;
-    --pillar-network: #f6a250;
-    --pillar-identity: #eed36b;
-    --pillar-cloud: #fbf3e6;
+    --pillar-endpoint: #c9ced6;
+    --pillar-network: var(--nmf-blued);
+    --pillar-identity: #e6dc8c;
+    --pillar-cloud: #ffffff;
 
     /* Brand tokens some shared components reach for directly. */
-    --coded-ink: var(--nmf-room);
-    --coded-navy-deep: #1b0f0a;
-    --coded-blue-bright: var(--nmf-safelight);
-    --coded-blue-soft: var(--nmf-safelight-soft);
-    --coded-gold: #eed36b;
-    --coded-white: #fff8ee;
+    --coded-ink: var(--nmf-lacquer);
+    --coded-navy-deep: #111318;
+    --coded-blue-bright: var(--nmf-blued);
+    --coded-blue-soft: var(--nmf-blued-soft);
+    --coded-gold: #e6dc8c;
+    --coded-white: #ffffff;
 
-    /* ---- Type: Plex, set like a darkroom's paperwork ------------------ */
+    /* ---- Type and shape ---------------------------------------------- */
     --nmf-cond: 'IBM Plex Sans Condensed', var(--font-sans);
     --nmf-serif: 'IBM Plex Serif', Georgia, serif;
     --ls-eyebrow: 0.2em;
@@ -98,12 +103,11 @@
     --r-md: 3px;
     --r-lg: 4px;
     --r-xl: 6px;
-    --ease: cubic-bezier(0.16, 0.84, 0.3, 1);
-    --nmf-pitch: 1.5rem; /* the sprocket pitch: one rhythm for the room */
+    --ease: cubic-bezier(0.2, 0.8, 0.25, 1);
 
     color-scheme: dark;
-    accent-color: var(--nmf-safelight);
-    scrollbar-color: #4a2c1c var(--nmf-room);
+    accent-color: var(--nmf-blued);
+    scrollbar-color: #3a3f48 var(--nmf-lacquer);
   }
 
   /* =======================================================================
@@ -112,12 +116,12 @@
 
   :root[data-lesson='network-memory-forensics'] {
     & body {
-      background: var(--nmf-room);
+      background: var(--nmf-lacquer);
     }
 
     & ::selection {
-      background: rgba(243, 154, 61, 0.38);
-      color: #fff8ee;
+      background: rgba(138, 162, 255, 0.4);
+      color: #ffffff;
     }
 
     & :focus-visible {
@@ -137,34 +141,34 @@
       font-variant-numeric: tabular-nums slashed-zero;
     }
 
-    /* Paper: any print in the room redefines the tokens beneath it, so the
-       shared renderers inside it ink themselves in silver on fibre. */
+    /* Paper: anything written down redefines the tokens beneath it, so the
+       shared renderers inside it ink themselves on manuscript paper. */
     & .nmf-paper,
-    & .nmf-ev__print,
-    & .nmf-xprint__plate,
+    & .nmf-ev__sheet,
+    & .nmf-pinprint__plate,
     & .present .code,
     & .study .code {
       --text: var(--nmf-ink);
       --text-muted: var(--nmf-ink-muted);
       --text-dim: var(--nmf-ink-dim);
-      --line: rgba(28, 20, 16, 0.16);
-      --line-strong: rgba(28, 20, 16, 0.3);
-      --card: rgba(28, 20, 16, 0.04);
-      --card-brd: rgba(28, 20, 16, 0.16);
-      --accent-soft: #8e4510;
-      --ev-observation: #65544a;
-      --ev-hypothesis: #6e540a;
-      --ev-confirmed: #1c1410;
-      --ev-uncertain: #74414f;
-      --ev-response: #8e4510;
-      --ev-attack: #a82a1c;
-      --ev-observation-bg: rgba(101, 84, 74, 0.07);
-      --ev-hypothesis-bg: rgba(110, 84, 10, 0.08);
-      --ev-confirmed-bg: rgba(28, 20, 16, 0.08);
-      --ev-uncertain-bg: rgba(116, 65, 79, 0.08);
-      --ev-response-bg: rgba(142, 69, 16, 0.08);
-      --ev-attack-bg: rgba(168, 42, 28, 0.07);
-      --focus: #8e4510;
+      --line: rgba(21, 23, 27, 0.16);
+      --line-strong: rgba(21, 23, 27, 0.3);
+      --card: rgba(21, 23, 27, 0.04);
+      --card-brd: rgba(21, 23, 27, 0.16);
+      --accent-soft: var(--nmf-blued-ink);
+      --ev-observation: #4b5058;
+      --ev-hypothesis: #6b5d0a;
+      --ev-confirmed: var(--nmf-ink);
+      --ev-uncertain: #5b3f9a;
+      --ev-response: var(--nmf-blued-ink);
+      --ev-attack: #b0261c;
+      --ev-observation-bg: rgba(75, 80, 88, 0.07);
+      --ev-hypothesis-bg: rgba(107, 93, 10, 0.08);
+      --ev-confirmed-bg: rgba(21, 23, 27, 0.08);
+      --ev-uncertain-bg: rgba(91, 63, 154, 0.08);
+      --ev-response-bg: rgba(44, 71, 176, 0.08);
+      --ev-attack-bg: rgba(176, 38, 28, 0.07);
+      --focus: var(--nmf-blued-ink);
       color: var(--nmf-ink);
       background: var(--nmf-paper);
     }
@@ -174,14 +178,12 @@
       display: block;
     }
 
-    /* The darkroom timer and the fogged frame replace the shared Unicode
-       glyphs (both aria-hidden). Drawn as masks so they take currentColor. */
+    /* Drawn marks replace the shared Unicode glyphs (both aria-hidden). */
     & .duration > span[aria-hidden='true'],
     & .synthetic-badge__glyph {
       display: inline-block;
       width: 0.95em;
       height: 0.95em;
-      font-size: inherit;
       color: transparent;
       background: var(--nmf-glyph-color, currentColor);
       -webkit-mask: var(--nmf-glyph) center / contain no-repeat;
@@ -190,25 +192,27 @@
       overflow: hidden;
     }
 
+    /* a dial: how long this part plays */
     & .duration > span[aria-hidden='true'] {
       --nmf-glyph-color: var(--text-dim);
-      --nmf-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='9' r='6' fill='none' stroke='black' stroke-width='1.6'/%3E%3Cpath d='M8 9V5.5M6.5 1.5h3' stroke='black' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+      --nmf-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.2' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M8 3.5V8l3 2' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
     }
 
+    /* a ghost pin: a position drawn, nothing real set in it */
     & .synthetic-badge__glyph {
       --nmf-glyph-color: var(--ev-uncertain);
-      --nmf-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='1.5' y='3' width='13' height='10' rx='1' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M4 13l6-10M7.5 13l6-10M1.5 9.5L5 3' stroke='black' stroke-width='1' opacity='.7'/%3E%3C/svg%3E");
+      --nmf-glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5.5' fill='none' stroke='black' stroke-width='1.5' stroke-dasharray='2.2 2'/%3E%3Ccircle cx='8' cy='8' r='1.6' fill='black'/%3E%3C/svg%3E");
       margin-top: 0.2em;
     }
 
-    /* The banned kicker above every heading goes; the heading speaks. */
+    /* The kicker above every heading goes; the heading speaks. */
     & .block__head > .eyebrow {
       display: none;
     }
   }
 
   /* =======================================================================
-     TYPE
+     TYPE — engraved plate lettering, tempo-mark annotations
      ======================================================================= */
 
   :root[data-lesson='network-memory-forensics'] {
@@ -217,7 +221,7 @@
     & .block__title {
       font-family: var(--nmf-cond);
       font-weight: 600;
-      letter-spacing: -0.012em;
+      letter-spacing: -0.01em;
       text-wrap: balance;
     }
 
@@ -232,23 +236,17 @@
       line-height: 1.55;
     }
 
-    /* Mono labels become edge print: condensed caps, as printed on film. */
-    & .mono-label {
+    & .mono-label,
+    & .eyebrow {
       font-family: var(--nmf-cond);
       font-weight: 600;
       font-size: 0.75rem;
       letter-spacing: 0.16em;
-      color: var(--accent-soft);
+      color: var(--nmf-blued-soft);
     }
 
     & .duration {
       color: var(--text-dim);
-    }
-
-    & .eyebrow {
-      font-family: var(--nmf-cond);
-      letter-spacing: 0.18em;
-      color: var(--accent-soft);
     }
   }
 
@@ -269,20 +267,20 @@
 
     & .btn:hover:not(:disabled) {
       background: var(--nmf-glow);
-      border-color: var(--nmf-safelight);
+      border-color: var(--nmf-blued);
     }
 
     & .btn--primary {
-      background: var(--nmf-safelight);
-      border-color: var(--nmf-safelight);
-      color: var(--nmf-ink);
-      box-shadow: 0 10px 30px -14px rgba(243, 154, 61, 0.75);
+      background: var(--nmf-blued-deep);
+      border-color: var(--nmf-blued-deep);
+      color: #ffffff;
+      box-shadow: 0 10px 28px -14px rgba(51, 80, 200, 0.9);
     }
 
     & .btn--primary:hover:not(:disabled) {
-      background: var(--nmf-safelight-soft);
-      border-color: var(--nmf-safelight-soft);
-      color: var(--nmf-ink);
+      background: #4161d6;
+      border-color: var(--nmf-blued);
+      color: #ffffff;
     }
 
     & .btn--ghost {
@@ -296,8 +294,8 @@
 
   /* =======================================================================
      SHARED SURFACES, RE-MATERIALISED
-     Prints have square corners. Coloured edges become 1px rules with a
-     marker tick, never thick side stripes.
+     Square corners; coloured side stripes become 1px rules with a short
+     tick on the top edge.
      ======================================================================= */
 
   :root[data-lesson='network-memory-forensics'] {
@@ -306,11 +304,11 @@
     & .proves__col,
     & .detail,
     & .interaction__teaches {
+      position: relative;
       border-radius: 2px;
       border: 1px solid var(--card-brd);
       border-left-width: 1px;
-      background: rgba(245, 214, 180, 0.035);
-      position: relative;
+      background: rgba(210, 218, 230, 0.03);
     }
 
     & .callout::before,
@@ -324,17 +322,12 @@
       left: -1px;
       width: 2.25rem;
       height: 3px;
-      background: var(--nmf-tick, var(--accent));
+      background: var(--nmf-tick, var(--nmf-blued));
     }
 
     & .callout--warn,
-    & .redblue__pane--red,
-    & .proves__col--no {
+    & .redblue__pane--red {
       --nmf-tick: var(--ev-attack);
-    }
-
-    & .proves__col--no {
-      --nmf-tick: var(--ev-uncertain);
     }
 
     & .callout--rule {
@@ -345,12 +338,16 @@
       --nmf-tick: var(--ev-confirmed);
     }
 
+    & .proves__col--no {
+      --nmf-tick: var(--ev-uncertain);
+    }
+
     & .redblue__pane--blue {
       --nmf-tick: var(--ev-response);
     }
 
     & .detail {
-      background: rgba(0, 0, 0, 0.22);
+      background: rgba(0, 0, 0, 0.25);
     }
 
     & .synthetic-badge {
@@ -373,57 +370,56 @@
       border-radius: 999px;
     }
 
-    /* Confirmed is developed: the chip is fully printed, not tinted. */
+    /* Confirmed is struck: the chip is solid, not tinted. */
     & .ev--confirmed {
       background: var(--ev-confirmed);
-      color: var(--nmf-ink);
       border-color: var(--ev-confirmed);
+      color: var(--nmf-ink);
     }
 
     & .nmf-paper .ev--confirmed,
-    & .nmf-ev__print .ev--confirmed {
+    & .nmf-ev__sheet .ev--confirmed {
       color: var(--nmf-paper);
     }
 
     & .ev--attack {
       border-left-width: 1px;
-      box-shadow: inset 3px 0 0 var(--ev-attack);
+      background: color-mix(in srgb, var(--ev-attack) 18%, transparent);
     }
 
-    /* Concept bullets are sprocket holes. */
+    /* Concept bullets are pins. */
     & .concept__bullet {
-      width: 0.42rem;
-      height: 0.62rem;
-      border-radius: 1.5px;
-      background: var(--accent);
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: var(--nmf-steel);
       border: 0;
-      margin-top: 0.45em;
-      opacity: 0.85;
+      margin-top: 0.5em;
+      box-shadow: 0 0 0 3px rgba(201, 206, 214, 0.12);
     }
 
-    /* Code is printed: silver mono on fibre paper, a sprocket rule above. */
+    /* Code is written on manuscript paper under a steel plate. */
     & .code {
       border-radius: 2px;
       border: 0;
       overflow: hidden;
-      box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.95);
     }
 
     & .code__head {
-      background: var(--nmf-rebate);
-      color: var(--nmf-edge);
+      background: #2a2e36;
       border-bottom: 0;
-      --text-dim: var(--nmf-edge);
-      --accent-soft: var(--nmf-edge);
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8'%3E%3Crect x='6' y='1' width='9' height='6' rx='1.5' fill='%23271a13'/%3E%3C/svg%3E");
-      background-repeat: repeat-x;
-      background-position: 0 3px;
-      padding-top: 1rem;
+      --text-dim: var(--nmf-steel);
+      --accent-soft: var(--nmf-steel);
+    }
+
+    & .code__head .mono-label {
+      color: var(--nmf-steel);
     }
 
     & .code__head .btn {
-      color: var(--nmf-edge);
-      border-color: rgba(233, 220, 198, 0.3);
+      color: var(--nmf-nickel);
+      border-color: rgba(238, 241, 245, 0.3);
     }
 
     & .code__body {
@@ -436,8 +432,8 @@
     & .hints__tier-num {
       font-family: var(--nmf-cond);
       font-weight: 700;
-      color: var(--nmf-ink);
-      background: var(--nmf-safelight);
+      color: #ffffff;
+      background: var(--nmf-blued-deep);
       border-radius: 1px;
     }
 
@@ -454,12 +450,12 @@
       border-color: var(--ev-attack);
     }
 
-    & .check__feedback {
+    & .check__feedback,
+    & .debrief__landing p {
       font-family: var(--nmf-serif);
     }
 
     & .debrief__landing p {
-      font-family: var(--nmf-serif);
       font-style: italic;
     }
 
@@ -469,114 +465,134 @@
     }
 
     & .ix {
-      background: rgba(10, 5, 3, 0.55);
+      background: rgba(5, 6, 8, 0.55);
       border-color: var(--card-brd);
       border-radius: 3px;
     }
   }
 
   /* =======================================================================
-     FILM STRIP (contact printed)
+     THE CYLINDER (unrolled)
      ======================================================================= */
 
   :root[data-lesson='network-memory-forensics'] {
-    & .nmf-strip {
+    & .nmf-cyl {
       display: block;
       width: 100%;
       height: 100%;
-      overflow: visible;
+      overflow: hidden;
     }
 
-    & .nmf-strip__rebate {
-      fill: var(--nmf-rebate);
+    & .nmf-cyl__track {
+      stroke: rgba(20, 22, 26, 0.18);
+      stroke-width: 1;
     }
 
-    & .nmf-strip__hole {
-      fill: #2a1c14;
+    & .nmf-cyl__ghost {
+      fill: rgba(20, 22, 26, 0.32);
     }
 
-    & .nmf-strip__frame {
-      fill: #d9cdb8;
+    & .nmf-cyl__pin {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: nmf-set 380ms var(--ease) both;
+      animation-delay: calc(var(--d) * 14ms);
     }
 
-    & .nmf-strip__frame--fog {
-      fill: #2c201a;
+    & .nmf-cyl__pin--beacon {
+      fill: #0d0f12;
+      stroke: #ffffff;
+      stroke-width: 1.2;
     }
 
-    & .nmf-strip__frame--blank {
-      fill: #cbbfa9;
+    & .nmf-cyl__pin--human {
+      fill: rgba(40, 44, 50, 0.62);
     }
 
-    & .nmf-strip__base {
-      fill: rgba(28, 20, 16, 0.35);
+    & .nmf-cyl__pin--inject {
+      fill: var(--nmf-blued-deep);
+      stroke: #ffffff;
+      stroke-width: 1.2;
     }
 
-    & .nmf-strip__mark {
-      fill: var(--nmf-ink);
-    }
-
-    & .nmf-strip__mark--soft {
-      fill: rgba(28, 20, 16, 0.7);
-    }
-
-    & .nmf-strip__word {
+    & .nmf-cyl__row-label {
       font-family: var(--nmf-cond);
       font-weight: 700;
-      font-size: 17px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      fill: var(--nmf-ink);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      fill: #1d2026;
     }
 
-    & .nmf-strip__edge {
+    & .nmf-cyl__comb-base {
+      fill: #6e757f;
+    }
+
+    & .nmf-cyl__tooth {
+      fill: #b9bfc8;
+      stroke: #3d4249;
+      stroke-width: 0.8;
+    }
+
+    & .nmf-cyl__scale-rule {
+      stroke: var(--nmf-steel-dim);
+      stroke-width: 1;
+    }
+
+    & .nmf-cyl__time {
       font-family: var(--nmf-cond);
       font-weight: 600;
       font-size: 11px;
-      letter-spacing: 0.12em;
-      fill: var(--nmf-edge);
+      letter-spacing: 0.08em;
+      fill: var(--text-muted);
+      font-variant-numeric: tabular-nums;
     }
 
-    & .nmf-strip__edge--top {
-      fill: #d6923f;
-    }
-
-    & .nmf-marker {
+    & .nmf-bracket {
       fill: none;
-      stroke: var(--nmf-marker);
-      stroke-width: 4.5;
-      opacity: 0.92;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      vector-effect: non-scaling-stroke;
+      stroke: var(--nmf-blued-ink);
+      stroke-width: 3;
+      stroke-linecap: square;
       stroke-dasharray: 1;
       stroke-dashoffset: 0;
     }
 
-    & .nmf-marker--grain {
-      stroke-width: 1.6;
-      opacity: 0.5;
+    & .nmf-cyl .nmf-bracket {
+      stroke: #2240c8;
+      stroke-width: 3.5;
     }
 
-    & .nmf-strip .nmf-marker {
-      vector-effect: none;
-      stroke-width: 5;
+    & .nmf-bracket--draw {
+      animation: nmf-draw 520ms cubic-bezier(0.6, 0, 0.3, 1) 520ms both;
     }
 
-    & .nmf-strip .nmf-marker--grain {
-      stroke-width: 2;
+    & .nmf-index {
+      position: absolute;
+      inset: -0.3rem -0.4rem;
+      width: calc(100% + 0.8rem);
+      height: calc(100% + 0.6rem);
+      overflow: visible;
+      pointer-events: none;
     }
 
-    & .nmf-marker--draw .nmf-marker {
-      animation: nmf-mark 640ms cubic-bezier(0.55, 0.05, 0.3, 1) 380ms both;
-    }
-
-    & .nmf-strip__cell {
-      animation: nmf-expose 520ms var(--ease) both;
-      animation-delay: calc(var(--f) * 45ms);
+    & .nmf-index .nmf-bracket {
+      stroke-width: 2.5;
+      vector-effect: non-scaling-stroke;
+      animation-delay: 0ms;
     }
   }
 
-  @keyframes nmf-mark {
+  @keyframes nmf-set {
+    from {
+      transform: scale(0.2);
+      opacity: 0.6;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  @keyframes nmf-draw {
     from {
       stroke-dashoffset: 1;
     }
@@ -585,9 +601,19 @@
     }
   }
 
-  /* A frame is exposed: it starts as a pale, contrastless ghost (never
-     invisible) and reaches density. */
-  @keyframes nmf-expose {
+  /* Headings rise into the lamp. Visible from the first frame. */
+  @keyframes nmf-rise {
+    from {
+      opacity: 0.6;
+      transform: translateY(0.35em);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes nmf-note {
     from {
       opacity: 0.55;
     }
@@ -596,20 +622,8 @@
     }
   }
 
-  /* Headings develop: fog to full density. Visible from the first frame. */
-  @keyframes nmf-develop {
-    from {
-      opacity: 0.6;
-      filter: blur(1.5px) contrast(0.6);
-    }
-    to {
-      opacity: 1;
-      filter: none;
-    }
-  }
-
-  :root[data-lesson='network-memory-forensics'] .nmf-develop {
-    animation: nmf-develop 560ms var(--ease) 80ms both;
+  :root[data-lesson='network-memory-forensics'] .nmf-rise {
+    animation: nmf-rise 560ms var(--ease) 60ms both;
   }
 
   /* =======================================================================
@@ -623,45 +637,37 @@
       padding-top: var(--s-2);
     }
 
-    & .nmf-hero__sheet {
+    & .nmf-hero__plate {
       position: relative;
-      background: var(--nmf-paper);
-      padding: 0.6rem 0 0.9rem;
+      background: #22262d;
       margin-inline: calc(var(--gutter) * -0.5);
       box-shadow:
-        0 30px 60px -30px rgba(0, 0, 0, 0.85),
-        0 0 0 1px rgba(0, 0, 0, 0.4);
-      transform: rotate(-0.35deg);
+        0 30px 60px -30px rgba(0, 0, 0, 0.95),
+        inset 0 1px 0 rgba(238, 241, 245, 0.14);
     }
 
-    /* Full height on wide screens (the whole strip, edge print and all);
-       on a phone the minimum height wins and the strip crops sideways. */
-    & .nmf-hero__strip {
-      width: 100%;
-      aspect-ratio: 1454 / 168;
-      min-height: 5.5rem;
-      overflow: hidden;
+    & .nmf-hero.study__header,
+    & .nmf-hero.overview__head {
+      max-width: none;
+      border-bottom: 0;
+      padding-bottom: 0;
     }
 
-    & .nmf-hero__edge {
-      display: flex;
-      gap: 0.6rem;
-      align-items: baseline;
-      margin: 0 1rem 0.5rem;
+    & .nmf-hero__engraving {
+      margin: var(--s-3) 0 0;
       font-family: var(--nmf-cond);
       font-weight: 600;
-      font-size: 0.8125rem;
-      letter-spacing: 0.16em;
+      font-size: 0.875rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--nmf-ink-muted);
+      color: var(--nmf-steel);
     }
 
-    & .nmf-hero__edge-mark {
-      color: var(--nmf-marker);
-    }
-
-    & .nmf-hero__edge-mark.nmf-decor[hidden] {
-      display: inline;
+    & .nmf-hero__band {
+      width: 100%;
+      aspect-ratio: 1270 / 172;
+      min-height: 6rem;
+      overflow: hidden;
     }
 
     & .nmf-hero__body {
@@ -704,7 +710,7 @@
   }
 
   /* =======================================================================
-     TITLE SLIDE — the contact sheet
+     TITLE SLIDE — the cylinder unrolled
      ======================================================================= */
 
   :root[data-lesson='network-memory-forensics'] {
@@ -713,36 +719,32 @@
       gap: var(--s-6);
     }
 
-    & .nmf-title__sheet {
-      background: var(--nmf-paper);
-      padding: 0.7rem 0 1.1rem;
+    & .nmf-title__plate {
+      background: #22262d;
       box-shadow:
-        0 40px 80px -36px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(0, 0, 0, 0.45);
-      transform: rotate(-0.5deg);
-      transform-origin: 30% 50%;
+        0 40px 80px -36px rgba(0, 0, 0, 0.95),
+        inset 0 1px 0 rgba(238, 241, 245, 0.14);
     }
 
-    /* Bleeds to the right edge and stops at the roll on the left. */
-    & .present .nmf-title__sheet {
-      width: calc(100vw - 2.25rem);
-      margin-left: calc(50% - 50vw + 2.25rem);
-      padding-inline: 0;
+    & .present .nmf-title__plate {
+      width: calc(100vw - 2.75rem);
+      margin-left: calc(50% - 50vw + 2.75rem);
     }
 
-    & .nmf-title__strip {
-      height: clamp(7rem, 4rem + 9vw, 13rem);
-      overflow: hidden;
-    }
-
-    & .nmf-title__edge {
-      margin: 0 clamp(1rem, 3vw, 4rem) 0.6rem;
+    & .nmf-title__engraving {
+      margin: 0;
+      padding: 0.65rem clamp(1rem, 3vw, 3rem) 0.55rem;
       font-family: var(--nmf-cond);
       font-weight: 600;
       font-size: clamp(0.8125rem, 0.7rem + 0.3vw, 1rem);
-      letter-spacing: 0.18em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--nmf-ink-muted);
+      color: var(--nmf-steel);
+    }
+
+    & .nmf-title__band {
+      height: clamp(8rem, 5rem + 9vw, 15rem);
+      overflow: hidden;
     }
 
     & .nmf-title__h {
@@ -760,7 +762,7 @@
       font-size: clamp(1.5rem, 1rem + 2.2vw, 2.9rem);
       line-height: 1.05;
       letter-spacing: -0.01em;
-      color: var(--nmf-safelight);
+      color: var(--nmf-blued);
     }
 
     & .nmf-title__lead {
@@ -773,19 +775,35 @@
       max-width: 46ch;
     }
 
+    & .nmf-title__colophon {
+      margin-top: var(--s-5);
+      font-family: var(--nmf-cond);
+      font-weight: 600;
+      font-size: 0.875rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
     & .nmf-title[data-mode='study'] .nmf-title__h {
       font-size: clamp(2.4rem, 1.4rem + 3.6vw, 4rem);
     }
   }
 
   /* =======================================================================
-     PRINTS beside the shared renderers
+     SCORES beside the shared renderers (manuscript paper)
      ======================================================================= */
 
   :root[data-lesson='network-memory-forensics'] {
     & .nmf-with-print {
       display: grid;
       gap: var(--s-5);
+    }
+
+    & .nmf-print {
+      background: var(--nmf-paper);
+      color: var(--nmf-ink);
+      box-shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.95);
     }
 
     & .nmf-print__caption {
@@ -796,30 +814,27 @@
       color: var(--nmf-ink-dim);
     }
 
-    /* ---- Scenario lanes ---------------------------------------------- */
+    /* ---- Scenario staves --------------------------------------------- */
     & .nmf-print--scenario {
       order: 2;
-      background: var(--nmf-paper);
-      color: var(--nmf-ink);
-      padding: 1rem 1.25rem 0.75rem;
-      box-shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.9);
+      padding: 1.1rem 1.25rem 0.75rem;
     }
 
-    & .nmf-lanes {
+    & .nmf-staves {
       display: grid;
-      gap: 0.45rem;
+      gap: 0.85rem;
     }
 
-    & .nmf-lanes__row {
+    & .nmf-staff {
       display: grid;
-      grid-template-columns: 5.5rem minmax(0, 1fr) 2.5rem;
+      grid-template-columns: 5rem minmax(0, 1fr) 2.25rem;
       align-items: center;
       gap: 0.75rem;
     }
 
-    & .nmf-lanes__label,
-    & .nmf-lanes__count,
-    & .nmf-lanes__axis {
+    & .nmf-staff__label,
+    & .nmf-staff__count,
+    & .nmf-staff__axis {
       font-family: var(--nmf-cond);
       font-weight: 600;
       font-size: 0.8125rem;
@@ -828,79 +843,74 @@
       color: var(--nmf-ink-muted);
     }
 
-    & .nmf-lanes__count {
+    & .nmf-staff__count {
       text-align: right;
       font-variant-numeric: tabular-nums;
       color: var(--nmf-ink);
     }
 
-    & .nmf-lanes__track {
+    /* five ruled lines: the staff */
+    & .nmf-staff__lines {
       position: relative;
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
-      height: 2.25rem;
-      border-bottom: 1px solid rgba(28, 20, 16, 0.35);
+      align-items: center;
+      height: 1.85rem;
+      background-image: repeating-linear-gradient(to bottom, var(--nmf-rule) 0 1px, transparent 1px 7px);
+      background-size: 100% 29px;
+      background-repeat: no-repeat;
+      background-position: 0 50%;
     }
 
-    & .nmf-lanes__tick {
-      width: 3px;
-      height: 70%;
+    & .nmf-staff__note {
+      width: 6px;
+      height: 4.5px;
+      border-radius: 50%;
       background: var(--nmf-ink);
-      animation: nmf-expose 420ms var(--ease) both;
+      transform: rotate(-22deg);
+      animation: nmf-note 420ms var(--ease) both;
       animation-delay: calc(var(--i) * 14ms);
     }
 
-    & .nmf-lanes__row[data-lane='user'] .nmf-lanes__track,
-    & .nmf-lanes__row[data-lane='disk'] .nmf-lanes__track {
-      border-bottom-style: dashed;
-    }
-
-    & .nmf-lanes__axis {
+    & .nmf-staff__axis {
       display: flex;
       justify-content: space-between;
-      margin-left: 6.25rem;
-      margin-right: 3.25rem;
+      margin-left: 5.75rem;
+      margin-right: 3rem;
       color: var(--nmf-ink-dim);
     }
 
-    /* ---- Test strip (PCAP triage) ------------------------------------- */
-    & .nmf-test {
+    /* ---- Order of play (PCAP triage) --------------------------------- */
+    & .nmf-order {
       list-style: none;
       margin: 0;
-      padding: 0;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      box-shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.9);
+      padding: 0.6rem 1.25rem;
     }
 
-    & .nmf-test__band {
-      --d: calc(0.92 - var(--i) * 0.3);
+    & .nmf-order__step {
       display: grid;
-      grid-template-columns: auto 1fr;
-      grid-template-rows: auto auto;
+      grid-template-columns: 2.75rem minmax(0, 1fr);
       column-gap: 0.75rem;
-      padding: 0.85rem 1rem;
-      min-height: 4.5rem;
-      background: color-mix(in srgb, var(--nmf-ink) calc(var(--d) * 100%), var(--nmf-paper));
-      color: var(--nmf-paper);
-      animation: nmf-expose 480ms var(--ease) both;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--nmf-rule);
+      animation: nmf-note 420ms var(--ease) both;
       animation-delay: calc(var(--i) * 140ms);
     }
 
-    & .nmf-test__band:nth-child(3) {
-      color: var(--nmf-ink);
+    & .nmf-order__step:last-child {
+      border-bottom: 0;
     }
 
-    & .nmf-test__n {
+    & .nmf-order__n {
       grid-row: span 2;
-      font-family: var(--nmf-cond);
-      font-weight: 700;
-      font-size: 2.2rem;
+      font-family: var(--nmf-serif);
+      font-weight: 600;
+      font-size: 1.6rem;
       line-height: 1;
+      color: var(--nmf-blued-ink);
     }
 
-    & .nmf-test__step {
+    & .nmf-order__step-name {
       font-family: var(--nmf-cond);
       font-weight: 700;
       font-size: 1.15rem;
@@ -908,19 +918,16 @@
       text-transform: uppercase;
     }
 
-    & .nmf-test__where {
+    & .nmf-order__where {
       font-family: var(--nmf-serif);
       font-style: italic;
       font-size: 0.9375rem;
-      opacity: 0.92;
+      color: var(--nmf-ink-muted);
     }
 
     /* ---- DGA queries --------------------------------------------------- */
     & .nmf-print--dga {
-      background: var(--nmf-paper);
-      color: var(--nmf-ink);
-      padding: 0.9rem 2rem 0.7rem;
-      box-shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.9);
+      padding: 0.9rem 1.5rem 0.7rem;
     }
 
     & .nmf-dga {
@@ -932,6 +939,7 @@
     }
 
     & .nmf-dga__q {
+      position: relative;
       display: flex;
       justify-content: space-between;
       gap: 1rem;
@@ -940,14 +948,14 @@
       font-size: 0.8125rem;
       color: var(--nmf-ink-dim);
       break-inside: avoid;
-      animation: nmf-expose 360ms var(--ease) both;
+      animation: nmf-note 360ms var(--ease) both;
       animation-delay: calc(var(--i) * 40ms);
     }
 
     & .nmf-dga__q[data-hit='false'] .nmf-dga__name {
       text-decoration: line-through;
-      text-decoration-color: rgba(199, 40, 28, 0.75);
-      text-decoration-thickness: 1.5px;
+      text-decoration-color: rgba(21, 23, 27, 0.45);
+      text-decoration-thickness: 1px;
     }
 
     & .nmf-dga__rc {
@@ -959,23 +967,32 @@
     & .nmf-dga__q[data-hit='true'] {
       color: var(--nmf-ink);
       font-weight: 600;
-      position: relative;
     }
 
+    /* the index bracket, set on the one query that resolved */
+    & .nmf-dga__q[data-hit='true']::before,
     & .nmf-dga__q[data-hit='true']::after {
       content: '';
       position: absolute;
-      inset: -0.45rem -1.4rem;
-      border: 3px solid var(--nmf-marker);
-      border-radius: 50% / 60%;
-      transform: rotate(-1.5deg);
+      top: -0.1rem;
+      bottom: -0.1rem;
+      width: 0.4rem;
+      border: 2.5px solid var(--nmf-blued-ink);
     }
 
-    /* ---- Volume ------------------------------------------------------- */
+    & .nmf-dga__q[data-hit='true']::before {
+      left: -0.6rem;
+      border-right: 0;
+    }
+
+    & .nmf-dga__q[data-hit='true']::after {
+      right: -0.6rem;
+      border-left: 0;
+    }
+
+    /* ---- Volume -------------------------------------------------------- */
     & .nmf-print--volume {
-      background: var(--nmf-paper);
       padding: 1rem 1.25rem 0.8rem;
-      box-shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.9);
     }
 
     & .nmf-vol {
@@ -993,7 +1010,7 @@
       align-items: flex-end;
       gap: 3px;
       height: 100%;
-      border-bottom: 1px solid rgba(28, 20, 16, 0.4);
+      border-bottom: 1px solid rgba(21, 23, 27, 0.4);
       padding-bottom: 2.4rem;
     }
 
@@ -1002,7 +1019,7 @@
       height: calc(var(--h) * 1%);
       background: var(--nmf-ink-dim);
       transform-origin: bottom;
-      animation: nmf-rise 520ms var(--ease) both;
+      animation: nmf-grow 520ms var(--ease) both;
       animation-delay: calc(var(--i) * 12ms);
     }
 
@@ -1015,19 +1032,34 @@
     & .nmf-vol__label {
       position: absolute;
       left: 0;
+      right: 0;
       bottom: 0;
       font-family: var(--nmf-cond);
       font-weight: 600;
       font-size: 0.75rem;
       letter-spacing: 0.12em;
+      line-height: 1.2;
       text-transform: uppercase;
       color: var(--nmf-ink-muted);
-      line-height: 1.2;
-      right: 0;
     }
   }
 
-  @keyframes nmf-rise {
+  @keyframes nmf-spin {
+    to {
+      transform: rotateY(360deg);
+    }
+  }
+
+  @keyframes nmf-governor-sway {
+    from {
+      transform: rotate(calc(var(--wob) * -1));
+    }
+    to {
+      transform: rotate(var(--wob));
+    }
+  }
+
+  @keyframes nmf-grow {
     from {
       transform: scaleY(0.15);
     }
@@ -1037,12 +1069,11 @@
   }
 
   /* =======================================================================
-     BEACON ANALYZER — rolls and the exposure print
+     BEACON ANALYZER — pins, print and sound
      ======================================================================= */
 
   :root[data-lesson='network-memory-forensics'] {
-    /* The analyzer is not a card: it sits on the room, and the print is
-       the object on the table. */
+    /* The analyzer sits on the lacquer: it is not a card. */
     & .ix.nmf-beacon {
       background: transparent;
       border: 0;
@@ -1067,21 +1098,7 @@
       padding-inline: 0;
     }
 
-    & .nmf-beacon .beacon__verdict {
-      margin: 0 0 var(--s-5);
-      padding: 0;
-      background: none;
-      border: 0;
-    }
-
-    & .nmf-beacon .beacon__verdict p {
-      font-family: var(--nmf-serif);
-      font-size: clamp(1rem, 0.94rem + 0.3vw, 1.2rem);
-      line-height: 1.55;
-      max-width: 70ch;
-    }
-
-    /* Presets as a test strip: each step one exposure darker. */
+    /* Presets: one pin with its jitter window, wider at each step. */
     & .nmf-beacon__presets {
       gap: 0;
       border: 1px solid var(--line-strong);
@@ -1092,7 +1109,7 @@
     & .nmf-beacon__preset {
       position: relative;
       display: grid;
-      gap: 0.4rem;
+      gap: 0.45rem;
       justify-items: start;
       min-height: 3.5rem;
       padding: 0.6rem 0.8rem;
@@ -1112,12 +1129,31 @@
     }
 
     & .nmf-beacon__preset-density {
+      position: relative;
       width: 100%;
-      height: 6px;
-      background: var(--nmf-safelight);
-      opacity: calc(0.25 + var(--step) * 0.22);
-      clip-path: inset(0 calc(100% - (var(--step) + 1) * 25%) 0 0);
-      transition: clip-path 320ms var(--ease);
+      height: 8px;
+    }
+
+    & .nmf-beacon__preset-density::before {
+      content: '';
+      position: absolute;
+      left: calc(50% - 4px);
+      top: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    & .nmf-beacon__preset-density::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      height: 2px;
+      left: calc(50% - var(--step) * 12%);
+      right: calc(50% - var(--step) * 12%);
+      background: currentColor;
+      opacity: 0.55;
     }
 
     & .nmf-beacon__preset:hover {
@@ -1126,19 +1162,14 @@
     }
 
     & .nmf-beacon__preset[aria-pressed='true'] {
-      background: var(--nmf-safelight);
-      color: var(--nmf-ink);
-    }
-
-    & .nmf-beacon__preset[aria-pressed='true'] .nmf-beacon__preset-density {
-      background: var(--nmf-ink);
-      opacity: 1;
+      background: var(--nmf-blued-deep);
+      color: #ffffff;
     }
 
     & .beacon__current {
       font-family: var(--nmf-cond);
       font-size: 1rem;
-      color: var(--nmf-safelight-soft);
+      color: var(--nmf-blued-soft);
     }
 
     & .beacon__preset-note {
@@ -1147,33 +1178,314 @@
       font-size: 1rem;
     }
 
-    & .nmf-roll2__body {
+    /* The governor: a fan-fly that wobbles with jitter, over a beat that holds. */
+    & .nmf-governor[hidden] {
       display: grid;
-      gap: 0;
-      box-shadow: 0 20px 44px -26px rgba(0, 0, 0, 0.9);
     }
 
-    /* Arrivals: the roll itself, on one shared clock. */
+    & .nmf-governor {
+      grid-template-columns: 4.5rem minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      align-items: center;
+      column-gap: 1rem;
+      margin-top: var(--s-4);
+    }
+
+    & .nmf-governor__fan {
+      grid-row: span 2;
+      width: 4.5rem;
+      height: 4.5rem;
+      overflow: visible;
+    }
+
+    /* On the projected slide the governor is sized for the back row. */
+    & .present__slide .nmf-governor {
+      grid-template-columns: clamp(4.5rem, 2rem + 5vw, 8rem) minmax(0, 1fr);
+      column-gap: 1.5rem;
+    }
+
+    & .present__slide .nmf-governor__fan {
+      width: clamp(4.5rem, 2rem + 5vw, 8rem);
+      height: clamp(4.5rem, 2rem + 5vw, 8rem);
+    }
+
+    & .present__slide .nmf-governor__beat {
+      height: 2.4rem;
+    }
+
+    & .present__slide .nmf-governor__ghost {
+      width: 16px;
+      height: 16px;
+      margin: -8px 0 0 -8px;
+    }
+
+    & .present__slide .nmf-governor__pin {
+      width: 10px;
+      height: 10px;
+      margin: -5px 0 0 -5px;
+    }
+
+    & .present__slide .nmf-governor__label {
+      font-size: 1rem;
+    }
+
+    & .nmf-governor__sway {
+      transform-origin: 0 0;
+      animation: nmf-governor-sway var(--wob-t) ease-in-out infinite alternate;
+    }
+
+    & .nmf-governor__vanes {
+      transform-origin: 0 0;
+      animation: nmf-spin 0.9s linear infinite;
+    }
+
+    & .nmf-governor__spindle {
+      stroke: var(--nmf-steel-dim);
+      stroke-width: 2;
+    }
+
+    & .nmf-governor__vane {
+      fill: var(--nmf-blued-deep);
+      stroke: var(--nmf-blued-soft);
+      stroke-width: 1;
+    }
+
+    & .nmf-governor__hub {
+      fill: var(--nmf-steel);
+    }
+
+    & .nmf-governor__beat {
+      position: relative;
+      height: 1.6rem;
+      background: linear-gradient(to bottom, #3d4249, #aeb4bd 40%, #8b929c 70%, #3d4249);
+    }
+
+    & .nmf-governor__ghost,
+    & .nmf-governor__pin {
+      position: absolute;
+      top: 50%;
+      border-radius: 50%;
+    }
+
+    & .nmf-governor__ghost {
+      width: 11px;
+      height: 11px;
+      margin: -5.5px 0 0 -5.5px;
+      border: 1px dashed rgba(20, 22, 26, 0.6);
+    }
+
+    & .nmf-governor__pin {
+      width: 7px;
+      height: 7px;
+      margin: -3.5px 0 0 -3.5px;
+      background: #0d0f12;
+      box-shadow: 0 0 0 1.5px #ffffff;
+      transition: left 460ms var(--ease);
+    }
+
+    & .nmf-governor__label {
+      font-family: var(--nmf-cond);
+      font-weight: 600;
+      font-size: 0.8125rem;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    /* The pin print. */
+    & .nmf-pinprint {
+      margin: var(--s-3) 0 var(--s-3);
+    }
+
+    & .nmf-pinprint__plate {
+      position: relative;
+      display: grid;
+      grid-template-columns: 6rem minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      padding: 0.9rem 1.25rem 0.6rem;
+      box-shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.95);
+    }
+
+    & .nmf-pinprint__label {
+      grid-column: 1;
+      grid-row: 1;
+      font-family: var(--nmf-cond);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--nmf-ink-muted);
+    }
+
+    & .nmf-pinprint__label--beacon {
+      align-self: start;
+      margin-top: 0.8rem;
+      color: var(--nmf-blued-ink);
+    }
+
+    & .nmf-pinprint__label--user {
+      align-self: end;
+      margin-bottom: 0.8rem;
+    }
+
+    & .nmf-pinprint__field {
+      grid-column: 2;
+      grid-row: 1;
+      position: relative;
+      height: 18rem;
+    }
+
+    & .nmf-pinprint__line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1.5px;
+      background: var(--nmf-ink);
+    }
+
+    & .nmf-pinprint__grid {
+      position: absolute;
+      top: 0.4rem;
+      bottom: 0.4rem;
+      width: 0;
+      border-left: 1px dashed var(--nmf-rule);
+    }
+
+    & .nmf-pinprint__pin {
+      position: absolute;
+      top: calc(50% - var(--pin) / 2);
+      width: var(--pin);
+      height: var(--pin);
+      margin-left: calc(var(--pin) / -2);
+      border-radius: 50%;
+      transition: transform 480ms var(--ease);
+      transition-delay: calc(var(--i, 0) * 8ms);
+    }
+
+    & .nmf-pinprint__pin--beacon {
+      background: var(--nmf-blued-deep);
+    }
+
+    & .nmf-pinprint__pin--user {
+      background: var(--nmf-ink-dim);
+    }
+
+    & .nmf-pinprint__axis {
+      grid-column: 2;
+      grid-row: 2;
+      position: relative;
+      height: 1.5rem;
+      border-top: 1px solid var(--nmf-rule);
+    }
+
+    & .nmf-pinprint__tick {
+      position: absolute;
+      left: calc(var(--x) * 100%);
+      top: 0;
+      transform: translateX(-50%);
+      padding-top: 0.3rem;
+      font-family: var(--nmf-cond);
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      color: var(--nmf-ink-muted);
+      white-space: nowrap;
+    }
+
+    & .nmf-pinprint__tick:first-child {
+      transform: none;
+    }
+
+    & .nmf-pinprint__tick:last-child {
+      transform: translateX(-100%);
+    }
+
+    & .nmf-pinprint__caption {
+      margin-top: 0.6rem;
+      font-family: var(--nmf-serif);
+      font-style: italic;
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      max-width: 72ch;
+    }
+
+    /* Listening. */
+    & .nmf-listen {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem 0.75rem;
+      margin: 0 0 var(--s-5);
+    }
+
+    & .nmf-listen__label {
+      font-family: var(--nmf-cond);
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--nmf-blued-soft);
+    }
+
+    & .nmf-listen__btn {
+      min-height: 44px;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--line-strong);
+      border-radius: 2px;
+      background: transparent;
+      color: var(--text);
+      font-family: var(--nmf-cond);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      cursor: pointer;
+    }
+
+    & .nmf-listen__btn:hover {
+      background: var(--nmf-glow);
+      border-color: var(--nmf-blued);
+    }
+
+    & .nmf-listen__btn[aria-pressed='true'] {
+      background: var(--nmf-blued-deep);
+      border-color: var(--nmf-blued-deep);
+      color: #ffffff;
+    }
+
+    & .nmf-listen__note {
+      flex: 1 1 18rem;
+      font-family: var(--nmf-serif);
+      font-style: italic;
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+    }
+
+    /* The two rolls: arrivals on a steel band, intervals as bars on paper. */
+    & .nmf-roll2__body {
+      display: grid;
+      box-shadow: 0 20px 44px -26px rgba(0, 0, 0, 0.95);
+    }
+
     & .nmf-roll2__arrivals {
       position: relative;
-      height: 2.1rem;
-      background: var(--nmf-rebate);
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='34'%3E%3Crect x='5' y='3' width='8' height='6' rx='1.5' fill='%23271a13'/%3E%3Crect x='5' y='25' width='8' height='6' rx='1.5' fill='%23271a13'/%3E%3C/svg%3E");
-      background-repeat: repeat-x;
+      height: 2rem;
+      background: linear-gradient(to bottom, #3d4249, #aeb4bd 40%, #8b929c 70%, #3d4249);
     }
 
     & .nmf-roll2__arrival {
       position: absolute;
-      top: 30%;
-      bottom: 30%;
-      left: calc(var(--x) * 98% + 1%);
-      width: 3px;
-      background: var(--nmf-edge);
+      top: 50%;
+      left: calc(var(--x) * 97% + 1.5%);
+      width: 7px;
+      height: 7px;
+      margin: -3.5px 0 0 -3.5px;
+      border-radius: 50%;
+      background: #2a2e35;
       transition: left 460ms var(--ease);
     }
 
     & .nmf-roll2[data-tone='beacon'] .nmf-roll2__arrival {
-      background: var(--nmf-safelight);
+      background: #0d0f12;
+      box-shadow: 0 0 0 1.5px #ffffff;
     }
 
     & .nmf-roll2__frames.beacon__chart {
@@ -1181,7 +1493,7 @@
       border: 0;
       border-radius: 0;
       background: var(--nmf-paper);
-      padding: 0.4rem 0.5rem 0;
+      padding: 0.3rem 0.5rem 0;
       gap: 3px;
     }
 
@@ -1192,7 +1504,7 @@
     }
 
     & .nmf-roll2[data-tone='beacon'] .beacon__bar {
-      background: var(--nmf-ink);
+      background: var(--nmf-blued-deep);
     }
 
     & .nmf-roll2[data-tone='user'] .beacon__bar {
@@ -1200,97 +1512,25 @@
     }
 
     & .beacon__series-stat strong {
-      color: var(--nmf-safelight-soft);
+      color: var(--nmf-blued-soft);
     }
 
-    /* The exposure print. */
-    & .nmf-xprint {
-      margin: var(--s-2) 0 var(--s-5);
+    & .nmf-beacon .beacon__verdict {
+      margin: var(--s-5) 0;
+      padding: 0;
+      background: none;
+      border: 0;
     }
 
-    & .nmf-xprint__plate {
-      position: relative;
-      display: grid;
-      grid-template-columns: 6rem minmax(0, 1fr);
-      grid-template-rows: clamp(3rem, 2rem + 3vw, 5rem) clamp(3rem, 2rem + 3vw, 5rem) auto;
-      padding: 1rem 1.25rem 0.6rem;
-      box-shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.9);
-    }
-
-    & .nmf-xprint__row-label {
-      grid-column: 1;
-      align-self: center;
-      font-family: var(--nmf-cond);
-      font-weight: 700;
-      font-size: 1rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--nmf-ink-muted);
-    }
-
-    & .nmf-xprint__canvas {
-      grid-column: 2;
-      grid-row: 1 / span 2;
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    & .nmf-xprint__axis {
-      grid-column: 2;
-      grid-row: 3;
-      position: relative;
-      height: 1.4rem;
-      border-top: 1px solid rgba(28, 20, 16, 0.35);
-    }
-
-    & .nmf-xprint__tick {
-      position: absolute;
-      left: calc(var(--x) * 100%);
-      top: 0;
-      transform: translateX(-50%);
-      padding-top: 0.25rem;
-      font-family: var(--nmf-cond);
-      font-weight: 600;
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
-      color: var(--nmf-ink-muted);
-      white-space: nowrap;
-    }
-
-    & .nmf-xprint__tick:first-child {
-      transform: none;
-    }
-
-    & .nmf-xprint__tick:last-child {
-      transform: translateX(-100%);
-    }
-
-    & .nmf-xprint__tick::before {
-      content: '';
-      position: absolute;
-      left: 50%;
-      top: -1px;
-      width: 1px;
-      height: 0.3rem;
-      background: rgba(28, 20, 16, 0.5);
-    }
-
-    & .nmf-xprint__caption {
-      margin-top: 0.6rem;
+    & .nmf-beacon .beacon__verdict p {
       font-family: var(--nmf-serif);
-      font-style: italic;
-      font-size: 0.9375rem;
-      color: var(--text-muted);
-      max-width: 72ch;
-    }
-
-    & .beacon__verdict {
-      border-radius: 2px;
+      font-size: clamp(1rem, 0.94rem + 0.3vw, 1.2rem);
+      line-height: 1.55;
+      max-width: 70ch;
     }
 
     & .beacon__table tbody td:first-of-type {
-      color: var(--nmf-safelight-soft);
+      color: var(--nmf-blued-soft);
     }
 
     & .beacon__ports li {
@@ -1299,11 +1539,52 @@
   }
 
   /* =======================================================================
-     EVIDENCE — the marked print
+     THE LID, OPEN (malfind)
      ======================================================================= */
 
   :root[data-lesson='network-memory-forensics'] {
-    & .nmf-ev__print {
+    & .nmf-lid[hidden] {
+      display: block;
+      margin: var(--s-4) 0 var(--s-5);
+      background: #22262d;
+    }
+
+    & .nmf-lid .nmf-cyl {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1166 / 176;
+      background: #22262d;
+      box-shadow:
+        0 24px 50px -28px rgba(0, 0, 0, 0.95),
+        inset 0 1px 0 rgba(238, 241, 245, 0.14);
+      overflow: hidden;
+    }
+
+    /* The cylinder engraves these labels itself; the caption carries them
+       only where the engraving is too small to read. */
+    & .nmf-lid__caption {
+      display: none;
+      margin: 0;
+      padding: 0.35rem 0.9rem 0.55rem;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: var(--nmf-blued-soft);
+      overflow-wrap: anywhere;
+    }
+
+    & .nmf-lid .nmf-cyl__time {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      fill: var(--nmf-blued-soft);
+    }
+  }
+
+  /* =======================================================================
+     EVIDENCE — the manuscript, bracketed
+     ======================================================================= */
+
+  :root[data-lesson='network-memory-forensics'] {
+    & .nmf-ev__sheet {
       border: 0;
       border-radius: 1px;
       overflow: visible;
@@ -1313,42 +1594,38 @@
     }
 
     & .nmf-ev__head {
-      background: var(--nmf-rebate);
+      background: #22262d;
       border-bottom: 0;
-      --accent-soft: var(--nmf-edge);
-      --text-dim: #cbb9a0;
+      --text-dim: var(--nmf-steel);
       padding-block: 0.7rem;
     }
 
     & .nmf-ev__head .mono-label {
-      color: var(--nmf-edge);
+      color: var(--nmf-steel);
     }
 
     & .nmf-ev__lines {
-      padding: 0.5rem 0.75rem 0.75rem 0;
+      padding: 0.5rem 0.9rem 0.75rem 0;
     }
 
     & .nmf-ev__cell {
       display: grid;
-      grid-template-columns: 3.4rem minmax(0, 1fr);
+      grid-template-columns: 3rem minmax(0, 1fr);
       align-items: start;
+      border-bottom: 1px solid var(--nmf-rule);
     }
 
-    & .nmf-ev__frame {
+    & .nmf-ev__cell:last-child {
+      border-bottom: 0;
+    }
+
+    & .nmf-ev__bar {
       grid-row: span 2;
-      display: grid;
-      justify-items: center;
-      padding-top: 0.65rem;
-      font-family: var(--nmf-cond);
-      font-weight: 700;
-      font-size: 0.875rem;
-      color: var(--nmf-ink-muted);
-      line-height: 1.1;
-    }
-
-    & .nmf-ev__frame-a {
-      font-weight: 500;
-      font-size: 0.6875rem;
+      padding-top: 0.75rem;
+      text-align: center;
+      font-family: var(--nmf-serif);
+      font-style: italic;
+      font-size: 0.9375rem;
       color: var(--nmf-ink-dim);
     }
 
@@ -1365,36 +1642,22 @@
     }
 
     & .nmf-ev__line.evidence__line--interactive:hover {
-      background: rgba(28, 20, 16, 0.05);
-      border-color: rgba(28, 20, 16, 0.18);
+      background: rgba(21, 23, 27, 0.05);
+      border-color: rgba(21, 23, 27, 0.16);
     }
 
     & .nmf-ev__line.is-open {
-      background: transparent;
+      background: rgba(44, 71, 176, 0.06);
       border-color: transparent;
-    }
-
-    & .nmf-ring {
-      position: absolute;
-      inset: -0.35rem -0.6rem;
-      width: calc(100% + 1.2rem);
-      height: calc(100% + 0.7rem);
-      overflow: visible;
-      pointer-events: none;
-    }
-
-    & .nmf-ring .nmf-marker {
-      stroke-width: 3;
-      animation: nmf-mark 520ms cubic-bezier(0.55, 0.05, 0.3, 1) both;
     }
 
     & .nmf-ev__note {
       grid-column: 2;
-      margin: 0.55rem 0 0.9rem 0.4rem;
+      margin: 0.4rem 0 0.9rem 0.4rem;
       border-left: 0;
       border-radius: 1px;
       background: var(--nmf-paper-2);
-      animation: nmf-develop 460ms var(--ease) both;
+      animation: nmf-rise 420ms var(--ease) both;
     }
 
     & .nmf-ev__note[data-open='false'] {
@@ -1420,7 +1683,7 @@
 
   :root[data-lesson='network-memory-forensics'] {
     & .present {
-      background: var(--nmf-room);
+      background: var(--nmf-lacquer);
     }
 
     & .present::before {
@@ -1428,16 +1691,16 @@
     }
 
     & .present__top {
-      background: color-mix(in srgb, var(--nmf-room) 82%, transparent);
-      border-bottom-color: rgba(245, 222, 196, 0.08);
+      background: color-mix(in srgb, var(--nmf-lacquer) 84%, transparent);
+      border-bottom-color: rgba(210, 218, 230, 0.08);
     }
 
     & .present__progress {
-      background: var(--nmf-rebate);
+      background: rgba(210, 218, 230, 0.1);
     }
 
-    & .present__progress > * {
-      background: var(--nmf-safelight);
+    & .present__progress span {
+      background: var(--nmf-blued);
     }
 
     & .present__slide .block__title {
@@ -1449,8 +1712,10 @@
       font-size: clamp(1.15rem, 0.98rem + 0.75vw, 1.6rem);
     }
 
+    /* The mechanism lies behind the bottom bar only; the stage is free. */
     & .present__stage {
       padding-inline: max(var(--s-7), 4.5rem);
+
     }
 
     /* A grid item's min-content would let a long code line or table widen
@@ -1467,14 +1732,10 @@
       overflow-x: auto;
     }
 
-    /* Prints sit beside the text on a projector. */
+    /* Scores sit beside the text on a projector. */
     & .present__slide .nmf-with-print--scenario {
       grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
       align-items: center;
-    }
-
-    & .present__slide .nmf-with-print--scenario .nmf-print--scenario {
-      order: 2;
     }
 
     & .present__slide .nmf-with-print--pcap,
@@ -1490,91 +1751,117 @@
       top: 0;
     }
 
-    & .present__slide .nmf-with-print--pcap .nmf-test {
-      grid-template-columns: 1fr;
-    }
-
     & .present__slide .nmf-dga {
       columns: 1;
     }
   }
 
-  /* The roll: rebate down the left edge, one frame per slide. */
-  :root[data-lesson='network-memory-forensics'] .nmf-roll {
+  /* The comb: one tuned tooth per slide down the left edge. */
+  :root[data-lesson='network-memory-forensics'] .nmf-comb {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
-    width: 2.25rem;
-    overflow: hidden;
-    background-color: var(--nmf-rebate);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='24'%3E%3Crect x='3' y='6' width='7' height='11' rx='1.5' fill='%23271a13'/%3E%3C/svg%3E");
-    background-repeat: repeat-y;
-    box-shadow: 1px 0 0 rgba(245, 222, 196, 0.06);
-    opacity: 0.9;
+    width: 2.75rem;
+    opacity: 0.95;
     transition: opacity 600ms var(--ease);
   }
 
-  :root[data-lesson='network-memory-forensics'] .nmf-roll[data-focus='true'] {
+  :root[data-lesson='network-memory-forensics'] .nmf-comb[data-focus='true'] {
     opacity: 0.55;
   }
 
-  :root[data-lesson='network-memory-forensics'] .nmf-roll__track {
-    --frame: 9rem;
+  :root[data-lesson='network-memory-forensics'] .nmf-comb__base {
     position: absolute;
-    left: 0;
+    left: 0.55rem;
+    top: 12%;
+    bottom: 12%;
+    width: 5px;
+    background: #6e757f;
+    box-shadow: inset 1px 0 0 #9aa1ab;
+    border-radius: 1px;
+  }
+
+  :root[data-lesson='network-memory-forensics'] .nmf-comb__teeth {
+    position: absolute;
+    left: 0.55rem;
+    top: 12%;
+    bottom: 12%;
     right: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  :root[data-lesson='network-memory-forensics'] .nmf-comb__tooth {
+    position: relative;
+    height: 4px;
+  }
+
+  :root[data-lesson='network-memory-forensics'] .nmf-comb__steel {
+    position: absolute;
+    left: 4px;
+    top: 0;
+    height: 4px;
+    width: calc(var(--len) * 1.7rem);
+    background: #4a5059;
+    border-radius: 0 2px 2px 0;
+    transform-origin: left center;
+  }
+
+  :root[data-lesson='network-memory-forensics'] .nmf-comb__tooth[data-state='played'] .nmf-comb__steel {
+    background: var(--nmf-steel);
+  }
+
+  :root[data-lesson='network-memory-forensics'] .nmf-comb__tooth[data-state='current'] .nmf-comb__steel {
+    background: var(--nmf-blued);
+    animation: nmf-pluck 900ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+
+  :root[data-lesson='network-memory-forensics'] .nmf-comb__num {
+    position: absolute;
+    left: calc(var(--len) * 1.7rem + 0.5rem);
     top: 50%;
-    transform: translateY(calc((var(--i) + 0.5) * var(--frame) * -1));
-    transition: transform 620ms cubic-bezier(0.7, 0, 0.2, 1);
-  }
-
-  :root[data-lesson='network-memory-forensics'] .nmf-roll__frame {
-    height: var(--frame);
-    display: grid;
-    place-items: center;
-    border-bottom: 1px solid rgba(245, 222, 196, 0.06);
-  }
-
-  :root[data-lesson='network-memory-forensics'] .nmf-roll__num {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    margin-left: 0.75rem;
+    transform: translateY(-50%);
     font-family: var(--nmf-cond);
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.75rem;
-    letter-spacing: 0.14em;
-    color: rgba(233, 220, 198, 0.45);
-    white-space: nowrap;
+    color: var(--nmf-blued);
+    font-variant-numeric: tabular-nums;
   }
 
-  :root[data-lesson='network-memory-forensics'] .nmf-roll__frame[data-current='true'] .nmf-roll__num {
-    color: var(--nmf-safelight);
+  /* A plucked tooth: a few quick, shrinking swings, never a flash. */
+  @keyframes nmf-pluck {
+    0% {
+      transform: rotate(0deg);
+    }
+    12% {
+      transform: rotate(-9deg);
+    }
+    28% {
+      transform: rotate(6deg);
+    }
+    46% {
+      transform: rotate(-3.5deg);
+    }
+    66% {
+      transform: rotate(1.6deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
   }
 
-  :root[data-lesson='network-memory-forensics'] .nmf-roll__arrow {
-    display: inline-block;
-    margin: 0.35rem 0;
-    color: var(--nmf-marker-dark);
-  }
-
-  /* The tray layer. */
-  :root[data-lesson='network-memory-forensics'] .nmf-tray {
+  /* The mechanism layer. */
+  :root[data-lesson='network-memory-forensics'] .nmf-mech {
     position: absolute;
     inset: 0;
-    background: var(--nmf-room);
-  }
-
-  :root[data-lesson='network-memory-forensics'] .nmf-tray__gl {
     display: block;
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  :root[data-lesson='network-memory-forensics'] .nmf-tray--fallback {
-    background:
-      radial-gradient(120% 70% at 66% -10%, rgba(243, 154, 61, 0.16), transparent 60%),
-      var(--nmf-room);
+    width: 100%;
+    height: 100%;
   }
 
   /* =======================================================================
@@ -1583,11 +1870,11 @@
 
   :root[data-lesson='network-memory-forensics'] {
     & .study__rail-inner {
-      background: color-mix(in srgb, var(--nmf-room) 78%, transparent);
+      background: color-mix(in srgb, var(--nmf-lacquer) 80%, transparent);
     }
 
     & .study__toc-link[aria-current='true'] {
-      color: var(--nmf-safelight-soft);
+      color: var(--nmf-blued-soft);
     }
 
     & .study__toc-num,
@@ -1596,84 +1883,70 @@
       font-weight: 600;
     }
 
-    & .study__section {
-      position: relative;
-    }
-
-    & .study__section + .study__section {
-      border-top: 0;
-    }
-
+    /* Sections are divided by a pin track: one beat, evenly spaced. */
     & .study__section + .study__section::before {
       content: '';
       display: block;
-      height: 0.75rem;
+      height: 7px;
       margin-bottom: var(--s-6);
-      background-color: var(--nmf-rebate);
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12'%3E%3Crect x='6' y='3' width='9' height='6' rx='1.5' fill='%23271a13'/%3E%3C/svg%3E");
+      background-image: radial-gradient(circle, rgba(201, 206, 214, 0.5) 0 2px, transparent 2.5px);
+      background-size: 26px 7px;
       background-repeat: repeat-x;
-      opacity: 0.85;
+      background-position: 0 50%;
     }
 
     & .overview__panel {
       border-radius: 2px;
-      background: rgba(10, 5, 3, 0.45);
+      background: rgba(5, 6, 8, 0.45);
     }
 
     & .structure__num {
       font-family: var(--nmf-cond);
       font-weight: 700;
-      color: var(--nmf-safelight);
+      color: var(--nmf-blued);
     }
   }
 
   /* =======================================================================
-     SLIDE TRANSITIONS — advance the roll, develop the frame
-     The outgoing frame winds on by one pitch and fades to the room; the
-     incoming one develops from safelight fog to full density. Visible from
-     its first frame, settled inside 600ms.
+     SLIDE TRANSITIONS — the cylinder turns one step
+     The outgoing slide rolls away over the drum's crown; the incoming one
+     rises from below into the lamp. Visible from its first frame, settled
+     inside 560ms.
      ======================================================================= */
 
   :root[data-lesson='network-memory-forensics'][data-slide-dir]::view-transition-old(slide) {
-    animation: nmf-wind-out-fwd 380ms cubic-bezier(0.7, 0, 0.84, 0) both;
+    animation: nmf-roll-away 360ms cubic-bezier(0.6, 0, 0.8, 0.4) both;
+    transform-origin: 50% 0%;
   }
 
   :root[data-lesson='network-memory-forensics'][data-slide-dir]::view-transition-new(slide) {
-    animation: nmf-develop-in-fwd 580ms cubic-bezier(0.16, 0.84, 0.3, 1) both;
+    animation: nmf-roll-in 560ms cubic-bezier(0.15, 0.85, 0.3, 1) both;
+    transform-origin: 50% 100%;
   }
 
   :root[data-lesson='network-memory-forensics'][data-slide-dir='back']::view-transition-old(slide) {
-    animation-name: nmf-wind-out-back;
+    animation-name: nmf-roll-away-back;
+    transform-origin: 50% 100%;
   }
 
   :root[data-lesson='network-memory-forensics'][data-slide-dir='back']::view-transition-new(slide) {
-    animation-name: nmf-develop-in-back;
+    animation-name: nmf-roll-in-back;
+    transform-origin: 50% 0%;
   }
 
-  @keyframes nmf-wind-out-fwd {
+  @keyframes nmf-roll-away {
     to {
       opacity: 0;
-      transform: translateY(-3rem);
-      filter: brightness(0.4) sepia(0.6);
+      transform: perspective(1400px) translateY(-6%) rotateX(22deg);
+      filter: brightness(0.5);
     }
   }
 
-  @keyframes nmf-wind-out-back {
-    to {
-      opacity: 0;
-      transform: translateY(3rem);
-      filter: brightness(0.4) sepia(0.6);
-    }
-  }
-
-  @keyframes nmf-develop-in-fwd {
+  @keyframes nmf-roll-in {
     from {
-      opacity: 0.35;
-      transform: translateY(2.25rem);
-      filter: sepia(1) saturate(2.2) brightness(1.45) contrast(0.45) blur(2px);
-    }
-    55% {
-      filter: sepia(0.35) saturate(1.3) brightness(1.08) contrast(0.85) blur(0.4px);
+      opacity: 0.4;
+      transform: perspective(1400px) translateY(7%) rotateX(-18deg);
+      filter: brightness(0.6);
     }
     to {
       opacity: 1;
@@ -1682,11 +1955,19 @@
     }
   }
 
-  @keyframes nmf-develop-in-back {
+  @keyframes nmf-roll-away-back {
+    to {
+      opacity: 0;
+      transform: perspective(1400px) translateY(6%) rotateX(-22deg);
+      filter: brightness(0.5);
+    }
+  }
+
+  @keyframes nmf-roll-in-back {
     from {
-      opacity: 0.35;
-      transform: translateY(-2.25rem);
-      filter: sepia(1) saturate(2.2) brightness(1.45) contrast(0.45) blur(2px);
+      opacity: 0.4;
+      transform: perspective(1400px) translateY(-7%) rotateX(18deg);
+      filter: brightness(0.6);
     }
     to {
       opacity: 1;
@@ -1701,7 +1982,7 @@
 
   @media (max-width: 60rem) {
     :root[data-lesson='network-memory-forensics'] {
-      & .nmf-roll {
+      & .nmf-comb {
         display: none;
       }
 
@@ -1709,7 +1990,7 @@
         padding-inline: var(--s-4);
       }
 
-      & .present .nmf-title__sheet {
+      & .present .nmf-title__plate {
         width: 100vw;
         margin-left: calc(50% - 50vw);
       }
@@ -1724,16 +2005,11 @@
       & .present__slide .nmf-with-print > .nmf-print {
         position: static;
       }
-
     }
   }
 
   @media (max-width: 40rem) {
     :root[data-lesson='network-memory-forensics'] {
-      & .nmf-test {
-        grid-template-columns: 1fr;
-      }
-
       & .nmf-beacon__presets {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -1746,67 +2022,71 @@
         border-bottom: 1px solid var(--line-strong);
       }
 
-      & .nmf-lanes__row {
+      & .nmf-staff {
         grid-template-columns: 4.25rem minmax(0, 1fr) 1.75rem;
         gap: 0.5rem;
       }
 
-      & .nmf-lanes__axis {
+      & .nmf-staff__axis {
         margin-left: 4.75rem;
         margin-right: 2.25rem;
       }
 
-      & .nmf-vol {
-        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-      }
-
-      & .nmf-vol__label {
-        white-space: normal;
-        line-height: 1.2;
-      }
-
       & .nmf-ev__cell {
-        grid-template-columns: 2.4rem minmax(0, 1fr);
+        grid-template-columns: 2.2rem minmax(0, 1fr);
       }
 
-      & .nmf-xprint__plate {
+      & .nmf-pinprint__plate {
         grid-template-columns: 4.25rem minmax(0, 1fr);
         padding-inline: 0.75rem;
       }
 
-      & .nmf-xprint__tick[data-minor='true'] {
+      & .nmf-pinprint__label {
+        font-size: 0.8125rem;
+      }
+
+      & .nmf-pinprint__field {
+        height: 15rem;
+      }
+
+      & .nmf-pinprint__tick[data-minor='true'] {
         display: none;
       }
 
-      & .nmf-hero__sheet,
-      & .nmf-title__sheet {
-        transform: none;
+      & .nmf-lid .nmf-cyl__row-label,
+      & .nmf-lid .nmf-cyl__time {
+        display: none;
+      }
+
+      & .nmf-lid__caption {
+        display: block;
       }
     }
   }
 
   /* =======================================================================
-     REDUCED MOTION — a composed still: everything already developed
+     REDUCED MOTION — a composed still: every pin already set
      ======================================================================= */
 
   @media (prefers-reduced-motion: reduce) {
     :root[data-lesson='network-memory-forensics'] {
-      & .nmf-develop,
-      & .nmf-strip__cell,
-      & .nmf-marker--draw .nmf-marker,
-      & .nmf-ring .nmf-marker,
+      & .nmf-rise,
+      & .nmf-cyl__pin,
+      & .nmf-bracket--draw,
       & .nmf-ev__note,
-      & .nmf-lanes__tick,
-      & .nmf-test__band,
+      & .nmf-staff__note,
+      & .nmf-order__step,
       & .nmf-dga__q,
-      & .nmf-vol__bar {
-        animation: none;
+      & .nmf-vol__bar,
+      & .nmf-comb__steel,
+      & .nmf-governor__sway,
+      & .nmf-governor__vanes {
+        animation: none !important;
       }
 
-      & .nmf-roll__track,
+      & .nmf-pinprint__pin,
       & .nmf-roll2__arrival,
-      & .nmf-roll2__frames .beacon__bar,
-      & .nmf-beacon__preset-density {
+      & .nmf-roll2__frames .beacon__bar {
         transition: none;
       }
     }
