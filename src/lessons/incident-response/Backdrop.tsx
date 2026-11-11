@@ -8,7 +8,7 @@ export default function Backdrop({ reducedMotion, surface }: StageProps) {
       ctx.clearRect(0, 0, w, h)
       const x0 = w * .72, boundary = w * .87
       ctx.lineWidth = 1
-      ctx.strokeStyle = '#c7d5cf'
+      ctx.strokeStyle = '#c9c9c7'
       ctx.beginPath(); ctx.moveTo(boundary, 0); ctx.lineTo(boundary, h); ctx.stroke()
       for (let lane = 0; lane < 5; lane++) {
         const y = h * .24 + lane * 42
@@ -21,9 +21,9 @@ export default function Backdrop({ reducedMotion, surface }: StageProps) {
           const yy = y + Math.sin(i * 1.9 + t * (5-lane) * .4) * 10 * decay
           if (i % (lane + 3) === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy)
         }
-        ctx.stroke(); ctx.globalAlpha = .2; ctx.strokeStyle = '#006158'
+        ctx.stroke(); ctx.globalAlpha = .2; ctx.strokeStyle = '#801a32'
         ctx.beginPath(); ctx.moveTo(boundary, y); ctx.lineTo(w, y); ctx.stroke()
-        ctx.fillStyle = '#006158'; ctx.fillRect(boundary - 2, y - 2, 4, 4)
+        ctx.fillStyle = '#801a32'; ctx.fillRect(boundary - 2, y - 2, 4, 4)
       }
       ctx.globalAlpha = 1
     }} />

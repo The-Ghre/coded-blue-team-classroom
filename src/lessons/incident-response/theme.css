@@ -1,24 +1,24 @@
 /* Preservation Ledger. Screen-only so the classroom's print contract remains intact. */
 @media screen {
   :root[data-lesson='incident-response'] {
-    --bg: #f2f5f2; --bg-raised: #ffffff; --surface: #e5ece7;
-    --surface-2: #dce7e0; --surface-3: #d2e1d8; --surface-panel: #e5ece7;
-    --text: #172c2b; --text-muted: #2f4741; --text-dim: #3b5149;
-    --line: #c1cfc7; --line-strong: #81998d; --card: #ffffff; --card-brd: #b8cabe;
-    --accent: #004d45; --accent-deep: #004b44; --accent-soft: #005c53; --focus: #9c2543;
+    --bg: #f5f5f4; --bg-raised: #ffffff; --surface: #ececeb;
+    --surface-2: #e5e5e4; --surface-3: #dddddc; --surface-panel: #ececeb;
+    --text: #202020; --text-muted: #383838; --text-dim: #444444;
+    --line: #c9c9c7; --line-strong: #858583; --card: #ffffff; --card-brd: #bfbfbd;
+    --accent: #801a32; --accent-deep: #70172c; --accent-soft: #801a32; --focus: #941f3b;
     --ev-observation: #244f77; --ev-observation-bg: #e5edf5;
     --ev-hypothesis: #765000; --ev-hypothesis-bg: #f5edda;
-    --ev-confirmed: #005b43; --ev-confirmed-bg: #dfefe5;
+    --ev-confirmed: #4b465c; --ev-confirmed-bg: #ece9f0;
     --ev-uncertain: #743c70; --ev-uncertain-bg: #f0e6ee;
-    --ev-response: #005b63; --ev-response-bg: #deedef;
+    --ev-response: #713147; --ev-response-bg: #f1e7eb;
     --ev-attack: #84203b; --ev-attack-bg: #f8e6ea;
     --pillar-endpoint: #244f77; --pillar-network: #514680;
-    --pillar-identity: #765000; --pillar-cloud: #005b43;
+    --pillar-identity: #765000; --pillar-cloud: #4b465c;
     --r-sm: 2px; --r-md: 3px; --r-lg: 4px; --r-xl: 4px;
-    --shadow-sm: 0 2px 6px #172c2b0c; --shadow-md: 0 8px 24px -14px #172c2b35;
-    color-scheme: light; scrollbar-color: #81998d #e5ece7; caret-color: #9c2543;
+    --shadow-sm: 0 2px 6px #2020200c; --shadow-md: 0 8px 24px -14px #20202035;
+    color-scheme: light; scrollbar-color: #858583 #ececeb; caret-color: #941f3b;
   }
-  :root[data-lesson='incident-response'] ::selection { background: #c3e3d2; color: #172c2b; }
+  :root[data-lesson='incident-response'] ::selection { background: #edd6dc; color: #202020; }
   :root[data-lesson='incident-response'] :focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
   :root[data-lesson='incident-response'] :is(button, .btn) { min-height: 44px; }
   :root[data-lesson='incident-response'] a { text-underline-offset: .2em; }
@@ -42,9 +42,9 @@
   :root[data-lesson='incident-response'] .ir-hero h1 { font-size: clamp(2.5rem, 4vw, 4.5rem); max-width: 18ch; line-height: 1.02; }
   :root[data-lesson='incident-response'] .ir-context { color: var(--text-muted); margin-block: 1rem; font-size: .875rem; }
   :root[data-lesson='incident-response'] .ir-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
-  :root[data-lesson='incident-response'] .ir-register { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 2rem; }
-  :root[data-lesson='incident-response'] .ir-register h2 { font-size: 1.5rem; margin: 0 0 .75rem; }
-  :root[data-lesson='incident-response'] .ir-register ol { list-style: none; padding: 0; margin: 0; }
+  :root[data-lesson='incident-response'] .ir-register { display: grid; grid-template-columns: minmax(0,1fr); gap: 2.5rem; margin-top: 2rem; }
+  :root[data-lesson='incident-response'] .ir-register h2 { border-top: 2px solid var(--accent); padding-top: .75rem; font-size: 1.5rem; margin: 0 0 .75rem; }
+  :root[data-lesson='incident-response'] .ir-register ol { border-left: 1px solid var(--accent); list-style: none; padding: 0 0 0 1rem; margin: 0; }
   :root[data-lesson='incident-response'] .ir-register li { border-bottom: 1px solid var(--line); }
   :root[data-lesson='incident-response'] .ir-register a { display: grid; grid-template-columns: 2rem minmax(0,1fr) 4.5rem; align-items: baseline; gap: .65rem; padding: .85rem .25rem; min-height: 44px; text-decoration: none; color: var(--text); }
   :root[data-lesson='incident-response'] .ir-register a:hover { background: var(--surface-2); }
@@ -56,7 +56,7 @@
   :root[data-lesson='incident-response'] .ir-acquisition path { fill: none; stroke-width: 2; }
   :root[data-lesson='incident-response'] .ir-acquisition__source { stroke: var(--ev-attack); stroke-dasharray: 8 4; animation: ir-decay 7s linear infinite; animation-delay: calc(var(--lane) * -.8s); }
   :root[data-lesson='incident-response'] .ir-acquisition__copy { stroke: var(--accent); }
-  :root[data-lesson='incident-response'] .ir-acquisition__boundary { stroke: var(--text); stroke-width: 1; }
+  :root[data-lesson='incident-response'] .ir-acquisition__boundary { stroke: var(--accent); stroke-width: 1; }
   :root[data-lesson='incident-response'] .ir-acquisition__bracket { stroke: var(--line-strong); stroke-width: 1; }
   :root[data-lesson='incident-response'] .ir-acquisition figcaption { display: flex; justify-content: space-between; font-size: .875rem; color: var(--text-muted); border-top: 1px solid var(--line); padding-top: .75rem; }
   :root[data-lesson='incident-response'] .ir-title { display: grid; grid-template-columns: 1.3fr 1fr; align-items: center; gap: 3rem; }
@@ -98,7 +98,7 @@
   :root[data-lesson='incident-response'] .ir-strip-ix__controls { display: flex; gap: .75rem; margin-block: 1rem; }
   :root[data-lesson='incident-response'] .ir-strip-ix__status { min-height: 2.8em; font-size: .875rem; }
   :root[data-lesson='incident-response'] .ir-acts__list { list-style: none; padding: 0; display: grid; gap: .5rem; }
-  :root[data-lesson='incident-response'] .ir-custody__layout { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: 1.5rem; margin-block: 1rem; }
+  :root[data-lesson='incident-response'] .ir-custody__layout { border-top: 2px solid var(--accent); padding-top: .75rem; display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: 1.5rem; margin-block: 1rem; }
   :root[data-lesson='incident-response'] .ir-code { display: block; width: 100%; height: 20px; fill: var(--accent); }
   :root[data-lesson='incident-response'] .ir-sleeve__code { width: 60px; height: 16px; flex-shrink: 0; }
   :root[data-lesson='incident-response'] .ir-reg { border: 1px solid var(--line-strong); padding: 1rem; background: var(--bg-raised); }
