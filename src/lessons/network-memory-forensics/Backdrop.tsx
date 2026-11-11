@@ -42,6 +42,8 @@ uniform float uAgit;
 uniform float uDir;
 uniform float uPage;
 uniform float uStill;
+uniform sampler2D uMask;
+uniform float uMaskOn;
 
 float hash(vec2 p) {
   p = fract(p * vec2(443.897, 441.423));
@@ -98,6 +100,11 @@ void main() {
   float m = max(a * clear, b * dev);
   float clump = vnoise(gl_FragCoord.xy * 0.45 + 3.0) * 0.5 + vnoise(gl_FragCoord.xy * 0.09) * 0.5;
   float silver = smoothstep(0.12, 0.85, m * (0.7 + 0.6 * clump)) * uDense;
+  // The reading plane stays clear: no silver develops under text. On a
+  // projected slide the mask is measured from the slide's own text blocks;
+  // on a reading page the image keeps to the empty right-hand margin.
+  silver *= 1.0 - 0.96 * texture2D(uMask, uv).r * uMaskOn;
+  silver *= mix(1.0, smoothstep(0.76, 0.9, uv.x) * step(1.25, aspect), uPage);
   col += amber * silver * mix(0.24, 0.14, uPage) * (0.5 + lamp);
 
   // Glints where the liquid catches the lamp.
@@ -123,6 +130,8 @@ interface Tray {
   canvasB: HTMLCanvasElement
   texA: Texture
   texB: Texture
+  mask: HTMLCanvasElement
+  texMask: Texture
   motif: Motif | null
   mixStart: number
   agitAt: number
@@ -130,6 +139,43 @@ interface Tray {
 }
 
 const DEVELOP_SECONDS = 2.4
+const MASK_SCALE = 1 / 6
+
+/* Elements that carry words. Their boxes are kept clear of silver. */
+const TEXT_SELECTOR =
+  'h1,h2,h3,h4,p,li,dt,dd,th,td,figcaption,summary,button,label,code,.mono-label,.duration,.ev,.nmf-print,.nmf-xprint,.evidence,.code'
+
+/** Paint the boxes of every text element on the slide into the mask. */
+function paintMask(mask: HTMLCanvasElement, host: HTMLElement) {
+  const ctx = mask.getContext('2d')
+  if (!ctx) return
+  const hr = host.getBoundingClientRect()
+  const w = Math.max(1, Math.round(hr.width * MASK_SCALE))
+  const h = Math.max(1, Math.round(hr.height * MASK_SCALE))
+  if (mask.width !== w || mask.height !== h) {
+    mask.width = w
+    mask.height = h
+  }
+  ctx.filter = 'none'
+  ctx.fillStyle = '#000'
+  ctx.fillRect(0, 0, w, h)
+  const slide = host.closest('.present')?.querySelector('.present__slide')
+  if (!slide) return
+  ctx.filter = 'blur(3px)'
+  ctx.fillStyle = '#fff'
+  const pad = 18
+  slide.querySelectorAll(TEXT_SELECTOR).forEach((el) => {
+    const r = el.getBoundingClientRect()
+    if (r.width < 1 || r.height < 1 || r.bottom < hr.top || r.top > hr.bottom) return
+    ctx.fillRect(
+      (r.left - hr.left - pad) * MASK_SCALE,
+      (r.top - hr.top - pad) * MASK_SCALE,
+      (r.width + pad * 2) * MASK_SCALE,
+      (r.height + pad * 2) * MASK_SCALE,
+    )
+  })
+  ctx.filter = 'none'
+}
 
 export function Backdrop(props: StageProps) {
   const { surface, half, block, slideIndex, direction, focusMode, reducedMotion } = props
@@ -184,6 +230,10 @@ export function Backdrop(props: StageProps) {
     }
     const texA = new Texture(gl, { image: canvasA, ...texOpts })
     const texB = new Texture(gl, { image: canvasB, ...texOpts })
+    const mask = document.createElement('canvas')
+    mask.width = 1
+    mask.height = 1
+    const texMask = new Texture(gl, { image: mask, ...texOpts })
     const program = new Program(gl, {
       vertex,
       fragment,
@@ -198,6 +248,8 @@ export function Backdrop(props: StageProps) {
         uDir: { value: 1 },
         uPage: { value: page },
         uStill: { value: 0 },
+        uMask: { value: texMask },
+        uMaskOn: { value: page ? 0 : 1 },
       },
     })
     const mesh = new Mesh(gl, { geometry: new Triangle(gl), program })
@@ -214,11 +266,28 @@ export function Backdrop(props: StageProps) {
     const ro = new ResizeObserver(() => {
       resize()
       // A resize clears the buffer; a still frame must be redrawn.
-      if (tray.current) renderOnce(tray.current)
+      if (tray.current) {
+        refreshMask(tray.current)
+        renderOnce(tray.current)
+      }
     })
     ro.observe(el)
 
-    tray.current = { renderer, program, mesh, canvasA, canvasB, texA, texB, motif: null, mixStart: 0, agitAt: -100, dir: 1 }
+    tray.current = {
+      renderer,
+      program,
+      mesh,
+      canvasA,
+      canvasB,
+      texA,
+      texB,
+      mask,
+      texMask,
+      motif: null,
+      mixStart: 0,
+      agitAt: -100,
+      dir: 1,
+    }
 
     return () => {
       ro.disconnect()
@@ -247,6 +316,14 @@ export function Backdrop(props: StageProps) {
       dense += 0.3 * (max > 0 ? window.scrollY / max : 0)
     }
     u.uDense.value = dense
+  }
+
+  function refreshMask(tr: Tray) {
+    const el = host.current
+    if (!el || page) return
+    paintMask(tr.mask, el)
+    tr.texMask.image = tr.mask
+    tr.texMask.needsUpdate = true
   }
 
   function renderOnce(tr: Tray) {
@@ -280,6 +357,38 @@ export function Backdrop(props: StageProps) {
     tr.agitAt = performance.now() / 1000
     tr.dir = direction
   }, [slideIndex, direction])
+
+  /* Keep the clear field under the text current: after each slide change
+     (once the DOM has swapped and again once transitions settle), when the
+     slide scrolls, and after any click that may open or close content. */
+  useEffect(() => {
+    if (page) return
+    let raf = 0
+    const schedule = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const tr = tray.current
+        if (!tr) return
+        refreshMask(tr)
+        if (reducedMotion || !visible) renderOnce(tr)
+      })
+    }
+    const timers = [0, 120, 720].map((ms) => window.setTimeout(schedule, ms))
+    const stage = host.current?.closest('.present')?.querySelector('.present__stage')
+    const onClick = () => {
+      window.setTimeout(schedule, 40)
+      window.setTimeout(schedule, 520)
+    }
+    stage?.addEventListener('scroll', schedule, { passive: true })
+    document.addEventListener('click', onClick, true)
+    return () => {
+      timers.forEach(clearTimeout)
+      cancelAnimationFrame(raf)
+      stage?.removeEventListener('scroll', schedule)
+      document.removeEventListener('click', onClick, true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slideIndex, page, reducedMotion])
 
   /* Still frame under reduced motion, and whenever focus mode changes it. */
   useEffect(() => {

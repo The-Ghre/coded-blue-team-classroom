@@ -142,12 +142,6 @@ export function drawMotif(ctx: CanvasRenderingContext2D, motif: Motif) {
       ctx.globalAlpha = 1
       for (let row = 9; row <= 10; row++)
         for (let c = 23; c <= 27; c++) ctx.fillRect(ox + c * cw + 1.5, oy + row * ch + 1.5, cw - 3, ch - 3)
-      /* china-marker loop around it */
-      ctx.globalAlpha = 0.85
-      ctx.lineWidth = 3
-      ctx.beginPath()
-      ctx.ellipse(ox + 25.5 * cw, oy + 10 * ch, cw * 4.4, ch * 2.3, -0.05, 0, Math.PI * 2.1)
-      ctx.stroke()
       break
     }
     case 'lanes': {

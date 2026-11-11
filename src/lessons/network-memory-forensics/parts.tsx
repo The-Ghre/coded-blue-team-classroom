@@ -183,8 +183,8 @@ export function FilmStrip({
         <MarkerPath
           cx={GAP + ring * PITCH + FW / 2}
           cy={REB + FH / 2}
-          rx={FW / 2 + 7}
-          ry={FH / 2 + 3}
+          rx={FW / 2 + 6}
+          ry={FH / 2 + 1}
           animate={animateRing}
         />
       )}

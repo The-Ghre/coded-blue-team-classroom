@@ -61,26 +61,26 @@
 
     /* Evidence in darkroom terms. Observation is the edge print (what the
        film recorded); hypothesis the film-box yellow of an untested idea;
-       confirmed the hypo-clearing sage of a fixed print; uncertain the
+       confirmed the full white of a fixed, washed print; uncertain the
        grey-rose of fogged paper; response the safelight; adversary the
        china marker. Shape, glyph and word still carry every kind. */
-    --ev-observation: #e6d5bd;
+    --ev-observation: #bfa98e;
     --ev-hypothesis: #eed36b;
-    --ev-confirmed: #b5d18c;
+    --ev-confirmed: #fbf3e6;
     --ev-uncertain: #d2aeb8;
     --ev-response: #f6a250;
     --ev-attack: #ff7a66;
-    --ev-observation-bg: rgba(230, 213, 189, 0.07);
+    --ev-observation-bg: rgba(191, 169, 142, 0.07);
     --ev-hypothesis-bg: rgba(238, 211, 107, 0.08);
-    --ev-confirmed-bg: rgba(181, 209, 140, 0.08);
+    --ev-confirmed-bg: rgba(251, 243, 230, 0.07);
     --ev-uncertain-bg: rgba(210, 174, 184, 0.08);
     --ev-response-bg: rgba(246, 162, 80, 0.09);
     --ev-attack-bg: rgba(255, 122, 102, 0.08);
 
-    --pillar-endpoint: #e6d5bd;
+    --pillar-endpoint: #bfa98e;
     --pillar-network: #f6a250;
     --pillar-identity: #eed36b;
-    --pillar-cloud: #b5d18c;
+    --pillar-cloud: #fbf3e6;
 
     /* Brand tokens some shared components reach for directly. */
     --coded-ink: var(--nmf-room);
@@ -152,15 +152,15 @@
       --card: rgba(28, 20, 16, 0.04);
       --card-brd: rgba(28, 20, 16, 0.16);
       --accent-soft: #8e4510;
-      --ev-observation: #3a2e26;
+      --ev-observation: #65544a;
       --ev-hypothesis: #6e540a;
-      --ev-confirmed: #3f5b1e;
+      --ev-confirmed: #1c1410;
       --ev-uncertain: #74414f;
       --ev-response: #8e4510;
       --ev-attack: #a82a1c;
-      --ev-observation-bg: rgba(58, 46, 38, 0.07);
+      --ev-observation-bg: rgba(101, 84, 74, 0.07);
       --ev-hypothesis-bg: rgba(110, 84, 10, 0.08);
-      --ev-confirmed-bg: rgba(63, 91, 30, 0.08);
+      --ev-confirmed-bg: rgba(28, 20, 16, 0.08);
       --ev-uncertain-bg: rgba(116, 65, 79, 0.08);
       --ev-response-bg: rgba(142, 69, 16, 0.08);
       --ev-attack-bg: rgba(168, 42, 28, 0.07);
@@ -373,6 +373,18 @@
       border-radius: 999px;
     }
 
+    /* Confirmed is developed: the chip is fully printed, not tinted. */
+    & .ev--confirmed {
+      background: var(--ev-confirmed);
+      color: var(--nmf-ink);
+      border-color: var(--ev-confirmed);
+    }
+
+    & .nmf-paper .ev--confirmed,
+    & .nmf-ev__print .ev--confirmed {
+      color: var(--nmf-paper);
+    }
+
     & .ev--attack {
       border-left-width: 1px;
       box-shadow: inset 3px 0 0 var(--ev-attack);
@@ -545,6 +557,15 @@
       opacity: 0.5;
     }
 
+    & .nmf-strip .nmf-marker {
+      vector-effect: none;
+      stroke-width: 5;
+    }
+
+    & .nmf-strip .nmf-marker--grain {
+      stroke-width: 2;
+    }
+
     & .nmf-marker--draw .nmf-marker {
       animation: nmf-mark 640ms cubic-bezier(0.55, 0.05, 0.3, 1) 380ms both;
     }
@@ -711,7 +732,7 @@
 
     & .nmf-title__strip {
       height: clamp(7rem, 4rem + 9vw, 13rem);
-      overflow: visible;
+      overflow: hidden;
     }
 
     & .nmf-title__edge {
@@ -898,7 +919,7 @@
     & .nmf-print--dga {
       background: var(--nmf-paper);
       color: var(--nmf-ink);
-      padding: 0.9rem 1.1rem 0.7rem;
+      padding: 0.9rem 2rem 0.7rem;
       box-shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.9);
     }
 
@@ -944,7 +965,7 @@
     & .nmf-dga__q[data-hit='true']::after {
       content: '';
       position: absolute;
-      inset: -0.5rem -1.7rem;
+      inset: -0.45rem -1.4rem;
       border: 3px solid var(--nmf-marker);
       border-radius: 50% / 60%;
       transform: rotate(-1.5deg);
