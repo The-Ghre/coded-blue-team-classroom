@@ -930,8 +930,9 @@
       font-size: clamp(1rem, 0.92rem + 0.35vw, 1.2rem);
       line-height: 1.45;
     }
+    /* Clouds keep a full scallop's clearance so each one closes on its own. */
     & .present__slide .adw-concept--clouded .concept__points {
-      gap: var(--s-4);
+      gap: calc(var(--s-5) + 8px);
     }
     & .present__slide .check__list {
       gap: var(--s-3);
