@@ -87,9 +87,6 @@ function CustodyRecord({
                     <span className="evidence__marker" aria-hidden="true">
                       {EVIDENCE_META[line.note.kind].glyph}
                     </span>
-                    <span className="ir-sleeve__frame" aria-hidden="true">
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
                     <code>{line.text}</code>
                     {hash && <EdgeCode hash={hash} className="ir-sleeve__code" />}
                   </button>
@@ -167,6 +164,8 @@ function EdgeCode({ hash, className, style }: { hash: string; className?: string
       className={`ir-code${className ? ` ${className}` : ''}`}
       style={style}
       viewBox={`0 0 ${bars.width} 10`}
+      width="0"
+      height="0"
       preserveAspectRatio="none"
       aria-hidden="true"
       focusable="false"

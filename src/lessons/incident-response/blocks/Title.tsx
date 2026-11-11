@@ -20,7 +20,7 @@ export default function Title({ block, mode }: BlockOverrideProps<TitleBlock>) {
 
   return (
     <section className="block block--title ir-title" data-mode={mode}>
-      <svg className="ir-title__defs" aria-hidden="true" focusable="false">
+      <svg className="ir-title__defs" width="0" height="0" aria-hidden="true" focusable="false">
         <filter id="ir-tray" x="-5%" y="-10%" width="110%" height="120%">
           <feTurbulence type="fractalNoise" baseFrequency="0.012 0.04" numOctaves="2" seed="5" result="n">
             <animate attributeName="baseFrequency" dur="2.4s" values="0.012 0.04;0.016 0.05" fill="freeze" />
@@ -37,7 +37,7 @@ export default function Title({ block, mode }: BlockOverrideProps<TitleBlock>) {
         <h1 className="block--title__h ir-title__h" aria-label={block.title}>
           <span className="ir-title__word" aria-hidden="true">
             {word}
-          </span>
+          </span>{' '}
           {num && (
             <span className="ir-title__num" aria-hidden="true">
               {num}
@@ -49,6 +49,18 @@ export default function Title({ block, mode }: BlockOverrideProps<TitleBlock>) {
         {block.lead && <p className="block--title__lead ir-title__lead">{block.lead}</p>}
         <p className="ir-title__overline">{block.overline}</p>
         </div>
+        {session?.themes?.length ? (
+          <ul className="ir-title__themes" aria-label="Themes">
+            {session.themes.map((t, i) => (
+              <li key={t}>
+                <span className="ir-title__theme-num" aria-hidden="true">
+                  {i + 1}A
+                </span>
+                {t}
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
     </section>
   )

@@ -40,7 +40,7 @@ export default function Scenario({ block, mode, Default }: BlockOverrideProps<Sc
     <div className="ir-scenario" data-live={live || undefined}>
       <Default block={block} mode={mode} />
       <div className="ir-timer" aria-hidden="true">
-        <svg viewBox="0 0 120 120" focusable="false">
+        <svg viewBox="0 0 120 140" width="0" height="0" focusable="false">
           <circle className="ir-timer__face" cx="60" cy="60" r="56" />
           {Array.from({ length: 60 }, (_, i) => (
             <line
@@ -66,11 +66,10 @@ export default function Scenario({ block, mode, Default }: BlockOverrideProps<Sc
             transform={`rotate(${(left % 60) * -6} 60 60)`}
           />
           <circle className="ir-timer__hub" cx="60" cy="60" r="3.5" />
+          <text className="ir-timer__read" x="60" y="134" textAnchor="middle">
+            {mins}:{String(secs).padStart(2, '0')}
+          </text>
         </svg>
-        <span className="ir-timer__read">
-          {mins}:{String(secs).padStart(2, '0')}
-        </span>
-        <span className="ir-timer__label">until the reboot</span>
       </div>
     </div>
   )

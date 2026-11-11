@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import type { Block } from '@/types/content'
 import type { RenderMode } from '@/components/teaching/blocks'
 import { Duration, Eyebrow, MonoLabel, ProvenanceTag, SourceRefs } from '@/components/brand/Brand'
@@ -66,12 +65,15 @@ export function MarkerRing({ className, tone = 'yellow' }: { className?: string;
     <svg
       className={`ir-marker ir-marker--${tone}${className ? ` ${className}` : ''}`}
       viewBox="0 0 200 120"
+      width="0"
+      height="0"
       preserveAspectRatio="none"
       aria-hidden="true"
       focusable="false"
     >
       <path
         pathLength={1}
+        fill="none"
         d="M118 9C72 4 22 16 11 47c-10 29 25 58 84 63 57 5 98-14 99-46 1-28-34-50-86-55-18-2-35 0-49 4"
       />
     </svg>
@@ -84,12 +86,14 @@ export function MarkerCross({ className }: { className?: string }) {
     <svg
       className={`ir-cross${className ? ` ${className}` : ''}`}
       viewBox="0 0 100 100"
+      width="0"
+      height="0"
       preserveAspectRatio="none"
       aria-hidden="true"
       focusable="false"
     >
-      <path pathLength={1} d="M12 14C38 38 61 62 90 88" />
-      <path pathLength={1} d="M86 10C62 36 37 63 10 90" />
+      <path pathLength={1} fill="none" d="M12 14C38 38 61 62 90 88" />
+      <path pathLength={1} fill="none" d="M86 10C62 36 37 63 10 90" />
     </svg>
   )
 }
@@ -101,6 +105,3 @@ export function splitDash(text: string): { name?: string; body: string } {
   return { name: text.slice(0, i), body: text.slice(i + 3) }
 }
 
-export function Frag({ children }: { children: ReactNode }) {
-  return <>{children}</>
-}

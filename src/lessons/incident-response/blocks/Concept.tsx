@@ -21,6 +21,8 @@ import { KitDetail, KitFooter, KitHead, MarkerCross, splitDash } from '../parts'
 export default function Concept({ block, mode, Default }: BlockOverrideProps<ConceptBlock>) {
   if (block.diagram?.type === 'ladder') return <TestStripConcept block={block} mode={mode} />
   if (block.diagram?.type === 'cycle') return <LoopConcept block={block} mode={mode} />
+  if (!block.diagram && block.callout?.tone === 'warn' && acts(block.callout.text).length > 1)
+    return <ActsConcept block={block} mode={mode} />
   return (
     <div className="ir-concept" data-id={block.id}>
       <Default block={block} mode={mode} />
@@ -33,18 +35,21 @@ function Shell({
   mode,
   className,
   children,
+  callout,
 }: {
   block: ConceptBlock
   mode: RenderMode
   className: string
   children: ReactNode
+  /** Replaces the shared callout when the world needs its own form for it. */
+  callout?: ReactNode
 }) {
   return (
     <section className={`block block--concept ${className}`}>
       <KitHead block={block} kicker="Concept" />
       {block.lead && <p className="lead">{block.lead}</p>}
       {children}
-      {block.callout && <Callout tone={block.callout.tone}>{block.callout.text}</Callout>}
+      {callout ?? (block.callout && <Callout tone={block.callout.tone}>{block.callout.text}</Callout>)}
       <RedBlue red={block.redView} blue={block.blueView} />
       <KitDetail detail={block.detail} mode={mode} />
       <KitFooter block={block} mode={mode} />
@@ -178,7 +183,7 @@ function TestStripConcept({ block, mode }: { block: ConceptBlock; mode: RenderMo
       </ul>
 
       <Figure alt={spec.alt} label="Test strip · collect from the top">
-        <div className="ir-strip-ix" data-done={done || undefined} data-rebooted={rebooted || undefined}>
+        <div className="ir-strip-ix study__section-tools" data-done={done || undefined} data-rebooted={rebooted || undefined}>
           {flash > 0 && <span key={flash} className="ir-strip-ix__flash" aria-hidden="true" />}
 
           <div className="ir-strip-ix__clock" aria-hidden="true">
@@ -207,7 +212,7 @@ function TestStripConcept({ block, mode }: { block: ConceptBlock; mode: RenderMo
                     type="button"
                     className="ir-band__btn"
                     onClick={() => collect(i)}
-                    disabled={done || st.status !== 'latent'}
+                    aria-disabled={done || st.status !== 'latent'}
                   >
                     <span className="ir-band__density" aria-hidden="true" />
                     <span className="ir-band__label">{r.label}</span>
@@ -234,10 +239,15 @@ function TestStripConcept({ block, mode }: { block: ConceptBlock; mode: RenderMo
           </ol>
 
           <div className="ir-strip-ix__controls">
-            <button type="button" className="btn btn--sm ir-reboot" onClick={reboot} disabled={done}>
+            <button type="button" className="btn btn--sm ir-reboot" onClick={reboot} aria-disabled={done}>
               Reboot now
             </button>
-            <button type="button" className="btn btn--ghost btn--sm" onClick={reset} disabled={!started}>
+            <button
+              type="button"
+              className="btn btn--ghost btn--sm"
+              onClick={() => started && reset()}
+              aria-disabled={!started}
+            >
               Start again
             </button>
           </div>
@@ -298,8 +308,8 @@ function LoopConcept({ block, mode }: { block: ConceptBlock; mode: RenderMode })
     <Shell block={block} mode={mode} className="ir-phases">
       <div className="ir-loop-wrap">
         <Figure alt={spec.alt} label="Cycle · select a phase to skip it">
-          <div className="ir-loop" style={{ '--n': steps.length } as CSSProperties}>
-            <svg className="ir-loop__film" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+          <div className="ir-loop study__section-tools" style={{ '--n': steps.length } as CSSProperties}>
+            <svg className="ir-loop__film" viewBox="0 0 200 200" width="0" height="0" aria-hidden="true" focusable="false">
               <circle className="ir-loop__base" cx="100" cy="100" r="74" />
               <circle className="ir-loop__sprocket" cx="100" cy="100" r="88" pathLength={120} />
               <circle className="ir-loop__sprocket" cx="100" cy="100" r="60" pathLength={90} />
@@ -353,7 +363,7 @@ function LoopConcept({ block, mode }: { block: ConceptBlock; mode: RenderMode })
                   {cost ? (
                     <>
                       {body.slice(0, cost.index)}
-                      <mark className="ir-points__cost">{cost[0]}</mark>
+                      <span className="ir-points__cost">{cost[0]}</span>
                       {body.slice(cost.index + cost[0].length)}
                     </>
                   ) : (
@@ -365,6 +375,67 @@ function LoopConcept({ block, mode }: { block: ConceptBlock; mode: RenderMode })
           })}
         </ul>
       </div>
+    </Shell>
+  )
+}
+
+/* =========================================================================
+   DESTRUCTIVE ACTS — each "Do not" crossed through in china marker
+   =========================================================================
+   A warning made of several prohibitions is set as a list of acts, each
+   struck with the printer's reject mark: these are the actions that destroy
+   evidence while appearing to help. The words stay fully legible; the
+   cross sits beside them, not over them.
+   ========================================================================= */
+
+function acts(text: string): string[] {
+  return text
+    .split(/(?<=\.)\s+(?=Do not\b)/)
+    .map((t) => t.trim())
+    .filter(Boolean)
+}
+
+function ActsConcept({ block, mode }: { block: ConceptBlock; mode: RenderMode }) {
+  const list = acts(block.callout!.text)
+  return (
+    <Shell
+      block={block}
+      mode={mode}
+      className="ir-acts-concept"
+      callout={
+        <aside className="callout callout--warn ir-acts">
+          <span className="callout__badge" aria-hidden="true">
+            !
+          </span>
+          <div className="callout__body">
+            <MonoLabel>Warning</MonoLabel>
+            <ul className="ir-acts__list">
+              {list.map((a, i) => (
+                <li key={i} style={{ '--i': i } as CSSProperties}>
+                  <MarkerCross className="ir-acts__cross" />
+                  <span>{a}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+      }
+    >
+      <ul className="concept__points ir-points">
+        {block.points.map((p, i) => {
+          const { name, body } = splitDash(p)
+          return (
+            <li key={i}>
+              <span className="concept__bullet" aria-hidden="true" />
+              <span>
+                {name && <strong className="ir-points__name">{name}</strong>}
+                {name && ' — '}
+                {body}
+              </span>
+            </li>
+          )
+        })}
+      </ul>
     </Shell>
   )
 }

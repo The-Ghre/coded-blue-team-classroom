@@ -439,6 +439,7 @@
     position: relative;
     min-height: min(68vh, 40rem);
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     align-content: center;
   }
 
@@ -450,7 +451,11 @@
 
   :root[data-lesson='incident-response'] .ir-title__print {
     position: relative;
-    max-width: 62rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s-6);
+    align-items: end;
+    max-width: 74rem;
     padding: clamp(1.5rem, 0.8rem + 3vw, 4rem) clamp(1.5rem, 0.8rem + 3.6vw, 4.6rem);
     background:
       radial-gradient(120% 90% at 85% 0%, rgba(255, 150, 80, 0.28), transparent 60%),
@@ -512,10 +517,10 @@
 
   :root[data-lesson='incident-response'] .ir-title__ring {
     position: absolute;
-    left: -30%;
-    top: -16%;
-    width: 160%;
-    height: 136%;
+    left: -14%;
+    top: -10%;
+    width: 140%;
+    height: 126%;
   }
 
   :root[data-lesson='incident-response'] .ir-title__num .ir-title__ring path {
@@ -642,7 +647,9 @@
   :root[data-lesson='incident-response'] .ir-strip-ix {
     position: relative;
     display: grid;
+    align-items: stretch;
     gap: var(--s-4);
+    margin: 0;
   }
 
   :root[data-lesson='incident-response'] .ir-strip-ix__flash {
@@ -744,7 +751,7 @@
     transition: background 700ms var(--ir-develop), filter 700ms var(--ir-develop);
   }
 
-  :root[data-lesson='incident-response'] .ir-band__btn:hover:not(:disabled) .ir-band__density,
+  :root[data-lesson='incident-response'] .ir-band__btn:hover:not([aria-disabled='true']) .ir-band__density,
   :root[data-lesson='incident-response'] .ir-band__btn:focus-visible .ir-band__density {
     background:
       linear-gradient(90deg, rgba(255, 140, 66, 0.26), rgba(255, 140, 66, 0.06) 75%),
@@ -801,7 +808,9 @@
   }
 
   :root[data-lesson='incident-response'] .ir-band[data-status='fixed'] .ir-band__rail {
-    border-left: 3px solid #1d5a35;
+    width: 3px;
+    border-left: 0;
+    background: #1d5a35;
   }
 
   :root[data-lesson='incident-response'] .ir-band[data-status='fixed'] .ir-band__state {
@@ -827,9 +836,13 @@
     color: var(--ev-attack);
   }
 
-  :root[data-lesson='incident-response'] .ir-band__btn:disabled {
+  :root[data-lesson='incident-response'] .ir-band__btn[aria-disabled='true'] {
     cursor: default;
-    opacity: 1;
+  }
+
+  :root[data-lesson='incident-response'] .ir-strip-ix__controls .btn[aria-disabled='true'] {
+    opacity: 0.45;
+    cursor: default;
   }
 
   :root[data-lesson='incident-response'] .ir-band__cross {
@@ -863,7 +876,7 @@
     color: #fffaf4;
   }
 
-  :root[data-lesson='incident-response'] .ir-reboot:hover:not(:disabled) {
+  :root[data-lesson='incident-response'] .ir-reboot:hover:not([aria-disabled='true']) {
     background: #fffaf4;
     color: var(--ir-ink);
   }
@@ -890,8 +903,8 @@
   }
 
   :root[data-lesson='incident-response'] .ir-loop {
-    --r: 38%;
     position: relative;
+    display: block;
     width: 100%;
     aspect-ratio: 1;
     margin-top: var(--s-3);
@@ -920,14 +933,6 @@
     animation: ir-reel 60s linear infinite;
   }
 
-  :root[data-lesson='incident-response'] .ir-loop__return {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 1.5;
-    stroke-dasharray: 0.02 0.02;
-    opacity: 0.7;
-  }
-
   :root[data-lesson='incident-response'] .ir-loop__frames {
     list-style: none;
     margin: 0;
@@ -938,9 +943,9 @@
 
   :root[data-lesson='incident-response'] .ir-loop__frame {
     position: absolute;
-    left: calc(50% + 37% * sin(var(--i) * 60deg));
-    top: calc(50% - 37% * cos(var(--i) * 60deg));
-    width: 31%;
+    left: calc(50% + 36% * sin(var(--i) * 60deg));
+    top: calc(50% - 36% * cos(var(--i) * 60deg));
+    width: 34%;
     aspect-ratio: 3 / 2;
     transform: translate(-50%, -50%);
   }
@@ -953,12 +958,14 @@
     display: grid;
     place-content: center;
     gap: 0.1rem;
-    padding: 0.3rem;
+    padding: 0.5rem 0.25rem;
     text-align: center;
     background: #d9cbbb;
     color: var(--ir-ink);
-    border: 2px solid var(--ir-film-rebate);
-    border-radius: 2px;
+    border: 0;
+    border-block: 0.42rem solid var(--ir-film-rebate);
+    border-inline: 2px solid var(--ir-film-rebate);
+    border-radius: 1px;
     cursor: pointer;
     box-shadow: 0 8px 18px -10px rgba(0, 0, 0, 0.9);
     transition: background 500ms var(--ir-develop), color 500ms var(--ir-develop), transform 300ms var(--ir-develop);
@@ -982,10 +989,9 @@
   :root[data-lesson='incident-response'] .ir-loop__name {
     font-family: var(--ir-cond);
     font-weight: 600;
-    font-size: clamp(0.75rem, 0.62rem + 0.4vw, 0.95rem);
+    font-size: clamp(0.7rem, 0.6rem + 0.25vw, 0.86rem);
     line-height: 1.1;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: -0.01em;
   }
 
   :root[data-lesson='incident-response'] .ir-loop__cross path {
@@ -1077,23 +1083,11 @@
   }
 
   :root[data-lesson='incident-response'] .ir-sleeve .evidence__line {
-    grid-template-columns: 2.2rem 1.8rem minmax(0, 1fr);
     border-radius: 2px;
   }
 
-  :root[data-lesson='incident-response'] .ir-sleeve .evidence__line[data-hash] {
-    grid-template-columns: 2.2rem 1.8rem minmax(0, 1fr);
-  }
-
-  :root[data-lesson='incident-response'] .ir-sleeve__frame {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    color: var(--ir-edge);
-    align-self: center;
-  }
-
   :root[data-lesson='incident-response'] .ir-sleeve__code {
-    grid-column: 3;
+    grid-column: 2;
     height: 0.7rem;
     width: 100%;
     margin-top: 0.35rem;
@@ -1115,7 +1109,7 @@
 
   :root[data-lesson='incident-response'] .ir-sleeve .evidence__note {
     border-left-width: 1px;
-    margin: 0 0 var(--s-2) 4rem;
+    margin: 0 0 var(--s-2) 2.2rem;
   }
 
   :root[data-lesson='incident-response'] .ir-reg {
@@ -1293,18 +1287,14 @@
 
   :root[data-lesson='incident-response'] .ir-timer__read {
     font-family: var(--font-mono);
-    font-size: clamp(1.4rem, 1rem + 1vw, 2.2rem);
+    font-size: 15px;
     font-weight: 500;
     font-variant-numeric: tabular-nums;
-    color: var(--text);
+    fill: var(--text);
   }
 
-  :root[data-lesson='incident-response'] .ir-timer__label {
-    font-family: var(--ir-cond);
-    font-size: 0.75rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ir-edge);
+  :root[data-lesson='incident-response'] .ir-hero__sep {
+    display: none;
   }
 
   :root[data-lesson='incident-response'] .scenario__driver {
@@ -1412,6 +1402,24 @@
   :root[data-lesson='incident-response'] .detail,
   :root[data-lesson='incident-response'] .query__result-col {
     border-left-width: 1px;
+    border-radius: 2px;
+  }
+
+  /* The room's rule weight is one hairline; no thick coloured side rules. */
+  :root[data-lesson='incident-response'] .interaction__teaches,
+  :root[data-lesson='incident-response'] .brief__scenario,
+  :root[data-lesson='incident-response'] .retrieval__a,
+  :root[data-lesson='incident-response'] .check__feedback,
+  :root[data-lesson='incident-response'] .evidence__note,
+  :root[data-lesson='incident-response'] .glossary__entry,
+  :root[data-lesson='incident-response'] .tlr__missed,
+  :root[data-lesson='incident-response'] .query__assumes,
+  :root[data-lesson='incident-response'] .study__toc-link {
+    border-left-width: 1px;
+  }
+
+  :root[data-lesson='incident-response'] .interaction__teaches,
+  :root[data-lesson='incident-response'] .brief__scenario {
     border-radius: 2px;
   }
 
@@ -1688,14 +1696,25 @@
   }
 
   :root[data-lesson='incident-response'] .ir-hero {
-    display: grid;
-    gap: var(--s-6);
+    display: block;
     margin-bottom: var(--s-7);
   }
 
-  :root[data-lesson='incident-response'] .ir-hero__sheet.study__section-tools {
+  /* The sheet is fixed paper: ink tokens inside it, so the page's real
+     controls (the actions) print in ink rather than in the room's light. */
+  :root[data-lesson='incident-response'] .ir-hero__sheet {
+    --text: var(--ir-ink);
+    --text-muted: var(--ir-ink-muted);
+    --text-dim: var(--ir-ink-dim);
+    --card: rgba(26, 18, 13, 0.06);
+    --card-brd: rgba(26, 18, 13, 0.28);
+    --line: rgba(26, 18, 13, 0.2);
+    --line-strong: rgba(26, 18, 13, 0.35);
+    --focus: #8f3a10;
     display: grid;
-    gap: var(--s-3);
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.35fr);
+    gap: var(--s-6);
+    align-items: start;
     margin: 0;
     padding: clamp(1rem, 0.6rem + 1.4vw, 2rem);
     background:
@@ -1704,8 +1723,6 @@
     color: var(--ir-ink);
     border-radius: 1px;
     box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.95), 0 2px 0 rgba(0, 0, 0, 0.4);
-    transform: rotate(-0.4deg);
-    opacity: 1;
   }
 
   :root[data-lesson='incident-response'] .ir-hero__edge {
@@ -1848,22 +1865,57 @@
   :root[data-lesson='incident-response'] .ir-hero__caption {
     display: grid;
     gap: var(--s-4);
-    max-width: 68ch;
+    align-content: start;
   }
 
   :root[data-lesson='incident-response'] .ir-hero__caption h1 {
     margin: 0;
-    font-size: clamp(2.4rem, 1.4rem + 3.6vw, 4.6rem);
-    line-height: 1;
+    font-size: clamp(2.2rem, 1.3rem + 2.4vw, 3.6rem);
+    line-height: 1.02;
     letter-spacing: -0.025em;
+    color: var(--ir-ink);
     text-wrap: balance;
   }
 
   :root[data-lesson='incident-response'] .ir-hero__lead {
     margin: 0;
-    font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+    font-size: 1.0625rem;
     line-height: 1.55;
-    max-width: 66ch;
+    color: var(--ir-ink-muted);
+    max-width: 62ch;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__sheet .btn:not(.btn--primary) {
+    color: var(--ir-ink);
+    background: rgba(26, 18, 13, 0.05);
+    border-color: rgba(26, 18, 13, 0.3);
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__sheet .btn:not(.btn--primary):hover {
+    background: rgba(26, 18, 13, 0.12);
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__sheet .btn--ghost {
+    border-color: transparent;
+    background: transparent;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__sheet .btn--primary {
+    box-shadow: none;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__strips.study__section-tools {
+    display: grid;
+    gap: var(--s-3);
+    margin: 0;
+    padding: 0;
+    opacity: 1;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero--study .ir-hero__frames {
+    --cols: 4;
   }
 
   :root[data-lesson='incident-response'] .ir-hero__actions .overview__actions {
@@ -1913,10 +1965,344 @@
     font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem);
   }
 
+  :root[data-lesson='incident-response'] .overview__source-files code {
+    overflow-wrap: anywhere;
+  }
+
   :root[data-lesson='incident-response'] .glossary__entry dt {
     font-family: var(--ir-cond);
     font-weight: 600;
     letter-spacing: 0.02em;
+  }
+
+  /* ---------------------------------------------------------------------
+     16b. FINISH-REVIEW ROUND — the world carried onto every slide
+     --------------------------------------------------------------------- */
+
+  /* Signature slides fit the projected frame: the clock, the reboot and
+     the outcome are on the slide, not below it. */
+  :root[data-lesson='incident-response'] .present__slide .ir-volatility .block__title,
+  :root[data-lesson='incident-response'] .present__slide .ir-phases .block__title,
+  :root[data-lesson='incident-response'] .present__slide .ir-acts-concept .block__title,
+  :root[data-lesson='incident-response'] .present__slide .ir-custody .block__title {
+    font-size: clamp(1.7rem, 1rem + 1.7vw, 2.6rem);
+    max-width: none;
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-volatility .block__head,
+  :root[data-lesson='incident-response'] .present__slide .ir-phases .block__head,
+  :root[data-lesson='incident-response'] .present__slide .ir-acts-concept .block__head,
+  :root[data-lesson='incident-response'] .present__slide .ir-custody .block__head {
+    margin-bottom: var(--s-3);
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-volatility .lead,
+  :root[data-lesson='incident-response'] .present__slide .ir-phases .lead,
+  :root[data-lesson='incident-response'] .present__slide .ir-acts-concept .lead,
+  :root[data-lesson='incident-response'] .present__slide .ir-custody .lead {
+    font-size: clamp(1.02rem, 0.92rem + 0.45vw, 1.3rem);
+    max-width: 80ch;
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-volatility .ir-figure {
+    margin-top: var(--s-3);
+    padding: var(--s-3) var(--s-4);
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-volatility .ir-strip-ix {
+    gap: var(--s-2);
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-band__btn {
+    min-height: 2.75rem;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-band__note {
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-band__label {
+    font-size: 1.05rem;
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-phases .ir-loop-wrap {
+    grid-template-columns: minmax(18rem, 23rem) minmax(0, 1fr);
+    gap: var(--s-6);
+    margin-top: var(--s-3);
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-phases .ir-points--phases li {
+    font-size: clamp(0.98rem, 0.9rem + 0.25vw, 1.1rem);
+    line-height: 1.4;
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-phases .ir-points--phases {
+    gap: var(--s-2);
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-phases .ir-figure {
+    padding: var(--s-3);
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-custody .synthetic-badge {
+    margin-block: var(--s-2);
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-sleeve .evidence__line {
+    padding-block: 0.22rem;
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-sleeve .evidence__line code {
+    font-size: 0.82rem;
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-sleeve__code {
+    display: none;
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-sleeve .evidence__head {
+    padding-block: 0.45rem;
+  }
+
+  /* Containment: the four methods and the four destructive acts side by
+     side on the projected slide, so every act is in the frame. */
+  :root[data-lesson='incident-response'] .present__slide .ir-acts-concept .concept__points {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-3) var(--s-6);
+    max-width: none;
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-acts-concept .concept__points li {
+    font-size: clamp(1rem, 0.92rem + 0.3vw, 1.15rem);
+    line-height: 1.4;
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-acts__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-2) var(--s-6);
+  }
+
+  :root[data-lesson='incident-response'] .present__slide .ir-acts__list li {
+    font-size: 1rem;
+  }
+
+  /* Ground: interaction boards and the synthetic notice in the room's own
+     materials, not the base slate. */
+  :root[data-lesson='incident-response'] .ix {
+    background: rgba(0, 0, 0, 0.28);
+    border-color: var(--card-brd);
+    border-radius: 3px;
+  }
+
+  :root[data-lesson='incident-response'] .ix__bar {
+    background: transparent;
+    border-color: var(--line);
+  }
+
+  :root[data-lesson='incident-response'] .synthetic-badge {
+    background: rgba(235, 229, 220, 0.05);
+    border-color: rgba(235, 229, 220, 0.3);
+    color: var(--text-muted);
+  }
+
+  :root[data-lesson='incident-response'] .synthetic-badge strong {
+    color: var(--text);
+  }
+
+  /* No coloured side stripes: whole hairline frames. */
+  :root[data-lesson='incident-response'] .interaction__teaches,
+  :root[data-lesson='incident-response'] .brief__scenario {
+    border: 1px solid var(--line-strong);
+    border-left: 1px solid var(--line-strong);
+    background: rgba(0, 0, 0, 0.22);
+  }
+
+  /* Downloads as ruled rows of the kit list, not cards inside a card. */
+  :root[data-lesson='incident-response'] .brief__download {
+    margin: 0;
+    padding: var(--s-2) 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+  }
+
+  :root[data-lesson='incident-response'] .brief__download:hover {
+    background: rgba(255, 196, 150, 0.06);
+  }
+
+  :root[data-lesson='incident-response'] .brief__download-glyph {
+    color: var(--accent);
+  }
+
+  /* Severity as a step wedge: one density step per level, P1 densest. */
+  :root[data-lesson='incident-response'] .block--compare .compare__table tbody th[scope='row'] {
+    position: relative;
+    padding-left: 2.6rem;
+    color: var(--text);
+  }
+
+  :root[data-lesson='incident-response'] .block--compare .compare__table tbody th[scope='row']::before {
+    content: '';
+    position: absolute;
+    left: 0.6rem;
+    top: 50%;
+    width: 1.4rem;
+    height: 0.95rem;
+    transform: translateY(-50%);
+    border: 1px solid var(--accent-soft);
+    /* Density as fill: P1 fully exposed, each lower step less. */
+    background: linear-gradient(0deg, var(--accent) var(--ir-fill, 0%), transparent var(--ir-fill, 0%));
+  }
+
+  :root[data-lesson='incident-response'] .block--compare .compare__table tbody tr {
+    background: none;
+  }
+
+  :root[data-lesson='incident-response'] .block--compare .compare__table tbody tr > * {
+    background: var(--ir-row, transparent);
+  }
+
+  :root[data-lesson='incident-response'] .block--compare .compare__table tbody tr:nth-child(1) {
+    --ir-fill: 100%;
+    --ir-row: rgba(255, 140, 66, 0.2);
+  }
+
+  :root[data-lesson='incident-response'] .block--compare .compare__table tbody tr:nth-child(2) {
+    --ir-fill: 66%;
+    --ir-row: rgba(255, 140, 66, 0.12);
+  }
+
+  :root[data-lesson='incident-response'] .block--compare .compare__table tbody tr:nth-child(3) {
+    --ir-fill: 33%;
+    --ir-row: rgba(255, 140, 66, 0.06);
+  }
+
+  :root[data-lesson='incident-response'] .block--compare .compare__table tbody tr:nth-child(4) {
+    --ir-fill: 0%;
+    --ir-row: transparent;
+  }
+
+  /* Destructive acts, each crossed in china marker beside its words. */
+  :root[data-lesson='incident-response'] .ir-acts__list {
+    list-style: none;
+    margin: var(--s-2) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  :root[data-lesson='incident-response'] .ir-acts__list li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.8rem minmax(0, 1fr);
+    gap: var(--s-3);
+    align-items: start;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+  }
+
+  :root[data-lesson='incident-response'] .ir-acts__cross {
+    position: relative;
+    left: 0;
+    top: 0.1rem;
+    width: 1.5rem;
+    height: 1.25rem;
+  }
+
+  /* Drawn, not drawn-on: these crosses carry meaning, so they never wait
+     on an animation to be visible. */
+  :root[data-lesson='incident-response'] .ir-acts__cross path {
+    stroke-dashoffset: 0;
+  }
+
+  /* Knowledge check: the chosen answer is ringed in china marker —
+     yellow when it holds, red when it does not. */
+  :root[data-lesson='incident-response'] .check__option {
+    position: relative;
+  }
+
+  :root[data-lesson='incident-response'] .check__option[aria-pressed='true']::after {
+    content: '';
+    position: absolute;
+    left: -0.85rem;
+    right: -0.85rem;
+    top: -0.5rem;
+    bottom: -0.5rem;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpath d='M60 5C130 2 197 6 198 40c1 44-12 74-88 76C50 118 3 112 2 64 1 22 22 6 90 4' fill='none' stroke='%23f6d34a' stroke-width='3' vector-effect='non-scaling-stroke' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  }
+
+  :root[data-lesson='incident-response'] .check__option[aria-pressed='true'][data-state='incorrect']::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 120' preserveAspectRatio='none'%3E%3Cpath d='M60 5C130 2 197 6 198 40c1 44-12 74-88 76C50 118 3 112 2 64 1 22 22 6 90 4' fill='none' stroke='%23ff5a4f' stroke-width='3' vector-effect='non-scaling-stroke' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  /* Recap: each takeaway is a fixed print — paper and ink. */
+  :root[data-lesson='incident-response'] .recap__takeaways {
+    gap: var(--s-2);
+  }
+
+  :root[data-lesson='incident-response'] .recap__takeaways li {
+    padding: var(--s-3) var(--s-4);
+    background: linear-gradient(180deg, #efe4d6, #e1d2c0);
+    color: var(--ir-ink);
+    border: 0;
+    border-block: 0.35rem solid var(--ir-film-rebate);
+    border-radius: 1px;
+    box-shadow: 0 10px 22px -16px rgba(0, 0, 0, 0.9);
+  }
+
+  :root[data-lesson='incident-response'] .recap__takeaways .recap__num {
+    color: #8f3a10;
+  }
+
+  /* Title print: the session's themes printed in the print's right margin. */
+  :root[data-lesson='incident-response'] .ir-title__themes {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0.3rem var(--s-5);
+    border-left: 1px dashed rgba(26, 18, 13, 0.35);
+    display: grid;
+    gap: var(--s-3);
+  }
+
+  :root[data-lesson='incident-response'] .ir-title__themes li {
+    display: grid;
+    gap: 0.1rem;
+    font-family: var(--ir-cond);
+    font-weight: 600;
+    font-size: clamp(1rem, 0.8rem + 0.7vw, 1.5rem);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ir-ink);
+  }
+
+  :root[data-lesson='incident-response'] .ir-title__theme-num {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: #8f3a10;
+  }
+
+  /* Contact sheet: overview strips are cut seven frames long. */
+  :root[data-lesson='incident-response'] .ir-hero--overview .ir-hero__frames {
+    --cols: 7;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero--overview .ir-hero__frame-title {
+    -webkit-line-clamp: 2;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__frame a {
+    row-gap: 0.15rem;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__edge {
+    border-top: 1px dashed rgba(26, 18, 13, 0.3);
+    padding-top: var(--s-2);
   }
 
   /* ---------------------------------------------------------------------
@@ -2022,12 +2408,12 @@
 
   @keyframes ir-develop-title {
     0% {
-      opacity: 0.08;
-      filter: blur(3px);
+      opacity: 0.5;
+      filter: blur(0.8px);
     }
-    25% {
-      opacity: 0.8;
-      filter: blur(0.6px);
+    18% {
+      opacity: 0.9;
+      filter: blur(0.3px);
     }
     100% {
       opacity: 1;
@@ -2041,17 +2427,15 @@
     }
   }
 
+  /* The emulsion darkens under the content, never the content itself:
+     an inset shadow paints below text, so labels hold full contrast in
+     every frame — and if the animation never runs. */
   @keyframes ir-develop-in {
     0% {
-      opacity: 0.3;
-      filter: brightness(0.3) contrast(0.6);
-    }
-    60% {
-      opacity: 1;
+      box-shadow: inset 0 0 0 100vmax rgba(8, 4, 2, 0.6);
     }
     100% {
-      opacity: 1;
-      filter: none;
+      box-shadow: inset 0 0 0 100vmax rgba(8, 4, 2, 0);
     }
   }
 
@@ -2100,6 +2484,10 @@
       grid-template-columns: minmax(0, 1fr);
     }
 
+    :root[data-lesson='incident-response'] .ir-hero__sheet {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
     :root[data-lesson='incident-response'] .ir-loop {
       max-width: 22rem;
       margin-inline: auto;
@@ -2127,6 +2515,30 @@
 
     :root[data-lesson='incident-response'] .present__stage {
       padding-left: var(--s-4);
+      padding-right: var(--s-4);
+    }
+
+    :root[data-lesson='incident-response'] .ir-title__h {
+      font-size: 2.6rem;
+    }
+
+    :root[data-lesson='incident-response'] .ir-title__print {
+      transform: none;
+    }
+
+    :root[data-lesson='incident-response'] .ir-title__print {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    :root[data-lesson='incident-response'] .ir-title__themes {
+      border-left: 0;
+      border-top: 1px dashed rgba(26, 18, 13, 0.35);
+      padding: var(--s-3) 0 0;
+      grid-auto-flow: column;
+    }
+
+    :root[data-lesson='incident-response'] .present__slide .ir-phases .ir-loop-wrap {
+      grid-template-columns: minmax(0, 1fr);
     }
 
     :root[data-lesson='incident-response'] .ir-scenario {
@@ -2137,24 +2549,14 @@
       position: static;
       grid-row: 1;
       justify-self: start;
-      grid-template-columns: 5rem auto;
-      grid-template-rows: auto auto;
-      justify-items: start;
-      align-items: center;
-      column-gap: var(--s-3);
-      width: auto;
+      width: 6.5rem;
     }
 
-    :root[data-lesson='incident-response'] .ir-timer svg {
-      grid-row: 1 / span 2;
-      width: 5rem;
-    }
-
-    :root[data-lesson='incident-response'] .ir-hero__frames {
+    :root[data-lesson='incident-response'] .ir-hero .ir-hero__frames {
       --cols: 3;
     }
 
-    :root[data-lesson='incident-response'] .ir-hero__sheet.study__section-tools {
+    :root[data-lesson='incident-response'] .ir-hero__sheet {
       transform: none;
     }
 
@@ -2169,19 +2571,6 @@
 
     :root[data-lesson='incident-response'] .ir-window__min {
       display: none;
-    }
-
-    :root[data-lesson='incident-response'] .ir-sleeve .evidence__line,
-    :root[data-lesson='incident-response'] .ir-sleeve .evidence__line[data-hash] {
-      grid-template-columns: 1.8rem minmax(0, 1fr);
-    }
-
-    :root[data-lesson='incident-response'] .ir-sleeve__frame {
-      display: none;
-    }
-
-    :root[data-lesson='incident-response'] .ir-sleeve__code {
-      grid-column: 2;
     }
 
     :root[data-lesson='incident-response'] .ir-sleeve .evidence__note {
@@ -2217,6 +2606,7 @@
     :root[data-lesson='incident-response'] .ir-title[data-mode='slide'] .ir-title__ring path,
     :root[data-lesson='incident-response'] .ir-hero__resume path,
     :root[data-lesson='incident-response'] .ir-band[data-status='lost'] .ir-band__cross path,
+    :root[data-lesson='incident-response'] .ir-acts__cross path,
     :root[data-lesson='incident-response'] .ir-loop__cross path {
       animation: none;
       stroke-dashoffset: 0;

@@ -51,14 +51,21 @@ export default function Hero({ session, surface, half, eyebrow, lead, actions }:
 
   return (
     <header className={`ir-hero ir-hero--${surface} ${surface === 'overview' ? 'overview__head' : 'study__header'}`}>
-      <div className="ir-hero__sheet study__section-tools">
-        <p className="ir-hero__edge">
-          <span>{eyebrow}</span>
-          <span>
-            {fixed} of {shown} sections complete
-          </span>
-        </p>
-        <nav className="ir-hero__strips" aria-label="Sections on this contact sheet">
+      <div className="ir-hero__sheet">
+        <div className="ir-hero__caption">
+          <h1>{session.title}</h1>
+          <p className="ir-hero__edge">
+            <span>{eyebrow}</span>
+            <span className="ir-hero__sep"> · </span>
+            <span>
+              {fixed} of {shown} sections complete
+            </span>
+          </p>
+          {lead ? <div className="lead ir-hero__lead">{lead}</div> : null}
+          {actions ? <div className="ir-hero__actions">{actions}</div> : null}
+        </div>
+
+        <nav className="ir-hero__strips study__section-tools" aria-label="Sections on this contact sheet">
           {strips.map((strip) => (
             <div key={strip.key} className="ir-hero__strip" data-half={strip.key}>
               <span className="ir-hero__strip-label" aria-hidden="true">
@@ -100,12 +107,6 @@ export default function Hero({ session, surface, half, eyebrow, lead, actions }:
             </div>
           ))}
         </nav>
-      </div>
-
-      <div className="ir-hero__caption">
-        <h1>{session.title}</h1>
-        {lead ? <div className="lead ir-hero__lead">{lead}</div> : null}
-        {actions ? <div className="ir-hero__actions">{actions}</div> : null}
       </div>
     </header>
   )
