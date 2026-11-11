@@ -32,7 +32,9 @@ export function MessageSource() {
       </div>
       <figcaption className="pi-message__caption">
         <span>Synthetic message · .example</span>
-        <button type="button" aria-pressed={source} onClick={() => setSource(!source)}>
+        <button type="button" onKeyDown={event => {
+          if ([' ', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'].includes(event.key)) event.stopPropagation()
+        }} aria-pressed={source} onClick={() => setSource(!source)}>
           {source ? 'Show message' : 'Inspect source'}
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 12H20M14 6L20 12L14 18" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
         </button>
