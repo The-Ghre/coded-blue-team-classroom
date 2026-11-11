@@ -1,7 +1,7 @@
 @media screen {
   :root[data-lesson='active-directory-security'] {
     --bg: #edf5ee; --bg-raised: #f8fcf8; --surface: #dfebe2; --surface-2: #d4e4d9; --surface-3: #c7dbce; --surface-panel: #e2eee5;
-    --text: #102c23; --text-muted: #294d3e; --text-dim: #375944;
+    --text: #102c23; --text-muted: #234332; --text-dim: #234332;
     --line: #b0c8b7; --line-strong: #668773; --card: #e5efe7; --card-brd: #a3bcac;
     --accent: #842b28; --accent-deep: #70201e; --accent-soft: #842b28; --focus: #842b28;
     --ev-observation: #164b76; --ev-hypothesis: #71501b; --ev-confirmed: #175637; --ev-uncertain: #734173; --ev-response: #24566b; --ev-attack: #842b28;
@@ -16,17 +16,18 @@
     & .btn--primary:hover { background: #70201e; }
     & h1, & h2, & h3 { font-family: 'IBM Plex Sans Condensed', var(--font-sans); text-wrap: balance; }
     & .ad-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding: 2rem 0 3rem; gap: 1rem 3rem; border-bottom: 1px solid var(--line-strong); }
-    & .ad-hero h1 { font-size: clamp(2.6rem, 4.4vw, 4.7rem); line-height: 1.02; max-width: 18ch; margin: 0; }
+    & .ad-hero h1 { grid-column: 1 / -1; font-size: clamp(2.6rem, 4.4vw, 4.7rem); line-height: 1.02; max-width: 18ch; margin: 0; }
     & .ad-hero__meta { grid-column: 1; color: var(--text-muted); margin: 0; }
-    & .ad-hero__map { grid-column: 2; grid-row: 1 / 4; align-self: center; margin: 0; }
+    & .ad-hero__map { grid-column: 1 / -1; grid-row: 3; margin: 0; min-width: 0; }
     & .ad-hero__map figcaption { font-size: .8rem; border-top: 1px solid var(--line); padding-top: .8rem; }
-    & .ad-hero__lead { grid-column: 1; max-width: 68ch; }
+    & .ad-hero__lead { grid-column: 1 / -1; max-width: 75ch; }
     & .ad-hero__actions { grid-column: 1 / -1; margin-top: 1rem; }
-    & .ad-graph { width: 100%; height: auto; overflow: visible; color: #ac302e; }
+    & .ad-graph-scroll { min-width: 0; max-width: 100%; overflow-x: auto; padding: 1rem 0; }
+    & .ad-graph { min-width: 800px; width: 100%; height: auto; overflow: visible; color: #ac302e; }
     & .ad-graph__branches { fill: none; stroke: #668773; stroke-width: 1; stroke-dasharray: 3 6; }
     & .ad-graph__node { fill: var(--bg); stroke: #102c23; stroke-width: 2; }
     & .ad-graph__node[data-active='true'] { stroke: #ac302e; }
-    & .ad-graph text { stroke: none; fill: #102c23; font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+    & .ad-graph text { stroke: none; fill: #102c23; font-family: var(--font-mono); font-size: 16px; font-weight: 600; }
     & .ad-graph__edge { color: #668773; }
     & .ad-graph__edge path { fill: none; stroke: currentColor; stroke-width: 2; stroke-dasharray: 5 5; }
     & .ad-graph__edge[data-active='true'] { color: #ac302e; }
@@ -34,7 +35,7 @@
     & .ad-position { position: absolute; right: 18px; top: 17px; display: flex; gap: 1rem; font: 600 .7rem var(--font-mono); color: var(--text-muted); }
     & .ad-title h1 { font-size: clamp(2.5rem, 5vw, 5rem); margin: 0; }
     & .ad-title__subject { font-family: 'IBM Plex Sans Condensed', var(--font-sans); font-size: 2.2rem; margin: .2rem 0 0; }
-    & .ad-title .ad-graph { display: block; max-height: 310px; margin: 0 auto; }
+    & .ad-title .ad-graph { display: block; margin: 0 auto; }
     & .ad-title__meta { margin-top: 1rem; font-size: .9rem; color: var(--text-muted); }
     & .block__head .eyebrow { order: 2; margin-top: .6rem; }
     & .block__head { display: flex; flex-direction: column; align-items: flex-start; }
@@ -45,7 +46,7 @@
     & .adw-kn { font-family: var(--font-mono); font-size: .9em; }
     & .adw-climb__stage { display: grid; grid-template-columns: 1fr; }
     & .adw-climb__section { margin: 0 0 1rem; }
-    & .adw-climb__section .ad-graph { max-height: 220px; }
+    & .adw-climb__section .ad-graph { min-width: 800px; }
     & .adw-climb__section figcaption { display: flex; justify-content: space-between; color: var(--text-muted); font-size: .8rem; }
     & .adw-climb__cols { display: none; }
     & .adw-climb__code { display: grid; grid-template-columns: 4rem 3rem minmax(0, 1fr); gap: .8rem; width: 100%; }
@@ -79,7 +80,16 @@
     & .adw-reset__ack svg { width: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
     & .structure__title { white-space: normal; overflow: visible; text-overflow: clip; }
     & .overview__panel { border-radius: 0; background: none; box-shadow: none; }
-    & .callout { border-left-width: 1px; }
+    & .callout, & .redblue__pane, & .brief__scenario { border-left-width: 1px; }
+    & .present::before { background: none; }
+    & .brief__grid, & .redblue { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
+    & .adw-reset__transmittal { table-layout: fixed; overflow-wrap: anywhere; }
+    & .adw-reset__ticket { flex-wrap: wrap; }
+    & .evidence__line { min-height: 44px; }
+    & .ad-hero__map .ad-graph { min-height: 230px; }
+    & .present__slide .tasks__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+    & .present__slide .tasks__steps { font-size: 1rem; line-height: 1.35; }
+
     & .present__slide { background: var(--bg); padding: 1.2rem 2.5rem; }
     & .present__slide .block { border: 0; }
     & .present__slide .block__title { font-size: clamp(1.5rem, 2.1vw, 2rem); }
@@ -88,7 +98,7 @@
     & .present__slide .concept__points li { padding: 0; }
     & .present__slide .callout { padding: .7rem 1rem; margin-block: 1rem; font-size: .95rem; }
     & .present__slide .redblue { margin-top: 1rem; }
-    & .present__slide .redblue__col { padding: .7rem 1rem; }
+    & .present__slide .redblue__pane { padding: .7rem 1rem; }
     & .present__slide .redblue p { font-size: .9rem; line-height: 1.4; }
     & .present__slide .adw-climb__section { display: none; }
     & .present__slide .evidence__line code { font-size: .85rem; }
@@ -113,6 +123,7 @@
       & .adw-climb__fields { grid-column: 1 / -1; }
       & .ad-title .ad-graph { min-height: 150px; }
       & .ad-position { display: none; }
+      & .present__slide .tasks__list { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) {
       & *, & *::before, & *::after { animation: none !important; transition: none !important; }

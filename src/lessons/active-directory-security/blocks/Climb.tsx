@@ -7,18 +7,8 @@ import type { BlockOverrideProps } from '../../types'
 import { Detail, Footer, SheetHead } from './parts'
 import { AccessGraph } from '../AccessGraph'
 
-/* =========================================================================
-   THE CLIMB — twenty minutes of a domain falling, drawn as a section
-   =========================================================================
-   The shared evidence annotator, rebuilt as a construction sheet: on the
-   left, Section A–A through the building's stair, one storey per event, the
-   red route solid where svc_backup has been and dashed where it has yet to
-   go; on the right, the six lines as a schedule, each one a button that
-   opens its annotation exactly as the shared renderer does. A time rule
-   under both runs 03:00 → 03:22 on one clock. Everything the shared
-   renderer shows — caption, synthetic label, every annotation, what the
-   excerpt proves and does not prove — is here.
-   ========================================================================= */
+/** Six events, one account: event selection advances the corresponding
+ * relationship. Source lines, annotations and evidence limits stay intact. */
 
 interface Parsed {
   time: string
