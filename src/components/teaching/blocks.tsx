@@ -150,10 +150,10 @@ function ScenarioView({ block, mode }: BlockProps<ScenarioBlock>) {
     <section className="block block--scenario">
       <BlockHead block={block} kicker="Opening scenario" />
       {block.synthetic && <SyntheticBadge />}
-      <p className="scenario__setting">
+      <div className="scenario__setting">
         <MonoLabel>Setting</MonoLabel>
         {block.setting}
-      </p>
+      </div>
       <div className="scenario__narrative prose">
         {block.narrative.map((p, i) => (
           <p key={i}>{p}</p>
