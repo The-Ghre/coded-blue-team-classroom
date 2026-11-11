@@ -45,9 +45,9 @@ export default function Hero({ session, eyebrow, lead, actions }: HeroProps) {
           <code>{line.text.split(/(powershell\.exe)/g).map((part, j) => part === 'powershell.exe'
             ? <mark key={j}>{part}</mark> : <span key={j}>{part}</span>)}</code>
         </div>)}
-        <svg className="fj-join__link" viewBox={`0 0 ${link.width} ${link.height}`} aria-hidden="true"><path d={link.path} pathLength="1" /></svg>
+        <svg hidden className="fj-join__link" viewBox={`0 0 ${link.width} ${link.height}`} aria-hidden="true"><path d={link.path} pathLength="1" /></svg>
       </div>
-      <button className="fj-join__control" type="button" aria-pressed={joined} onClick={() => setJoined(v => !v)}>
+      <button hidden className="fj-join__control" type="button" aria-pressed={joined} onClick={() => setJoined(v => !v)}>
         <span>{joined ? 'Release' : 'Match'} process fields</span><code>powershell.exe</code>
       </button>
     </div>
