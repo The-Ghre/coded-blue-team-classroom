@@ -101,10 +101,10 @@ export function CoverageMap({ data }: { data: unknown }) {
             <strong>{selected.name}</strong>
           </div>
           {selected.rule && (
-            <p className="cov__detail-rule">
+            <div className="cov__detail-rule">
               <MonoLabel>Rule</MonoLabel>
               {selected.rule}
-            </p>
+            </div>
           )}
           {selected.note && <p className="cov__detail-note">{selected.note}</p>}
         </div>

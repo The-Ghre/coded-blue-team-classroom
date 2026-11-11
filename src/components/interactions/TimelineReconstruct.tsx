@@ -179,10 +179,10 @@ export function TimelineReconstruct({ data }: { data: unknown }) {
                     <h5>{event.title}</h5>
                     <p>{event.body}</p>
                     {submitted && event.evidence && (
-                      <p className="tlr__slot-evidence">
+                      <div className="tlr__slot-evidence">
                         <MonoLabel>Evidence</MonoLabel>
                         {event.evidence}
-                      </p>
+                      </div>
                     )}
                   </div>
                   {!submitted && (
