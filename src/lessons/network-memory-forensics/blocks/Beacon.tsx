@@ -224,7 +224,12 @@ function ExposurePrint({ beacon, user }: { beacon: number[]; user: number[] }) {
         <canvas ref={canvas} className="nmf-xprint__canvas" />
         <div className="nmf-xprint__axis">
           {AXIS.map((a) => (
-            <span key={a.s} className="nmf-xprint__tick" style={{ '--x': xOf(a.s) } as CSSProperties}>
+            <span
+              key={a.s}
+              className="nmf-xprint__tick"
+              data-minor={a.s === 10 || a.s === 600}
+              style={{ '--x': xOf(a.s) } as CSSProperties}
+            >
               {a.label}
             </span>
           ))}
@@ -291,12 +296,12 @@ function BeaconDarkroom({ data }: { data: unknown }) {
         </p>
       </div>
 
+      <ExposurePrint beacon={beacon} user={user} />
+
       <div className="beacon__charts nmf-beacon__rolls">
         <Roll values={beacon} label="C2 beacon — interval between connections" tone="beacon" max={max} span={span} />
         <Roll values={user} label={data.comparison.label} tone="user" max={max} span={span} />
       </div>
-
-      <ExposurePrint beacon={beacon} user={user} />
 
       <div className="beacon__verdict">
         <EvidenceChip kind="confirmed" label="What survives the jitter" />

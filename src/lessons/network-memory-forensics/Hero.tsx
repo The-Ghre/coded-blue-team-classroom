@@ -38,6 +38,12 @@ export function Hero({ session, half, surface, eyebrow, lead, actions }: HeroPro
   return (
     <header className="nmf-hero" data-surface={surface} data-half={half}>
       <div className="nmf-hero__sheet">
+        <p className="nmf-hero__edge">
+          <span>{eyebrow}</span>
+          <span className="nmf-hero__edge-mark nmf-decor" aria-hidden="true" hidden>
+            ▸
+          </span>
+        </p>
         <Decor className="nmf-hero__strip">
           <FilmStrip
             frames={frames}
@@ -46,12 +52,6 @@ export function Hero({ session, half, surface, eyebrow, lead, actions }: HeroPro
             ring={half === 'practical' ? 3 : 1}
           />
         </Decor>
-        <p className="nmf-hero__edge">
-          <span>{eyebrow}</span>
-          <span className="nmf-hero__edge-mark" aria-hidden="true">
-            ▸
-          </span>
-        </p>
       </div>
       <div className="nmf-hero__body">
         <h1 className="nmf-hero__title nmf-develop">{session.title}</h1>

@@ -182,9 +182,9 @@ export function FilmStrip({
       {ring !== undefined && (
         <MarkerPath
           cx={GAP + ring * PITCH + FW / 2}
-          cy={height / 2}
-          rx={FW / 2 + 14}
-          ry={height / 2 - 2}
+          cy={REB + FH / 2}
+          rx={FW / 2 + 7}
+          ry={FH / 2 + 3}
           animate={animateRing}
         />
       )}
@@ -199,10 +199,10 @@ export function FilmStrip({
 /** A hand-drawn loop: an ellipse that wobbles and overshoots its own start. */
 function loopPath(cx: number, cy: number, rx: number, ry: number) {
   const pts: string[] = []
-  const steps = 28
-  for (let i = 0; i <= steps + 4; i++) {
+  const steps = 72
+  for (let i = 0; i <= steps + 9; i++) {
     const a = -Math.PI * 0.62 + (i / steps) * Math.PI * 2
-    const wobble = 1 + Math.sin(i * 1.7) * 0.025 + (i > steps ? 0.06 : 0)
+    const wobble = 1 + Math.sin(i * 0.61) * 0.03 + Math.sin(i * 0.23) * 0.02 + (i > steps ? 0.05 : 0)
     const x = cx + Math.cos(a) * rx * wobble
     const y = cy + Math.sin(a) * ry * (wobble + (i > steps ? -0.08 : 0))
     pts.push(`${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`)
@@ -223,12 +223,14 @@ export function MarkerPath({
   ry: number
   animate?: boolean
 }) {
+  /* Two passes of the same loop, the second slightly offset and thinner:
+     a wax crayon never lays an even line. */
+  const d = loopPath(cx, cy, rx, ry)
   return (
-    <path
-      d={loopPath(cx, cy, rx, ry)}
-      pathLength={1}
-      className={`nmf-marker${animate ? ' nmf-marker--draw' : ''}`}
-    />
+    <g className={`nmf-marker-g${animate ? ' nmf-marker--draw' : ''}`}>
+      <path d={d} pathLength={1} className="nmf-marker" />
+      <path d={d} pathLength={1} className="nmf-marker nmf-marker--grain" transform="translate(1.2 -0.8)" />
+    </g>
   )
 }
 

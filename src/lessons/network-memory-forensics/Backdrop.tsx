@@ -98,7 +98,7 @@ void main() {
   float m = max(a * clear, b * dev);
   float clump = vnoise(gl_FragCoord.xy * 0.45 + 3.0) * 0.5 + vnoise(gl_FragCoord.xy * 0.09) * 0.5;
   float silver = smoothstep(0.12, 0.85, m * (0.7 + 0.6 * clump)) * uDense;
-  col += amber * silver * mix(0.3, 0.15, uPage) * (0.55 + lamp);
+  col += amber * silver * mix(0.24, 0.14, uPage) * (0.5 + lamp);
 
   // Glints where the liquid catches the lamp.
   float glint = pow(max(0.0, w1 * w2), 6.0) * lamp;
@@ -218,7 +218,7 @@ export function Backdrop(props: StageProps) {
     })
     ro.observe(el)
 
-    tray.current = { renderer, program, mesh, canvasA, canvasB, texA, texB, motif: null, mixStart: 0, agitAt: -10, dir: 1 }
+    tray.current = { renderer, program, mesh, canvasA, canvasB, texA, texB, motif: null, mixStart: 0, agitAt: -100, dir: 1 }
 
     return () => {
       ro.disconnect()
@@ -233,8 +233,11 @@ export function Backdrop(props: StageProps) {
     const u = tr.program.uniforms
     u.uTime.value = t
     u.uStill.value = still ? 1 : 0
-    u.uMix.value = still ? 1 : Math.min(1, (t - tr.mixStart) / DEVELOP_SECONDS)
-    u.uAgit.value = still ? 0 : Math.max(0, 1 - (t - tr.agitAt) / 1.1)
+    /* Development and agitation run on the wall clock, not the frame clock:
+       a throttled or backgrounded tab still finishes developing. */
+    const wall = performance.now() / 1000
+    u.uMix.value = still ? 1 : Math.min(1, (wall - tr.mixStart) / DEVELOP_SECONDS)
+    u.uAgit.value = still ? 0 : Math.max(0, 1 - (wall - tr.agitAt) / 1.1)
     u.uDir.value = tr.dir
     u.uPage.value = page
     let dense = page ? 0.62 : focusMode ? 1 : 0.8
@@ -265,7 +268,7 @@ export function Backdrop(props: StageProps) {
     tr.texB.image = tr.canvasB
     tr.texB.needsUpdate = true
     tr.motif = motif
-    tr.mixStart = clock.current
+    tr.mixStart = performance.now() / 1000
     if (reducedMotion || !visible) renderOnce(tr)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [motif, failed])
@@ -274,7 +277,7 @@ export function Backdrop(props: StageProps) {
   useEffect(() => {
     const tr = tray.current
     if (!tr || direction === 0) return
-    tr.agitAt = clock.current
+    tr.agitAt = performance.now() / 1000
     tr.dir = direction
   }, [slideIndex, direction])
 
