@@ -1,12 +1,12 @@
 import type { LessonKit } from '../types'
 import { Backdrop } from './Backdrop'
 import { Hero } from './Hero'
-import { Title } from './blocks/Title'
-import { Query } from './blocks/Query'
-import { Controls } from './blocks/Controls'
+import { ReadingPane } from './blocks/ReadingPane'
 import './theme.css'
 const kit: LessonKit = {
   slug: 'detection-engineering', Backdrop, Hero,
-  blocks: { title: Title, query: Query, interaction: Controls, check: Controls, hints: Controls, retrieval: Controls, deliverables: Controls },
+  blocks: Object.fromEntries([
+    'title', 'objectives', 'retrieval', 'scenario', 'concept', 'diagram', 'comparison', 'compare', 'evidence', 'query', 'interaction', 'check', 'recap', 'brief', 'tasks', 'hints', 'deliverables', 'assessment', 'debrief',
+  ].map(kind => [kind, ReadingPane])),
 }
 export default kit
