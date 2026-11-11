@@ -7,8 +7,8 @@
     --surface-3: #ccdfd5;
     --surface-panel: #ffffff;
     --text: #142e28;
-    --text-muted: #314f45;
-    --text-dim: #456156;
+    --text-muted: #29483d;
+    --text-dim: #29483d;
     --line: #bfd0c6;
     --line-strong: #779c8c;
     --card: #e7f0eb;
@@ -83,7 +83,8 @@
     & .beacon__preset[aria-pressed='true'] { background: #005b50; color: #fff; }
     & .beacon__preset { min-height: 44px; }
     & .present::before { background: none; }
-    & .ix, & .evidence { background: #fff; }
+    & .ix, & .evidence, & .detail { background: #fff; }
+    & .detail, & .evidence__note { border-inline-width: 1px; }
     & .callout, & .query__assumes, & .brief__scenario, & .interaction__teaches { border-inline: 0; border-top: 1px solid var(--line-strong); }
     & .interaction__teaches { background: var(--surface); }
     & .nm-opening .block--title { display: flex; flex-direction: column; }
@@ -97,15 +98,23 @@
     & .nm-paged__nav button { padding: .5rem .8rem; border: 1px solid var(--line-strong); color: var(--text); background: #fff; font-size: .875rem; cursor: pointer; }
     & .nm-paged__nav button[aria-pressed='true'] { background: var(--accent); color: #fff; }
     & .nm-paged__nav button:hover { border-color: var(--focus); }
+    & .nm-paged--concept .concept__points, & .nm-paged--concept .callout, & .nm-paged--concept .redblue,
+    & .nm-paged--recap .recap__takeaways, & .nm-paged--recap .recap__further,
+    & .nm-paged--query[data-nm-page='0'] .block--query > .lead { display: none; }
+    & .nm-paged--concept[data-nm-page='1'] .callout, & .nm-paged--recap[data-nm-page='1'] .recap__further { display: block; }
+    & .nm-paged--concept[data-nm-page='0'] .concept__points, & .nm-paged--concept[data-nm-page='1'] .redblue,
+    & .nm-paged--recap[data-nm-page='0'] .recap__takeaways { display: grid; }
     & .nm-paged--query .query__assumes, & .nm-paged--query .code, & .nm-paged--query .query__walk, & .nm-paged--query .query__result,
     & .nm-paged--interaction .interaction__teaches, & .nm-paged--interaction .beacon__controls, & .nm-paged--interaction .beacon__charts, & .nm-paged--interaction .beacon__verdict, & .nm-paged--interaction .beacon__metrics, & .nm-paged--interaction .beacon__ports,
     & .nm-paged--evidence .evidence, & .nm-paged--evidence .proves,
     & .nm-paged--brief .brief__scenario, & .nm-paged--brief .brief__grid, & .nm-paged--brief .block--brief > .brief__panel, & .nm-paged--brief .callout,
     & .nm-paged--deliverables .deliverables__list, & .nm-paged--deliverables .code,
     & .nm-paged--tasks .tasks__task, & .nm-paged--check .check__list > li { display: none; }
-    & .nm-paged--query[data-nm-page='0'] :is(.query__assumes,.code),
-    & .nm-paged--interaction[data-nm-page='0'] :is(.beacon__controls,.beacon__verdict),
-    & .nm-paged--interaction[data-nm-page='1'] :is(.interaction__teaches,.beacon__metrics),
+    & .nm-paged--query[data-nm-page='0'] .code,
+    & .nm-paged--query[data-nm-page='3'] .query__assumes,
+    & .nm-paged--interaction[data-nm-page='0'] .beacon__controls,
+    & .nm-paged--interaction[data-nm-page='1'] .beacon__metrics,
+    & .nm-paged--interaction[data-nm-page='3'] :is(.interaction__teaches,.beacon__verdict),
     & .nm-paged--interaction[data-nm-page='2'] .beacon__ports,
     & .nm-paged--evidence[data-nm-page='0'] .evidence,
     & .nm-paged--brief[data-nm-page='0'] .brief__scenario,
@@ -151,6 +160,13 @@
     :root[data-lesson='network-memory-forensics'] .nm-trace__packet { animation: nm-packet-arrive 650ms cubic-bezier(.16,1,.3,1) backwards; }
     @keyframes nm-packet-arrive { from { transform: translateY(8px); } }
   }
+  @media (min-width: 1000px) {
+    :root[data-lesson='network-memory-forensics'] {
+      & .present__slide .nm-paged--evidence .evidence__lines { position: relative; padding-right: 48%; min-height: 17rem; }
+      & .present__slide .nm-paged--evidence .evidence__note { position: absolute; top: 0; right: 0; width: 46%; margin: .75rem; max-height: 20rem; }
+      & .present__slide .nm-paged--evidence .evidence__line code { font-size: .8rem; }
+    }
+  }
   @media (max-width: 800px) {
     :root[data-lesson='network-memory-forensics'] {
       & .present__slide .beacon__charts, & .present__slide .beacon__ports ul, & .present__slide .query__walk { grid-template-columns: 1fr; }
@@ -159,7 +175,8 @@
       & .nm-hero h1 { font-size: 3rem; max-width: 16ch; }
       & .nm-trace figcaption { flex-wrap: wrap; gap: .25rem; }
       & .present::before { background: none; }
-    & .ix, & .evidence { background: #fff; }
+    & .ix, & .evidence, & .detail { background: #fff; }
+    & .detail, & .evidence__note { border-inline-width: 1px; }
     & .callout, & .query__assumes, & .brief__scenario, & .interaction__teaches { border-inline: 0; border-top: 1px solid var(--line-strong); }
     & .interaction__teaches { background: var(--surface); }
     & .nm-opening .block--title { display: flex; flex-direction: column; }
@@ -173,15 +190,23 @@
     & .nm-paged__nav button { padding: .5rem .8rem; border: 1px solid var(--line-strong); color: var(--text); background: #fff; font-size: .875rem; cursor: pointer; }
     & .nm-paged__nav button[aria-pressed='true'] { background: var(--accent); color: #fff; }
     & .nm-paged__nav button:hover { border-color: var(--focus); }
+    & .nm-paged--concept .concept__points, & .nm-paged--concept .callout, & .nm-paged--concept .redblue,
+    & .nm-paged--recap .recap__takeaways, & .nm-paged--recap .recap__further,
+    & .nm-paged--query[data-nm-page='0'] .block--query > .lead { display: none; }
+    & .nm-paged--concept[data-nm-page='1'] .callout, & .nm-paged--recap[data-nm-page='1'] .recap__further { display: block; }
+    & .nm-paged--concept[data-nm-page='0'] .concept__points, & .nm-paged--concept[data-nm-page='1'] .redblue,
+    & .nm-paged--recap[data-nm-page='0'] .recap__takeaways { display: grid; }
     & .nm-paged--query .query__assumes, & .nm-paged--query .code, & .nm-paged--query .query__walk, & .nm-paged--query .query__result,
     & .nm-paged--interaction .interaction__teaches, & .nm-paged--interaction .beacon__controls, & .nm-paged--interaction .beacon__charts, & .nm-paged--interaction .beacon__verdict, & .nm-paged--interaction .beacon__metrics, & .nm-paged--interaction .beacon__ports,
     & .nm-paged--evidence .evidence, & .nm-paged--evidence .proves,
     & .nm-paged--brief .brief__scenario, & .nm-paged--brief .brief__grid, & .nm-paged--brief .block--brief > .brief__panel, & .nm-paged--brief .callout,
     & .nm-paged--deliverables .deliverables__list, & .nm-paged--deliverables .code,
     & .nm-paged--tasks .tasks__task, & .nm-paged--check .check__list > li { display: none; }
-    & .nm-paged--query[data-nm-page='0'] :is(.query__assumes,.code),
-    & .nm-paged--interaction[data-nm-page='0'] :is(.beacon__controls,.beacon__verdict),
-    & .nm-paged--interaction[data-nm-page='1'] :is(.interaction__teaches,.beacon__metrics),
+    & .nm-paged--query[data-nm-page='0'] .code,
+    & .nm-paged--query[data-nm-page='3'] .query__assumes,
+    & .nm-paged--interaction[data-nm-page='0'] .beacon__controls,
+    & .nm-paged--interaction[data-nm-page='1'] .beacon__metrics,
+    & .nm-paged--interaction[data-nm-page='3'] :is(.interaction__teaches,.beacon__verdict),
     & .nm-paged--interaction[data-nm-page='2'] .beacon__ports,
     & .nm-paged--evidence[data-nm-page='0'] .evidence,
     & .nm-paged--brief[data-nm-page='0'] .brief__scenario,
