@@ -103,7 +103,7 @@ export const session10: Session = {
         kind: 'concept',
         id: 'kerberos',
         title: 'Kerberos abuse, and the one field that gives it away',
-        minutes: 8,
+        minutes: 11,
         lead:
           'Kerberos issues a Ticket Granting Ticket at logon, then service tickets on request. Attackers abuse the process at several points, and most of the abuse is visible in one field.',
         points: [
@@ -134,7 +134,7 @@ export const session10: Session = {
         kind: 'concept',
         id: 'pth',
         title: 'Pass-the-Hash: three fields together',
-        minutes: 5,
+        minutes: 7,
         lead:
           'NTLM accepts a password hash directly. An attacker who dumps hashes can authenticate across the network without ever learning a password.',
         points: [
@@ -156,7 +156,7 @@ export const session10: Session = {
         kind: 'concept',
         id: 'escalation',
         title: 'Domain escalation happens through configuration, not exploits',
-        minutes: 7,
+        minutes: 10,
         lead:
           'Most AD privilege escalation abuses permissions that were granted years ago, by someone solving a different problem, and never audited since.',
         points: [
@@ -182,7 +182,7 @@ export const session10: Session = {
         kind: 'evidence',
         id: 'demo',
         title: 'Instructor demonstration: twenty minutes of a domain falling',
-        minutes: 10,
+        minutes: 19,
         synthetic: true,
         lead:
           'Six events, one account, twenty minutes. Select each line and watch the privilege climb.',
@@ -263,7 +263,7 @@ export const session10: Session = {
         kind: 'concept',
         id: 'persistence',
         title: 'Domain persistence is designed to survive your response',
-        minutes: 6,
+        minutes: 9,
         lead:
           'These mechanisms exist specifically to outlast the remediation that follows discovery.',
         points: [
@@ -289,7 +289,7 @@ export const session10: Session = {
         kind: 'concept',
         id: 'krbtgt',
         title: 'The KRBTGT double reset, and why once is not enough',
-        minutes: 7,
+        minutes: 11,
         lead:
           'This is the most non-obvious and most critical AD recovery procedure. Document it before you need it, because you will be executing it at 04:00.',
         points: [

@@ -106,7 +106,7 @@ export const session04: Session = {
         kind: 'concept',
         id: 'anatomy',
         title: 'Every rule is three things',
-        minutes: 5,
+        minutes: 7,
         lead:
           'Detection logic looks intimidating in a vendor console and is structurally simple. IF this event happens AND these conditions hold THEN alert.',
         points: [
@@ -132,7 +132,7 @@ export const session04: Session = {
         kind: 'compare',
         id: 'sig-vs-behav',
         title: 'Signature or behaviour',
-        minutes: 5,
+        minutes: 7,
         lead:
           'Two fundamentally different approaches. A mature detection library uses both, deliberately, in layers.',
         columns: [{ label: 'Signature' }, { label: 'Behavioural' }],
@@ -170,7 +170,7 @@ export const session04: Session = {
         kind: 'concept',
         id: 'correlation',
         title: 'Five correlation patterns',
-        minutes: 6,
+        minutes: 8,
         lead:
           'A single event rarely confirms an attack. Correlation combines events across time or sources to produce a higher-confidence finding than any of them alone.',
         points: [
@@ -196,7 +196,7 @@ export const session04: Session = {
         kind: 'interaction',
         id: 'builder',
         title: 'Instructor demonstration: build a rule, then tune it',
-        minutes: 15,
+        minutes: 18,
         component: 'rule-builder',
         lead:
           'A labelled synthetic corpus of process-creation events: some genuinely malicious, most ordinary. Build a rule by selecting conditions, and watch precision and recall move in opposite directions.',
@@ -278,7 +278,7 @@ export const session04: Session = {
         kind: 'query',
         id: 'sigma',
         title: 'Sigma: write once, deploy to any SIEM',
-        minutes: 9,
+        minutes: 12,
         language: 'sigma',
         assumes:
           'Sigma specification as published by SigmaHQ, converted with sigma-cli. The logsource category and the field names must match what your SIEM actually ingests — conversion maps syntax, not schema.',
@@ -363,7 +363,7 @@ level: high`,
         kind: 'interaction',
         id: 'coverage',
         title: 'Guided analysis: the coverage map',
-        minutes: 12,
+        minutes: 15,
         component: 'coverage-map',
         lead:
           'The heatmap for the organisation from the opening scenario, after the ransomware incident. Green is covered, red is not. Select any technique to see what rule covers it — or what it would take to build one.',

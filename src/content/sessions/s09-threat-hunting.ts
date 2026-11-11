@@ -103,7 +103,7 @@ export const session09: Session = {
         kind: 'concept',
         id: 'hypothesis',
         title: 'The hypothesis is what separates hunting from browsing',
-        minutes: 7,
+        minutes: 10,
         lead:
           'A vague hunt — "look for anything suspicious" — produces results that cannot be interpreted, documented or repeated. The format fixes that.',
         points: [
@@ -134,7 +134,7 @@ export const session09: Session = {
         kind: 'compare',
         id: 'ioc-vs-behav',
         title: 'IOC-based or behavioural',
-        minutes: 5,
+        minutes: 7,
         lead: 'Two hunting modes. Fast and narrow, or slow and durable. You need both.',
         columns: [{ label: 'IOC-based' }, { label: 'Behavioural' }],
         rows: [
@@ -161,7 +161,7 @@ export const session09: Session = {
         kind: 'concept',
         id: 'baseline',
         title: 'Stack counting and the long tail',
-        minutes: 6,
+        minutes: 9,
         lead:
           'Behavioural hunting looks for deviation from normal. That requires knowing what normal is, which is the part organisations skip.',
         points: [
@@ -188,7 +188,7 @@ export const session09: Session = {
         kind: 'query',
         id: 'queries',
         title: 'Hunting queries for the three scenario techniques',
-        minutes: 11,
+        minutes: 15,
         language: 'splunk',
         assumes:
           'Splunk SPL with Windows Security and Sysmon forwarded. Field names follow the Splunk CIM. In Sentinel or Elastic the logic is identical and the syntax is not. These are hunting queries, run interactively — not detection rules, which fire automatically.',
@@ -244,7 +244,7 @@ NOT SubjectUserName="*$"
         kind: 'concept',
         id: 'pipeline',
         title: 'The hunting-to-detection pipeline',
-        minutes: 6,
+        minutes: 8,
         lead:
           'A hunting programme that does not produce rules is a programme that hunts the same technique forever.',
         points: [
@@ -270,7 +270,7 @@ NOT SubjectUserName="*$"
         kind: 'interaction',
         id: 'coverage',
         title: 'Guided analysis: choose what to hunt',
-        minutes: 12,
+        minutes: 18,
         component: 'coverage-map',
         lead:
           'The same coverage map from Session 4, now read as a hunting backlog rather than a development backlog. Which uncovered techniques do you hunt first?',

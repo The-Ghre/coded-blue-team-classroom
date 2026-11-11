@@ -111,7 +111,7 @@ export const session01: Session = {
         kind: 'concept',
         id: 'tiers',
         title: 'The SOC runs in tiers, and a tier is a decision, not a seniority',
-        minutes: 5,
+        minutes: 6,
         lead: 'Each tier is defined by the question it is allowed to answer and the point at which it must hand the problem on.',
         points: [
           'Tier 1 answers one question: is this real, or is it noise? They do not investigate — they route, and they document.',
@@ -163,7 +163,7 @@ export const session01: Session = {
         kind: 'compare',
         id: 'stack',
         title: 'SIEM, EDR and XDR see different things',
-        minutes: 5,
+        minutes: 6,
         lead: 'These are not competing products. They answer different questions, and each one is blind where another sees.',
         columns: [
           { label: 'SIEM', glyph: '▤' },
@@ -315,7 +315,7 @@ export const session01: Session = {
         kind: 'concept',
         id: 'attack',
         title: 'ATT&CK is a shared vocabulary, not paperwork',
-        minutes: 4,
+        minutes: 5,
         lead: 'MITRE ATT&CK catalogues adversary techniques by tactic — the goal — and technique — the method. For a defender it does four specific jobs.',
         points: [
           'It is a shared language. T1078 means the same thing in every team, in every country, with no ambiguity in handovers.',
@@ -344,7 +344,7 @@ export const session01: Session = {
         kind: 'evidence',
         id: 'demo-evidence',
         title: 'Instructor demonstration: reading the alert',
-        minutes: 10,
+        minutes: 13,
         synthetic: true,
         lead:
           'Here is the alert from the opening scenario, as it actually appears in the queue. Select any line to see what it establishes — and what it does not.',
@@ -458,7 +458,7 @@ export const session01: Session = {
         kind: 'interaction',
         id: 'triage',
         title: 'Guided analysis: work the queue',
-        minutes: 14,
+        minutes: 18,
         component: 'triage-console',
         lead:
           'Four alerts from one night shift. For each one, gather context, then decide. The console will not tell you whether you are right until you commit — and then it will tell you exactly why.',

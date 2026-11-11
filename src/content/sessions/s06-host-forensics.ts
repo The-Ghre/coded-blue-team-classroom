@@ -103,7 +103,7 @@ export const session06: Session = {
         kind: 'concept',
         id: 'five-questions',
         title: 'Five questions, two operating systems, one method',
-        minutes: 5,
+        minutes: 7,
         lead:
           'Before any platform-specific artefact, every host investigation asks the same five things in roughly this order of priority.',
         points: [
@@ -129,7 +129,7 @@ export const session06: Session = {
         kind: 'compare',
         id: 'execution',
         title: 'Question 1 — what ran?',
-        minutes: 6,
+        minutes: 10,
         lead:
           'Proving that a program executed, even one deleted afterwards, is usually the first concrete win in an investigation.',
         columns: [
@@ -179,7 +179,7 @@ export const session06: Session = {
         kind: 'compare',
         id: 'persistence',
         title: 'Question 2 — what stayed active?',
-        minutes: 6,
+        minutes: 10,
         lead:
           'Both platforms offer several built-in persistence mechanisms that blend with legitimate system activity. Finding one and stopping is the most common investigative failure.',
         columns: [
@@ -245,7 +245,7 @@ export const session06: Session = {
         kind: 'compare',
         id: 'access',
         title: 'Questions 3 and 4 — what was accessed, and where did they go?',
-        minutes: 6,
+        minutes: 10,
         lead:
           'Reconstructing what an attacker looked at or copied is central to data theft and insider threat investigations — and some of the strongest Windows evidence survives deletion of the thing itself.',
         columns: [
@@ -305,7 +305,7 @@ export const session06: Session = {
         kind: 'concept',
         id: 'antiforensics',
         title: 'Question 5 — a cleared log is a finding, not a dead end',
-        minutes: 7,
+        minutes: 11,
         lead:
           'Log tampering removes the local record. It does not remove the other records, and the tampering itself usually leaves a trace.',
         points: [
@@ -336,7 +336,7 @@ export const session06: Session = {
         kind: 'evidence',
         id: 'demo',
         title: 'Instructor demonstration: what survived the cleanup',
-        minutes: 10,
+        minutes: 19,
         synthetic: true,
         lead:
           'Triage output from the two hosts in the opening scenario, after the attacker cleaned up. Select each line.',

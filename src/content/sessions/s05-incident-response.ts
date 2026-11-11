@@ -103,7 +103,7 @@ export const session05: Session = {
         kind: 'concept',
         id: 'phases',
         title: 'Six phases, and what skipping each one costs',
-        minutes: 6,
+        minutes: 8,
         lead:
           'Every major IR framework — NIST SP 800-61, SANS, ISO 27035 — uses a version of these six. The phases are not bureaucracy; each exists because skipping it reliably produces worse outcomes than the attack.',
         points: [
@@ -142,7 +142,7 @@ export const session05: Session = {
         kind: 'compare',
         id: 'severity',
         title: 'Severity is a judgement that gets revisited',
-        minutes: 5,
+        minutes: 7,
         lead:
           'Classification scales the response to the threat. It is reassessed with every new finding, not set once at the top of the ticket.',
         columns: [{ label: 'Definition' }, { label: 'Response target' }, { label: 'Escalates to' }],
@@ -197,7 +197,7 @@ export const session05: Session = {
         kind: 'concept',
         id: 'volatility',
         title: 'Order of volatility: collect what disappears first',
-        minutes: 7,
+        minutes: 9,
         lead:
           'This is the hinge between response and forensics. Before you change anything, capture everything — in the order of how fast it vanishes.',
         points: [
@@ -234,7 +234,7 @@ export const session05: Session = {
         kind: 'concept',
         id: 'containment',
         title: 'Containment freezes the situation — it does not fix it',
-        minutes: 5,
+        minutes: 7,
         lead:
           'Four methods, and a list of four things that destroy evidence while appearing to help.',
         points: [
@@ -259,7 +259,7 @@ export const session05: Session = {
         kind: 'evidence',
         id: 'custody',
         title: 'Instructor demonstration: a chain of custody record',
-        minutes: 8,
+        minutes: 14,
         synthetic: true,
         lead:
           'This record is what makes an investigation survive challenge. Select each line to see what it is defending against.',
@@ -361,7 +361,7 @@ export const session05: Session = {
         kind: 'interaction',
         id: 'timeline',
         title: 'Guided analysis: build the incident timeline',
-        minutes: 14,
+        minutes: 22,
         component: 'timeline-reconstruct',
         lead:
           'Evidence fragments from three sources, out of order. Place each one in the right lane and the right sequence, then see what the assembled timeline reveals that no single fragment did.',

@@ -103,7 +103,7 @@ export const session02: Session = {
         kind: 'concept',
         id: 'win-events',
         title: 'The Windows Security log, and the seven Event IDs that carry most of it',
-        minutes: 5,
+        minutes: 6,
         lead:
           'Windows records system activity as numbered events. Hundreds of types exist; a small number carry most of the defensive value.',
         points: [
@@ -135,7 +135,7 @@ export const session02: Session = {
         kind: 'compare',
         id: 'sysmon',
         title: 'Sysmon: from "something ran" to "here is the whole chain"',
-        minutes: 5,
+        minutes: 6,
         lead:
           'The default Event Log tells you that something happened. Sysmon tells you what happened and everything attached to it.',
         columns: [{ label: 'Without Sysmon' }, { label: 'With Sysmon' }],
@@ -403,7 +403,7 @@ export const session02: Session = {
         kind: 'query',
         id: 'query',
         title: 'Writing a detection query that will actually survive production',
-        minutes: 10,
+        minutes: 11,
         language: 'splunk',
         assumes:
           'Splunk SPL, with Sysmon forwarded to a sourcetype indexed as "sysmon" and fields normalised to the Splunk Common Information Model. Field names differ in Sentinel KQL and Elastic EQL; the logic is portable, the syntax is not.',

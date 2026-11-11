@@ -100,7 +100,7 @@ export const session07: Session = {
         kind: 'concept',
         id: 'pcap',
         title: 'PCAP triage: volume first, timing second, packets last',
-        minutes: 6,
+        minutes: 8,
         lead:
           'A packet capture records every byte. That is exactly why you do not start by reading packets.',
         points: [
@@ -126,7 +126,7 @@ export const session07: Session = {
         kind: 'interaction',
         id: 'beacon',
         title: 'Instructor demonstration: the shape of a beacon',
-        minutes: 14,
+        minutes: 18,
         component: 'beacon-analyzer',
         lead:
           'Adjust the jitter and compare the connection timing against real user traffic. Watch what survives the randomisation and what does not.',
@@ -171,7 +171,7 @@ export const session07: Session = {
         kind: 'concept',
         id: 'dns',
         title: 'DNS: the cheapest high-value telemetry there is',
-        minutes: 6,
+        minutes: 8,
         lead:
           'Every connection begins with a resolution. Logging every DNS query gives you a complete record of what every device tried to reach.',
         points: [
@@ -193,7 +193,7 @@ export const session07: Session = {
         kind: 'concept',
         id: 'exfil',
         title: 'Exfiltration, and why the destination rarely helps',
-        minutes: 5,
+        minutes: 7,
         lead:
           'Once data has left, network evidence is often the only record of what went. The difficulty is that the best exfiltration destinations are ones you have already allowed.',
         points: [
@@ -215,7 +215,7 @@ export const session07: Session = {
         kind: 'query',
         id: 'volatility',
         title: 'The Volatility workflow',
-        minutes: 10,
+        minutes: 14,
         language: 'bash',
         assumes:
           'Volatility with a memory image and a matching profile for the captured operating system version. Profiles must be prepared in advance for every OS build in your environment — this is a preparation task, not an incident task.',
@@ -265,7 +265,7 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
         kind: 'evidence',
         id: 'malfind',
         title: 'Instructor demonstration: reading malfind output',
-        minutes: 8,
+        minutes: 12,
         synthetic: true,
         lead: 'This is what injected code looks like. Select each line.',
         caption: 'Synthetic Volatility malfind and netscan output',

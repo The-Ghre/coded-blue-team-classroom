@@ -106,7 +106,7 @@ export const session03: Session = {
         kind: 'concept',
         id: 'lifecycle',
         title: 'How a phishing campaign is actually built',
-        minutes: 5,
+        minutes: 6,
         lead:
           'Investigating phishing is easier when you know how it was assembled. Each stage leaves different evidence, and some stages leave none at all.',
         points: [
@@ -145,7 +145,7 @@ export const session03: Session = {
         kind: 'concept',
         id: 'headers',
         title: 'The header is the only part of an email that is hard to fake',
-        minutes: 6,
+        minutes: 8,
         lead:
           'The From field is cosmetic. Any client can display any name and address. The routing data underneath is the forensic record.',
         points: [
@@ -172,7 +172,7 @@ export const session03: Session = {
         kind: 'concept',
         id: 'spf',
         title: 'SPF, DKIM and DMARC — what they check, and what they do not',
-        minutes: 6,
+        minutes: 8,
         lead:
           'Three mechanisms exist to fight spoofing. Understanding them matters most for understanding their limit, which analysts routinely overestimate.',
         points: [
@@ -202,7 +202,7 @@ export const session03: Session = {
         kind: 'evidence',
         id: 'demo',
         title: 'Instructor demonstration: reading a header',
-        minutes: 11,
+        minutes: 13,
         synthetic: true,
         lead:
           'The header from the opening scenario, trimmed to the lines that carry the finding. Select each line.',
@@ -299,7 +299,7 @@ export const session03: Session = {
         kind: 'concept',
         id: 'impact',
         title: 'Impact assessment, in the order that minimises damage',
-        minutes: 6,
+        minutes: 8,
         lead:
           'Analysing the email tells you what it is. Impact assessment tells you what it did — and the order you ask the questions in matters more than the answers.',
         points: [
@@ -329,7 +329,7 @@ export const session03: Session = {
         kind: 'concept',
         id: 'pivot',
         title: 'Pivoting: one indicator becomes a campaign blocklist',
-        minutes: 5,
+        minutes: 6,
         lead:
           'The domain you just blocked is one domain. The address it resolves to may host the three the attacker plans to use next week.',
         points: [
@@ -358,7 +358,7 @@ export const session03: Session = {
         kind: 'interaction',
         id: 'triage',
         title: 'Guided analysis: four reported emails',
-        minutes: 12,
+        minutes: 18,
         component: 'triage-console',
         lead:
           'Four reports from one morning. Work the evidence, then decide what each one actually requires.',
