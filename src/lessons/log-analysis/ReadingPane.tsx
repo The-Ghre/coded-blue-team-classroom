@@ -27,7 +27,7 @@ export default function ReadingPane({ block, mode, Default }: BlockOverrideProps
     const node = pane.current
     if (node) node.scrollBy({ top: direction * node.clientHeight * .8, behavior: 'instant' })
   }
-  return <div className="fj-reader" data-dense={position.dense}>
+  return <div className="fj-reader" data-keys-own="" data-dense={position.dense}>
     <div className="fj-reader__nav" aria-label="Slide reading controls">
       <span>Reading pane · scroll or use controls</span>
       <button className="btn btn--sm" type="button" aria-controls={id} disabled={position.start} onClick={() => move(-1)}>↑ Previous reading</button>
@@ -40,7 +40,10 @@ export default function ReadingPane({ block, mode, Default }: BlockOverrideProps
         if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) {
           event.stopPropagation()
           event.preventDefault()
-          const node = event.currentTarget
+          const region = event.currentTarget
+          const node = region.scrollHeight > region.clientHeight + 2
+            ? region
+            : region.closest<HTMLElement>('.present__stage') ?? region
           if (event.key === 'Home') node.scrollTop = 0
           else if (event.key === 'End') node.scrollTop = node.scrollHeight
           else node.scrollTop += (['ArrowUp', 'PageUp'].includes(event.key) ? -1 : 1) * (event.key.startsWith('Arrow') ? 80 : node.clientHeight * .8)
