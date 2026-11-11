@@ -66,6 +66,45 @@
   :root[data-lesson='soc-operations'] :is(.evidence__body, .compare__table, .brief__realism) { background: var(--bg-raised); }
   :root[data-lesson='soc-operations'] .triage__summary { background: #e2ede5; }
   :root[data-lesson='soc-operations'] .present__progress span { background: var(--accent); }
+  :root[data-lesson='soc-operations'] .diagram { background: var(--surface); }
+  /* Keep the stage's grid item from expanding to the console's intrinsic width. */
+  :root[data-lesson='soc-operations'] .present__stage { grid-template-columns: minmax(0, 1fr); }
+  :root[data-lesson='soc-operations'] .present__slide,
+  :root[data-lesson='soc-operations'] .present__slide .block { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+  @media (min-width: 64rem) {
+    :root[data-lesson='soc-operations'] .present__slide {
+      --s-2: .35rem; --s-3: .5rem; --s-4: .75rem; --s-5: 1rem; --s-6: 1.25rem; --s-7: 1.5rem;
+      padding-top: .75rem;
+    }
+    :root[data-lesson='soc-operations'] .present__slide .concept__points li { font-size: 1.0625rem; line-height: 1.4; }
+    :root[data-lesson='soc-operations'] .present__slide .block--concept { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem 2rem; align-items: start; }
+    :root[data-lesson='soc-operations'] .present__slide .block--concept > :is(.block__head, .lead) { grid-column: 1 / -1; }
+    :root[data-lesson='soc-operations'] .present__slide .concept__points { grid-row: span 3; margin: 0; }
+    :root[data-lesson='soc-operations'] .present__slide :is(.check__list, .tasks__list) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    :root[data-lesson='soc-operations'] .present__slide .check__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    :root[data-lesson='soc-operations'] .present__slide :is(.tasks__steps, .compare__table, .proves__col ul) { font-size: 1.0625rem; line-height: 1.4; }
+    :root[data-lesson='soc-operations'] .present__slide :is(.compare__table th, .compare__table td) { padding: .6rem; }
+    :root[data-lesson='soc-operations'] .present__slide .block--deliverables { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 2rem; }
+    :root[data-lesson='soc-operations'] .present__slide .block--deliverables > :is(.block__head, .lead) { grid-column: 1 / -1; }
+    :root[data-lesson='soc-operations'] .present__slide .block--interaction { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.7fr); gap: 1rem 2rem; align-items: start; }
+    :root[data-lesson='soc-operations'] .present__slide .block--interaction > :is(.block__head, .lead, .interaction__teaches) { grid-column: 1; }
+    :root[data-lesson='soc-operations'] .present__slide .block--interaction > .ix { grid-column: 2; grid-row: 1 / span 3; min-width: 0; }
+    :root[data-lesson='soc-operations'] .present__slide :is(.triage__check-list, .triage__options) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    :root[data-lesson='soc-operations'] .present__slide .triage__alert { padding: .75rem; }
+    :root[data-lesson='soc-operations'] .present__slide .scenario__narrative { max-width: none; font-size: 1.2rem; line-height: 1.5; }
+    :root[data-lesson='soc-operations'] .present__slide .block--evidence { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: .75rem 1.5rem; align-items: start; }
+    :root[data-lesson='soc-operations'] .present__slide .block--evidence > :is(.block__head, .lead, .synthetic-badge) { grid-column: 1 / -1; }
+    :root[data-lesson='soc-operations'] .present__slide .proves { grid-template-columns: 1fr; margin: 0; }
+    :root[data-lesson='soc-operations'] .present__slide .block--brief { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem 1.5rem; align-items: start; }
+    :root[data-lesson='soc-operations'] .present__slide .block--brief > :is(.block__head, .synthetic-badge) { grid-column: 1 / -1; }
+    :root[data-lesson='soc-operations'] .present__slide .brief__grid { grid-template-columns: 1fr; margin: 0; }
+    :root[data-lesson='soc-operations'] .present__slide .brief__panel { margin: 0; padding: .75rem; }
+    :root[data-lesson='soc-operations'] .present__slide .tasks__task { padding: .75rem; }
+    :root[data-lesson='soc-operations'] .present__slide .tasks__steps { font-size: 1.0625rem; line-height: 1.3; }
+    :root[data-lesson='soc-operations'] .present__slide .tasks__steps li + li { margin-top: .25rem; }
+    :root[data-lesson='soc-operations'] .present__slide .diagram { margin: 0; }
+    :root[data-lesson='soc-operations'] .present__slide .dg-pipeline { gap: .25rem; }
+  }
   @media (max-width: 48rem) {
     :root[data-lesson='soc-operations'] .soc-opening { grid-template-columns: minmax(0, 1fr); gap: 0; }
     :root[data-lesson='soc-operations'] .soc-opening__flow { height: 180px; }
@@ -79,4 +118,8 @@
   @media (prefers-reduced-motion: reduce) {
     :root[data-lesson='soc-operations'] *, :root[data-lesson='soc-operations']::view-transition-new(slide), :root[data-lesson='soc-operations']::view-transition-old(slide) { animation: none !important; transition-duration: 0s !important; }
   }
+}
+@media print {
+  :root[data-lesson='soc-operations'] :is(.soc-opening__flow, .soc-hero__flow) { display: none; }
+  :root[data-lesson='soc-operations'] .soc-hero__meta { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin-block: 1rem; }
 }
