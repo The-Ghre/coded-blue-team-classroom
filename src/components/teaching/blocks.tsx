@@ -382,10 +382,10 @@ function TimelineView({ block, mode }: BlockProps<TimelineBlock>) {
               <h4 className="tl__title">{e.title}</h4>
               <p className="tl__text">{e.body}</p>
               {e.evidence && (
-                <p className="tl__evidence">
+                <div className="tl__evidence">
                   <MonoLabel>Evidence</MonoLabel>
                   {e.evidence}
-                </p>
+                </div>
               )}
             </div>
           </li>
@@ -713,10 +713,10 @@ function TasksView({ block, mode }: BlockProps<TasksBlock>) {
                 <li key={i}>{s}</li>
               ))}
             </ol>
-            <p className="tasks__produces">
+            <div className="tasks__produces">
               <MonoLabel>Produces</MonoLabel>
               {task.produces}
-            </p>
+            </div>
           </li>
         ))}
       </ol>
