@@ -1,46 +1,55 @@
-import { useMemo } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import type { HeroProps } from '../types'
-import { formatClock, sessionRoute } from './graph'
-import { RouteGraph } from './RouteGraph'
+import type { EvidenceBlock } from '@/types/content'
+import { SyntheticBadge } from '@/components/brand/Brand'
 
-/* =========================================================================
-   HERO — the head of the timetable sheet
-   =========================================================================
-   A ruled table head (the page's own label on the left, the route's clock
-   span on the right), the session title set large in condensed caps, then
-   a strip of the working graph with the unscheduled route plotted from the
-   demo's own events. The workshop page leaves the route off: that run is
-   the student's to reconstruct.
-   ========================================================================= */
-
-export default function Hero({ session, eyebrow, lead, actions, half, surface }: HeroProps) {
-  const route = useMemo(() => sessionRoute(session), [session])
-  const blank = surface === 'study' && half === 'practical'
-
-  return (
-    <header className={`la-hero${blank ? ' la-hero--blank' : ''}`}>
-      <div className="la-hero__head">
-        <span className="la-hero__table">{eyebrow}</span>
-        {route && <span className="la-hero__sep"> · </span>}
-        {route && (
-          <span className="la-hero__span">
-            {blank ? 'Route not yet drawn' : `${formatClock(route.start)} – ${formatClock(route.end)}`}
-          </span>
-        )}
+export default function Hero({ session, eyebrow, lead, actions }: HeroProps) {
+  const [joined, setJoined] = useState(false)
+  const recordsRef = useRef<HTMLDivElement>(null)
+  const [link, setLink] = useState({ width: 500, height: 260, path: '' })
+  useLayoutEffect(() => {
+    const el = recordsRef.current
+    if (!el) return
+    const measure = () => {
+      const marks = el.querySelectorAll('mark')
+      if (marks.length < 2) return
+      const box = el.getBoundingClientRect()
+      const a = marks[0].getBoundingClientRect()
+      const b = marks[1].getBoundingClientRect()
+      const x = box.width - 12
+      const y1 = a.top - box.top + a.height / 2
+      const y2 = b.top - box.top + b.height / 2
+      setLink({ width: box.width, height: box.height,
+        path: `M${a.right - box.left + 3} ${y1}H${x}V${y2}H${b.right - box.left + 3}` })
+    }
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    measure()
+    return () => observer.disconnect()
+  }, [session])
+  const demo = session.theory.blocks.find((b): b is EvidenceBlock => b.kind === 'evidence')
+  // Only the already published instructor demonstration; never workshop answers.
+  const lines = demo?.lines.filter(l => l.text.includes('powershell.exe')).slice(0, 2) ?? []
+  return <header className="fj-hero">
+    <div className="fj-hero__intro">
+      <h1>{session.title}</h1>
+      <p className="fj-hero__context">{eyebrow}</p>
+      {lead && <div className="fj-hero__lead">{lead}</div>}
+      {actions && <div className="fj-hero__actions">{actions}</div>}
+    </div>
+    <div className="fj-join" data-joined={joined}>
+      <div className="fj-join__bar"><SyntheticBadge /><span>Sysmon · FINANCE-PC-04</span></div>
+      <div className="fj-join__records" ref={recordsRef}>
+        {lines.map((line, i) => <div className="fj-record" key={line.text}>
+          <span className="fj-record__number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <code>{line.text.split(/(powershell\.exe)/g).map((part, j) => part === 'powershell.exe'
+            ? <mark key={j}>{part}</mark> : <span key={j}>{part}</span>)}</code>
+        </div>)}
+        <svg className="fj-join__link" viewBox={`0 0 ${link.width} ${link.height}`} aria-hidden="true"><path d={link.path} pathLength="1" /></svg>
       </div>
-      <h1 className="la-hero__title">{session.title}</h1>
-      {route && <RouteGraph route={route} showRoute={!blank} height={212} className="la-hero__graph" />}
-      {(lead || actions) && (
-        <div className="la-hero__foot">
-          {lead &&
-            (typeof lead === 'string' ? (
-              <p className="la-hero__lead">{lead}</p>
-            ) : (
-              <div className="la-hero__lead">{lead}</div>
-            ))}
-          {actions && <div className="la-hero__actions">{actions}</div>}
-        </div>
-      )}
-    </header>
-  )
+      <button className="fj-join__control" type="button" aria-pressed={joined} onClick={() => setJoined(v => !v)}>
+        <span>{joined ? 'Release' : 'Match'} process fields</span><code>powershell.exe</code>
+      </button>
+    </div>
+  </header>
 }
