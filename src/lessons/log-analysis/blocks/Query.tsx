@@ -20,12 +20,15 @@ function linesFor(part: string, code: string[]): number[] {
   const words = part.trim().split(/[\s=]+/).filter(Boolean)
   if (!words.length) return []
   const esc = (w: string) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const pipe = words[0] === '|' && !!words[1]
   const re =
-    words[0] === '|' && words[1]
+    pipe
       ? new RegExp(`^\\s*\\|\\s*${esc(words[1])}\\b`)
       : new RegExp(`(^|[^A-Za-z])${esc(words[0])}\\b`)
   const out: number[] = []
   code.forEach((l, i) => {
+    // A search clause never owns a pipeline command that merely names its field.
+    if (!pipe && /^\s*\|/.test(l)) return
     if (re.test(l)) out.push(i)
   })
   return out
@@ -73,8 +76,7 @@ export default function Query({ block, mode }: BlockOverrideProps<QueryBlock>) {
             <code>
               {code.map((l, i) => (
                 <span key={i} className={`la-code__line${active?.includes(i) ? ' is-on' : ''}`}>
-                  {l}
-                  {i < code.length - 1 ? '\n' : ''}
+                  {l || ' '}
                 </span>
               ))}
             </code>

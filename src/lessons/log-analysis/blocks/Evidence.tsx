@@ -3,7 +3,8 @@ import type { EvidenceBlock, EvidenceKind } from '@/types/content'
 import { EVIDENCE_META } from '@/types/content'
 import type { BlockOverrideProps } from '../../types'
 import { EvidenceChip, MonoLabel, SyntheticBadge } from '@/components/brand/Brand'
-import { HIDDEN_ON_PAPER, formatClock, parseClock, routeFromEvidence, stationOffsets, type Route } from '../graph'
+import { usePresentState } from '@/motion'
+import { HIDDEN_ON_PAPER, ROUTE_EVENT, formatClock, parseClock, routeFromEvidence, stationOffsets, type Route } from '../graph'
 import { Detail, Footer, Head } from '../parts'
 
 /* =========================================================================
@@ -107,9 +108,12 @@ function RoutePlot({
   lines: EvidenceBlock['lines']
 }) {
   const [ref, width] = useWidth()
+  const { presenting } = usePresentState()
   const narrow = width < 600
-  const labelW = narrow ? 86 : 138
-  const rowH = narrow ? 30 : 36
+  const labelW = narrow ? 98 : 138
+  // On a projected slide the plot stays short so the lines it mirrors are
+  // in view with it; the reading page can afford the taller drawing.
+  const rowH = narrow ? 30 : presenting ? 24 : 36
   const top = 30
   const height = top + rowH * (route.stations.length - 1) + 66
   const offsets = stationOffsets(route.stations.length)
@@ -144,7 +148,7 @@ function RoutePlot({
         {route.stations.map((st, i) => (
           <g key={st.name}>
             <line x1={labelW - 6} x2={width - 10} y1={y(i)} y2={y(i)} className={st.derived ? 'la-graph__station la-graph__station--derived' : 'la-graph__station'} />
-            <text x={labelW - 12} y={y(i)} dy="0.34em" textAnchor="end" className="la-plot__label">
+            <text x={labelW - 12} y={y(i)} dy="0.34em" textAnchor="end" className={narrow ? 'la-plot__label la-plot__label--small' : 'la-plot__label'}>
               {st.name.toUpperCase()}
             </text>
           </g>
@@ -216,6 +220,10 @@ export default function Evidence({ block, mode }: BlockOverrideProps<EvidenceBlo
   const pick = (i: number) => {
     setOpen((cur) => (cur === i ? null : i))
     setReachedLine((r) => Math.max(r, i))
+    // Tell the presentation backdrop how far the reading has got, so the run
+    // on the graph advances with the room rather than ahead of it.
+    const t = parseClock(block.lines[i]?.text ?? '')
+    if (t !== null) window.dispatchEvent(new CustomEvent(ROUTE_EVENT, { detail: { t } }))
   }
   const reached = route ? route.stops.filter((s) => s.line <= reachedLine).length - 1 : -1
   const allTimed = block.lines.every((l) => parseClock(l.text) !== null)

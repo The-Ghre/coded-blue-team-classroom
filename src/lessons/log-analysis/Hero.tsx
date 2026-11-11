@@ -21,6 +21,7 @@ export default function Hero({ session, eyebrow, lead, actions, half, surface }:
     <header className={`la-hero${blank ? ' la-hero--blank' : ''}`}>
       <div className="la-hero__head">
         <span className="la-hero__table">{eyebrow}</span>
+        {route && <span className="la-hero__sep"> · </span>}
         {route && (
           <span className="la-hero__span">
             {blank ? 'Route not yet drawn' : `${formatClock(route.start)} – ${formatClock(route.end)}`}

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { InteractionBlock } from '@/types/content'
 import type { BlockOverrideProps } from '../../types'
 import { EvidenceChip, MonoLabel, SyntheticBadge } from '@/components/brand/Brand'
+import { usePresentState } from '@/motion'
 import { HIDDEN_ON_PAPER, formatClock, parseClock } from '../graph'
 import { Detail, Footer, Head } from '../parts'
 
@@ -91,7 +92,11 @@ function WindowPlot({
   submitted: boolean
 }) {
   const [ref, width] = useWidth()
-  const narrow = width < 600
+  const { presenting } = usePresentState()
+  // Projected, the plot sits in a half-width column beside the list.
+  const narrow = width < (presenting ? 400 : 600)
+  // Projected, the station names must read from the back of the room.
+  const big = presenting && !narrow
 
   const stations = useMemo(() => {
     const out: { key: string; name: string }[] = []
@@ -109,8 +114,8 @@ function WindowPlot({
   if (!times.length || !stations.length) return null
   const t0 = Math.floor(Math.min(...times) / 60) * 60
   const t1 = Math.ceil((Math.max(...times) + 1) / 60) * 60
-  const labelW = narrow ? 84 : 128
-  const rowH = narrow ? 13 : 16
+  const labelW = narrow ? 84 : big ? 132 : 128
+  const rowH = narrow ? 13 : big ? 24 : 16
   const top = 26
   const plotH = rowH * (stations.length - 1)
   const height = top + plotH + 18
@@ -142,7 +147,7 @@ function WindowPlot({
         {stations.map((s, i) => (
           <g key={s.key}>
             <line x1={labelW - 4} x2={width - 8} y1={top + i * rowH} y2={top + i * rowH} className="la-graph__station" />
-            <text x={labelW - 9} y={top + i * rowH} dy="0.34em" textAnchor="end" className="la-plot__label la-plot__label--small">
+            <text x={labelW - 9} y={top + i * rowH} dy="0.34em" textAnchor="end" className={big ? 'la-plot__label la-plot__label--big' : 'la-plot__label la-plot__label--small'}>
               {s.name.replace(/\.exe$/i, '').toUpperCase()}
             </text>
           </g>

@@ -252,25 +252,29 @@
       margin-bottom: var(--s-5);
       border-bottom: 1px solid var(--line-strong);
     }
+    /* The kind word ("Concept", "Comparison") is interface, not lesson:
+       it stays for assistive technology, and the stub carries the slot's
+       time instead, which is what a timetable's stub column holds. */
     & .block__head > .eyebrow {
-      grid-column: 1;
-      grid-row: 1 / span 2;
-      align-self: start;
-      padding-top: 0.6em;
-      font-family: var(--font-cond);
-      font-size: 0.78rem;
-      letter-spacing: 0.12em;
-      color: var(--la-rule-strong);
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
     }
     & .block__head > .block__title {
       grid-column: 2;
+      grid-row: 1;
       margin: 0;
       text-wrap: balance;
     }
     & .block__head > .block__meta {
       grid-column: 1;
-      grid-row: 2;
-      margin: 0.25rem 0 0;
+      grid-row: 1;
+      align-self: start;
+      margin: 0;
+      padding-top: 0.75em;
     }
     & .la-head__stub {
       grid-column: 1;
@@ -280,13 +284,33 @@
       gap: 0.3rem;
       padding-top: 0.6em;
     }
-    & .la-head__kind {
-      font-family: var(--font-cond);
-      font-weight: 600;
-      font-size: 0.78rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+    & .block__head {
+      grid-template-columns: 6.5rem minmax(0, 1fr);
+      position: relative;
+    }
+    & .duration {
+      font-size: 0.8rem;
+      font-weight: 500;
       color: var(--la-rule-strong);
+    }
+    /* Unicode stand-ins from the shared kit, redrawn in this world's ink. */
+    & .duration > span[aria-hidden='true'] {
+      display: inline-block;
+      width: 0.55rem;
+      height: 0.55rem;
+      font-size: 0;
+      border: 1.5px solid currentColor;
+      border-top-color: transparent;
+      transform: rotate(45deg);
+      margin-right: 0.15rem;
+    }
+    & .synthetic-badge__glyph {
+      font-size: 0;
+      width: 0.8rem;
+      height: 0.8rem;
+      margin-top: 0.3rem;
+      border: 1.5px dashed var(--ev-uncertain);
+      border-radius: 50%;
     }
 
     & .lead {
@@ -400,11 +424,25 @@
       color: var(--text);
       line-height: 1.55;
     }
+    /* Projected panels never drop below a readable size at the back of a room. */
+    & .present__slide .check__option,
+    & .present__slide .deliverables__text,
+    & .present__slide .assess__item p,
+    & .present__slide .brief__panel li,
+    & .present__slide .tasks__steps li,
+    & .present__slide .hints__tiers li,
+    & .present__slide .recap__note,
+    & .present__slide .loghunt__why {
+      font-size: clamp(0.98rem, 0.88rem + 0.3vw, 1.15rem);
+    }
+    & .present__slide .objectives__verb {
+      font-size: clamp(0.85rem, 0.75rem + 0.3vw, 1rem);
+    }
     & .present__slide .la-table__row {
       font-size: clamp(1rem, 0.9rem + 0.42vw, 1.3rem);
     }
     & .la-table__row:hover {
-      background: linear-gradient(to right, rgba(44, 102, 70, 0.07), transparent 70%);
+      background: rgba(44, 102, 70, 0.07);
     }
 
     /* ---------------------------------------------------------------------
@@ -509,6 +547,9 @@
       letter-spacing: 0.06em;
       fill: var(--la-graphite);
     }
+    & .la-plot__label--big {
+      font-size: 13px;
+    }
     & .la-plot__label--small {
       font-size: 9.5px;
       fill: var(--la-pencil);
@@ -547,7 +588,7 @@
       fill: var(--la-slip);
       stroke: var(--la-pencil);
       stroke-width: 1.4;
-      transition: transform 280ms cubic-bezier(0.3, 1.4, 0.5, 1);
+      transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
     }
     & .la-mark rect,
     & .la-mark path {
@@ -585,14 +626,14 @@
       stroke: var(--la-graphite);
       stroke-width: 1;
       stroke-dasharray: 2 2;
-      animation: la-leader 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      animation: la-leader 360ms cubic-bezier(0.2, 0.8, 0.2, 1);
     }
     & .la-plot__leader-text {
       font-family: var(--font-cond);
       font-weight: 600;
       font-size: 13px;
       fill: var(--la-graphite);
-      animation: la-fade 280ms 120ms ease-out both;
+      animation: la-fade 280ms ease-out;
     }
 
     /* Shared graph ink, used by the plots, the hero and the title. */
@@ -776,13 +817,13 @@
       stroke-width: 3;
       opacity: 1;
       stroke-dasharray: 1;
-      stroke-dashoffset: 1;
-      animation: la-draw 560ms cubic-bezier(0.55, 0, 0.12, 1.08) forwards;
+      stroke-dashoffset: 0;
+      animation: la-draw 560ms cubic-bezier(0.55, 0, 0.12, 1.08);
     }
     & .la-hop--missed .la-hop__run {
       stroke-dasharray: 0.12 0.08;
       stroke-dashoffset: 0;
-      animation: la-fade 420ms ease-out both;
+      animation: la-fade 420ms ease-out;
     }
     & .la-hop--hit .la-hop__from,
     & .la-hop--hit .la-hop__to,
@@ -834,10 +875,14 @@
     & .code[data-stepping] .la-code__line {
       opacity: 0.32;
     }
+    & .la-code__line {
+      display: block;
+      margin: 0 calc(-1 * var(--s-4));
+      padding: 0 var(--s-4);
+    }
     & .code[data-stepping] .la-code__line.is-on {
       opacity: 1;
       background: rgba(210, 59, 30, 0.1);
-      box-shadow: -1rem 0 0 rgba(210, 59, 30, 0.1);
     }
     & .la-query__stepper {
       margin-top: var(--s-3);
@@ -862,7 +907,7 @@
       display: grid;
       grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
       gap: 1.5rem;
-      animation: la-rise 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      animation: la-rise 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
     }
     & .la-query__clause code {
       font-family: var(--font-mono);
@@ -993,8 +1038,8 @@
       box-shadow: none;
     }
     & .study__toc-link[aria-current='true'] .study__toc-num {
-      color: var(--la-vermilion-ink);
-      font-weight: 600;
+      color: var(--la-graphite);
+      font-weight: 700;
     }
     & .study__toc-num {
       font-family: var(--font-mono);
@@ -1035,6 +1080,9 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--la-graphite);
+    }
+    & .la-hero__sep {
+      display: none;
     }
     & .la-hero__span {
       font-family: var(--font-mono);
@@ -1115,16 +1163,13 @@
       stroke-linejoin: round;
       stroke-dasharray: 1;
       stroke-dashoffset: 0;
-      animation: la-draw 1500ms 280ms cubic-bezier(0.62, 0, 0.12, 1.04) both;
+      /* Drawn at rest; the draw-in plays over it only when animation runs. */
+      animation: la-draw 1500ms cubic-bezier(0.62, 0, 0.12, 1.04);
     }
     & .la-graph__stop {
       fill: var(--la-vermilion);
       stroke: var(--la-vermilion-ink);
       stroke-width: 1;
-      animation: la-pop 260ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
-      animation-delay: calc(560ms + var(--k, 0) * 130ms);
-      transform-box: fill-box;
-      transform-origin: center;
     }
     & .la-graph__stop--derived {
       fill: var(--la-slip);
@@ -1251,15 +1296,32 @@
       align-items: flex-start;
       gap: 0.4rem;
     }
+    & .block--title {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    & .block--title__h {
+      order: 1;
+    }
+    & .block--title__lead {
+      order: 2;
+    }
+    /* The overline runs as the sheet's foot line, under the title — never
+       as a label stacked above it. */
     & .block--title .eyebrow {
+      order: 3;
+      margin-top: var(--s-5);
       display: inline-block;
       font-family: var(--font-cond);
       font-size: clamp(0.85rem, 0.7rem + 0.4vw, 1.1rem);
       letter-spacing: 0.14em;
       color: var(--la-graphite);
       background: var(--la-sheet);
-      padding: 0.3rem 0.6rem 0.3rem 0;
-      border-top: 3px solid var(--la-graphite);
+      padding: 0.45rem 0.6rem 0.3rem 0;
+      border-top: 1px solid var(--line-strong);
+      font-size: clamp(0.75rem, 0.65rem + 0.3vw, 0.95rem);
+      color: var(--text-dim);
     }
     & .block--title__h {
       font-weight: 700;
@@ -1280,7 +1342,114 @@
       color: var(--la-graphite);
       background: var(--la-sheet);
       padding: 0.6rem 0.8rem 0.6rem 0;
-      border-bottom: 2px solid var(--la-vermilion);
+      border-bottom: 2px solid var(--la-graphite);
+    }
+  }
+
+  /* -----------------------------------------------------------------------
+     The open band: from 1200px the slide leaves a strip of the graph
+     uncovered on the right, where the time scale changes and the
+     unscheduled run's plunge stays visible beside every slide.
+     Keep in step with BAND / slideRightEdge in Backdrop.tsx.
+     ----------------------------------------------------------------------- */
+  @media (min-width: 75rem) {
+    :root[data-lesson='log-analysis'] .present__slide {
+      justify-self: start;
+      margin-left: 1.5rem;
+      max-width: min(64rem, calc(100vw - clamp(1rem, 12vw, 12.5rem) - 3rem - 1.5rem - 220px));
+    }
+    :root[data-lesson='log-analysis'] .present__stage {
+      padding-right: 3rem;
+    }
+  }
+
+  /* Projected log hunt: the graph and the lines it plots share one view.
+     The graph holds its place in the left column while the list scrolls
+     beside it, so flagging a line and watching its run ink happen together. */
+  @media (min-width: 75rem) {
+    :root[data-lesson='log-analysis'] .present__slide .la-hunt {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: var(--s-5);
+      overflow: visible;
+    }
+    :root[data-lesson='log-analysis'] .present__slide .la-hunt > * {
+      grid-column: 1 / -1;
+    }
+    :root[data-lesson='log-analysis'] .present__slide .la-hunt > .la-plot--window {
+      grid-column: 1;
+      grid-row: span 1;
+      position: sticky;
+      top: 0;
+      align-self: start;
+      z-index: 1;
+      background: var(--la-slip);
+      padding-left: var(--s-3);
+    }
+    :root[data-lesson='log-analysis'] .present__slide .la-hunt > .loghunt__lines {
+      grid-column: 2;
+      border-top: 0;
+      border-left: 1px solid var(--line);
+    }
+  }
+
+  /* Overview and workshop: shared panels re-ruled as timetable rows. */
+  :root[data-lesson='log-analysis'] {
+    & .overview__panel {
+      background: transparent;
+      border: 0;
+      border-top: 2px solid var(--la-graphite);
+      border-radius: 0;
+      padding: var(--s-4) 0 0;
+    }
+    & .structure__item a {
+      border-radius: 0;
+      border-top: 1px solid var(--line);
+    }
+    & .structure__item a:hover {
+      background: rgba(44, 102, 70, 0.07);
+    }
+    & .structure__min {
+      color: var(--la-graphite);
+    }
+    & .glossary__entry {
+      border-left: 0;
+      padding-left: 0;
+      border-top: 1px solid var(--line);
+      padding-top: var(--s-3);
+    }
+    & .progress-notice,
+    & .gaps__item {
+      border: 0;
+      border-top: 1px solid var(--line-strong);
+      border-radius: 0;
+      background: transparent;
+    }
+    & .brief__panel {
+      background: transparent;
+      border: 0;
+      border-top: 2px solid var(--la-graphite);
+      padding-left: 0;
+      padding-right: 0;
+    }
+    & .brief__download {
+      background: transparent;
+      border: 0;
+      border-top: 1px solid var(--line);
+      border-radius: 0;
+      margin-bottom: 0;
+      padding: var(--s-3) 0;
+    }
+    & .brief__download:hover {
+      background: rgba(44, 102, 70, 0.07);
+    }
+    & .brief__download-glyph {
+      border-radius: 0;
+      border-color: var(--la-graphite);
+      color: var(--la-graphite);
+    }
+    & .brief__download-file {
+      color: var(--la-rule-strong);
     }
   }
 
@@ -1410,6 +1579,10 @@
       & .la-head__stub {
         flex-direction: row;
         gap: 0.75rem;
+        margin-top: 0.4rem;
+      }
+      & .block__head > .block__meta {
+        padding-top: 0;
         margin-top: 0.4rem;
       }
       & .block__head > .block__title {

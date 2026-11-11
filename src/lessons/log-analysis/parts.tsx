@@ -10,8 +10,10 @@ import { Duration, MonoLabel, ProvenanceTag, SourceRefs } from '@/components/bra
 export function Head({ block, kicker, children }: { block: Block; kicker: string; children?: ReactNode }) {
   return (
     <header className="block__head la-head">
+      {/* The stub carries the slot's time, as a timetable does. The kind
+          word is kept for assistive technology only. */}
       <div className="la-head__stub">
-        <span className="la-head__kind">{kicker}</span>
+        <span className="sr-only">{kicker}</span>
         {block.minutes !== undefined && <Duration minutes={block.minutes} />}
       </div>
       <h2 className="block__title">{block.title}</h2>

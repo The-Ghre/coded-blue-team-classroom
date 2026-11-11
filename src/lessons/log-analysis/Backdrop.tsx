@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import type { StageProps } from '../types'
 import { useFrameLoop, useIsVisible } from '@/motion'
 import {
+  ROUTE_EVENT,
   clockForSlide,
   formatClock,
   graphWindow,
@@ -54,19 +55,33 @@ interface Geometry {
   y0: number
   y1: number
   labels: boolean
+  /** Presentation only: where the time scale changes. Left of xb the
+      graph runs at reading pace; right of it, in the open band beside the
+      slide, the last seconds before and after the plunge get the width. */
+  xb?: number
+}
+
+/** Mirrors theme.css: from 1200px the slide leaves a 220px band open on the
+    right so the unscheduled run stays visible beside every slide. */
+export const BAND = 220
+export function slideRightEdge(w: number) {
+  const padL = Math.min(200, Math.max(16, w * 0.12))
+  return padL + 24 + Math.min(1024, w - padL - 48 - 24 - BAND)
 }
 
 function geometry(w: number, h: number, surface: StageProps['surface']): Geometry {
   if (surface === 'present') {
     const narrow = w < 720
+    const x1 = w - (narrow ? 12 : 28)
     return {
       w,
       h,
       x0: narrow ? 16 : Math.min(176, w * 0.13),
-      x1: w - (narrow ? 12 : 28),
+      x1,
       y0: narrow ? 92 : 104,
       y1: h - (narrow ? 110 : 132),
       labels: !narrow,
+      xb: w >= 1200 ? slideRightEdge(w) + 40 : undefined,
     }
   }
   return { w, h, x0: 0, x1: w, y0: h * 0.06, y1: h * 0.94, labels: false }
@@ -98,6 +113,7 @@ export default function Backdrop(props: StageProps) {
   const dirty = useRef(true)
   const drift = useRef(0)
   const presence = useRef(focusMode ? 1 : 0)
+  const placed = useRef(false)
 
   const showRoute = half === 'theory' && !!route
 
@@ -106,12 +122,41 @@ export default function Backdrop(props: StageProps) {
     if (surface === 'present') {
       target.current = clockForSlide(route, session.theory.blocks, slideIndex)
       if (half === 'practical') target.current = tEnd - 4
-      // Fold the in-slide creep into the clock so it never jumps back.
-      clock.current += drift.current
+      if (!placed.current) {
+        // Arriving on a slide by link or refresh: start at its moment
+        // rather than replaying the whole run from the first stop.
+        placed.current = true
+        clock.current = target.current
+      } else {
+        // Fold the in-slide creep into the clock so it never jumps back.
+        clock.current += drift.current
+      }
       drift.current = 0
       dirty.current = true
     }
   }, [route, surface, slideIndex, half, session, tEnd])
+
+  /* Demo slide: each line the instructor reads moves the clock to its stop. */
+  const onDemo = surface === 'present' && props.block?.kind === 'evidence'
+  useEffect(() => {
+    if (!onDemo || !route) return
+    const onReach = (e: Event) => {
+      const t = (e as CustomEvent<{ t: number }>).detail?.t
+      if (typeof t !== 'number') return
+      const next = t >= route.end ? route.end + 12 : t + 1
+      if (next > target.current) {
+        target.current = next
+        dirty.current = true
+        if (reducedMotion) {
+          clock.current = next
+          drawFrame(true)
+        }
+      }
+    }
+    window.addEventListener(ROUTE_EVENT, onReach)
+    return () => window.removeEventListener(ROUTE_EVENT, onReach)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onDemo, route, reducedMotion])
 
   /* Study and overview: reading progress is the clock. */
   useEffect(() => {
@@ -136,7 +181,16 @@ export default function Backdrop(props: StageProps) {
   }, [focusMode])
 
   /* ---------------- coordinate helpers ---------------- */
-  const xOf = (t: number, g: Geometry) => g.x0 + ((t - tStart) / (tEnd - tStart)) * (g.x1 - g.x0)
+  /* The time at which the scale changes: just before the run leaves its
+     first station. */
+  const tb = route ? (route.stops[1]?.t ?? route.end) - 15 : tEnd
+  const xOf = (t: number, g: Geometry) => {
+    if (g.xb === undefined || tb <= tStart || tb >= tEnd) {
+      return g.x0 + ((t - tStart) / (tEnd - tStart)) * (g.x1 - g.x0)
+    }
+    if (t <= tb) return g.x0 + ((t - tStart) / (tb - tStart)) * (g.xb - g.x0)
+    return g.xb + ((t - tb) / (tEnd - tb)) * (g.x1 - g.xb)
+  }
   const yOf = (s: number, g: Geometry) => g.y0 + offsets[s] * (g.y1 - g.y0)
 
   /* ---------------- the static sheet ---------------- */
@@ -145,8 +199,8 @@ export default function Backdrop(props: StageProps) {
     const inks = (inksRef.current = readInks())
     const sheet = sheetRef.current ?? document.createElement('canvas')
     sheetRef.current = sheet
-    sheet.width = Math.round(g.w * dpr)
-    sheet.height = Math.round(g.h * dpr)
+    sheet.width = Math.max(1, Math.round(g.w * dpr))
+    sheet.height = Math.max(1, Math.round(g.h * dpr))
     const ctx = sheet.getContext('2d')!
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.clearRect(0, 0, g.w, g.h)
@@ -194,6 +248,21 @@ export default function Backdrop(props: StageProps) {
       }
     })
 
+    /* The scale change is marked on both axes, as a printed graph would. */
+    if (g.xb !== undefined) {
+      ctx.globalAlpha = 0.7
+      ctx.strokeStyle = inks.graphite
+      ctx.lineWidth = 1.2
+      for (const y of [g.y0 - 10, g.y1 + 10]) {
+        ctx.beginPath()
+        ctx.moveTo(g.xb - 5, y + 5)
+        ctx.lineTo(g.xb - 1, y - 5)
+        ctx.moveTo(g.xb + 1, y + 5)
+        ctx.lineTo(g.xb + 5, y - 5)
+        ctx.stroke()
+      }
+    }
+
     /* Scheduled traffic: the baseline lattice. */
     ctx.strokeStyle = inks.graphite
     ctx.lineWidth = present ? 1 : 0.9
@@ -221,7 +290,8 @@ export default function Backdrop(props: StageProps) {
     const dpr = canvas.width / Math.max(1, g.w)
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    if (sheetRef.current) ctx.drawImage(sheetRef.current, 0, 0)
+    const sheet = sheetRef.current
+    if (sheet && sheet.width > 0 && sheet.height > 0) ctx.drawImage(sheet, 0, 0)
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
     const present = surface === 'present'

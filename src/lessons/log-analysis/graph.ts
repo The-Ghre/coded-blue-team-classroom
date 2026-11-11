@@ -167,9 +167,15 @@ export function clockForSlide(
 ): number {
   const demoIdx = blocks.findIndex((b) => b.kind === 'evidence')
   const waitEnd = route.stops[1]?.t ?? route.end
-  const from = route.start + 4
+  // The title already shows the run waiting: a visible line from the logon
+  // to the clock, which keeps creeping through the wait slide by slide.
+  const from = route.start + 70
   if (demoIdx < 0) return route.end
-  if (slideIndex >= demoIdx) {
+  // On the demo slide itself the run is still waiting: it advances only as
+  // the instructor reads each line (see ROUTE_EVENT), so the slide never
+  // shows its own answer before it has been read.
+  if (slideIndex === demoIdx) return waitEnd - 8
+  if (slideIndex > demoIdx) {
     const after = blocks.length - 1 - demoIdx
     const k = after > 0 ? (slideIndex - demoIdx) / after : 1
     return route.end + 12 + k * 30
@@ -188,3 +194,6 @@ export function graphWindow(route: Route): [number, number] {
  * handout never carries an unstyled drawing.
  */
 export const HIDDEN_ON_PAPER = { display: 'none' } as const
+
+/** Dispatched by the evidence block when a line is read: { t: seconds }. */
+export const ROUTE_EVENT = 'la-route-reached'
