@@ -30,7 +30,7 @@
   :root[data-lesson='threat-hunting'] .hunt-hero h1 { font-size: clamp(3rem,6.3vw,6rem); line-height: 1; letter-spacing: -.035em; }
   :root[data-lesson='threat-hunting'] .hunt-hero__heading > p { color: var(--text-muted); font-size: .875rem; }
   :root[data-lesson='threat-hunting'] .hunt-hero__lead { max-width: 74ch; margin-top: 1.5rem; }
-  :root[data-lesson='threat-hunting'] .hunt-distribution { margin: 2rem 0 0; }
+  :root[data-lesson='threat-hunting'] .hunt-distribution { display: block; margin: 2rem 0 0; }
   :root[data-lesson='threat-hunting'] .hunt-distribution__heading { display: flex; justify-content: space-between; gap: 1rem; align-items: center; border-top: 1px solid var(--line); padding-top: .75rem; }
   :root[data-lesson='threat-hunting'] .hunt-distribution figcaption { font-size: .875rem; color: var(--text-muted); }
   :root[data-lesson='threat-hunting'] .hunt-distribution__plot { display: flex; align-items: end; gap: clamp(3px,.65vw,10px); height: 195px; border-bottom: 1px solid var(--text); padding: 0 4px; }
@@ -63,12 +63,12 @@
   :root[data-lesson='threat-hunting'] .th-stack__rows { list-style: none; padding: 0; margin: 0; }
   :root[data-lesson='threat-hunting'] .th-stack__row { display: grid; grid-template-columns: minmax(0,1fr) 4rem; padding: .75rem 0; border-top: 1px solid var(--line); gap: .5rem; position: relative; }
   :root[data-lesson='threat-hunting'] .th-stack__pair { font: 400 .8rem 'IBM Plex Mono',monospace; overflow-wrap: anywhere; }
-  :root[data-lesson='threat-hunting'] .th-stack__count { text-align: right; font-family: 'IBM Plex Mono',monospace; font-variant-numeric: tabular-nums; }
+  :root[data-lesson='threat-hunting'] .th-stack__count { grid-column: 2; grid-row: 1; text-align: right; font-family: 'IBM Plex Mono',monospace; font-variant-numeric: tabular-nums; }
   :root[data-lesson='threat-hunting'] .th-stack__row[data-rare='true'] { color: var(--accent); border-color: var(--accent); font-weight: 600; }
-  :root[data-lesson='threat-hunting'] .th-stack__strip { display: block; grid-column: 1/-1; height: 4px; }
+  :root[data-lesson='threat-hunting'] .th-stack__strip { display: block; grid-column: 1/-1; grid-row: 2; height: 3px; }
   :root[data-lesson='threat-hunting'] .th-stack__fill { display: block; width: calc(var(--share)*100%); height: 100%; background: #b2a1bc; }
   :root[data-lesson='threat-hunting'] .th-stack__caption { margin-top: .75rem; font-size: .75rem; color: var(--text-muted); }
-  :root[data-lesson='threat-hunting'] .th-stack__points { margin-top: 0; }
+  :root[data-lesson='threat-hunting'] .th-stack__points { align-content: start; margin-top: 0; }
   :root[data-lesson='threat-hunting'] .th-pipe__strip { display: flex; padding: 0; list-style: none; margin: 1.5rem 0; border-block: 1px solid var(--line-strong); }
   :root[data-lesson='threat-hunting'] .th-pipe__stamp { flex: 1; padding: 1rem; border-right: 1px solid var(--line); }
   :root[data-lesson='threat-hunting'] .th-pipe__band { display: block; color: var(--accent); margin-bottom: .75rem; font: 500 1.5rem 'IBM Plex Mono',monospace; }
@@ -79,7 +79,7 @@
   :root[data-lesson='threat-hunting'] .th-query__plate { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(0,1fr); gap: 1.5rem; margin-block: 1.5rem; }
   :root[data-lesson='threat-hunting'] .th-query__code { min-width: 0; background: #fff; }
   :root[data-lesson='threat-hunting'] .th-query__body { position: relative; max-height: 38rem; overflow: auto; }
-  :root[data-lesson='threat-hunting'] .th-query__line { display: inline-block; min-width: 100%; }
+  :root[data-lesson='threat-hunting'] .th-query__line { display: block; min-width: 100%; }
   :root[data-lesson='threat-hunting'] .th-query__line[data-comment='true'] { color: var(--text-dim); }
   :root[data-lesson='threat-hunting'] .th-query__line[data-lit='true'] { background: #f5dce8; color: #770a3b; }
   :root[data-lesson='threat-hunting'] .th-query__pin { display: inline-block; width: 1.5rem; color: var(--accent); }
@@ -141,5 +141,67 @@
     :root[data-lesson='threat-hunting']::view-transition-new(slide),
     :root[data-lesson='threat-hunting']::view-transition-old(slide) { animation: none; }
     :root[data-lesson='threat-hunting'] * { scroll-behavior: auto !important; }
+  }
+}
+@media screen {
+  :root[data-lesson='threat-hunting'] .block__head > .eyebrow { order: 3; margin-top: .5rem; }
+  :root[data-lesson='threat-hunting'] .block__head { display: flex; flex-direction: column; align-items: start; }
+  :root[data-lesson='threat-hunting'] .present__slide { --s-5: 1rem; --s-6: 1.25rem; }
+  :root[data-lesson='threat-hunting'] .present__slide .block__head > .eyebrow { display: none; }
+  :root[data-lesson='threat-hunting'] .present__slide .block__meta { margin-top: .4rem; }
+  :root[data-lesson='threat-hunting'] .present__slide .redblue__pane { padding: .75rem; }
+  :root[data-lesson='threat-hunting'] .present__slide .redblue__pane p { line-height: 1.4; }
+  :root[data-lesson='threat-hunting'] .present__slide .query__result-col { padding: .75rem; }
+  :root[data-lesson='threat-hunting'] .present__slide .query__result-col :is(p,li) { font-size: .8rem; line-height: 1.4; }
+  :root[data-lesson='threat-hunting'] .present__slide .query__result-col li + li { margin-top: .25rem; }
+  :root[data-lesson='threat-hunting'] .present__slide .th-stack__row { padding-block: .3rem; gap: .2rem; }
+  :root[data-lesson='threat-hunting'] .present__slide .th-stack__count { font-size: .875rem; }
+  :root[data-lesson='threat-hunting'] .present__slide .th-stack__specimen { align-self: start; }
+  :root[data-lesson='threat-hunting'] .present__slide .th-stack__points { gap: .6rem; }
+  :root[data-lesson='threat-hunting'] .present__slide .th-stack__points li { font-size: 1rem; }
+  @media (min-width: 1000px) {
+    :root[data-lesson='threat-hunting'] .present__stage { padding-block: 1rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .block--title { padding: 0; }
+    :root[data-lesson='threat-hunting'] .present__slide .block--title__lead { font-size: 1.35rem; max-width: 65ch; }
+    :root[data-lesson='threat-hunting'] .present__slide .scenario__narrative { max-width: 88ch; font-size: 1.25rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .scenario__driver { padding: 1rem; margin-top: 1rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .compare__table :is(th,td) { padding: .55rem .75rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .th-query__body { max-height: 245px; }
+    :root[data-lesson='threat-hunting'] .present__slide .th-query__item-body { gap: .2rem; line-height: 1.35; }
+    :root[data-lesson='threat-hunting'] .present__slide .th-query__assumes { margin-top: .5rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .th-query > .lead { max-width: none; }
+    :root[data-lesson='threat-hunting'] .present__slide .check__list { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1.5rem; align-items: start; margin-top: 1rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .check__stem { font-size: 1.15rem; min-height: 4.8rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .check__option { padding: .6rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .tasks__list { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .tasks__task { padding: .75rem; border: 0; border-top: 1px solid var(--line-strong); background: transparent; }
+    :root[data-lesson='threat-hunting'] .present__slide .tasks__task:first-child { grid-row: span 2; }
+    :root[data-lesson='threat-hunting'] .present__slide .tasks__head { flex-wrap: wrap; gap: .5rem; padding-bottom: .5rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .tasks__head h4 { font-size: 1rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .tasks__steps { font-size: .85rem; line-height: 1.35; margin-top: .5rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .tasks__steps li + li { margin-top: .3rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .tasks__produces { font-size: .75rem; line-height: 1.35; margin-top: .5rem; padding-top: .5rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .tasks__budget { margin-top: .5rem; padding: .5rem .75rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .block--brief { display: grid; grid-template-columns: 1fr 2fr; gap: .75rem 1rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .block--brief > .block__head { grid-column: 1/-1; }
+    :root[data-lesson='threat-hunting'] .present__slide .brief__scenario { margin: 0; padding: .75rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .brief__scenario .lead { font-size: 1rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .brief__grid { margin: 0; gap: .75rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .brief__panel { padding: .75rem; margin: 0; }
+    :root[data-lesson='threat-hunting'] .present__slide .brief__panel :is(ul,ol) { font-size: .8rem; line-height: 1.4; }
+    :root[data-lesson='threat-hunting'] .present__slide .brief__panel li + li { margin-top: .4rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .brief__download { padding: .5rem; gap: .5rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .brief__requires span { font-size: .75rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .block--brief > .brief__panel { grid-column: 1; }
+    :root[data-lesson='threat-hunting'] .present__slide .block--brief > .callout { grid-column: 2; margin: 0; align-self: start; }
+    :root[data-lesson='threat-hunting'] .present__slide .block--deliverables { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .block--deliverables > .block__head { grid-column: 1/-1; }
+    :root[data-lesson='threat-hunting'] .present__slide .deliverables__list { margin: 0; }
+    :root[data-lesson='threat-hunting'] .present__slide .block--deliverables > .code { align-self: start; margin: 0; }
+    :root[data-lesson='threat-hunting'] .present__slide .block--deliverables .code__body { white-space: pre-wrap; overflow-wrap: anywhere; }
+    :root[data-lesson='threat-hunting'] .present__slide .recap__takeaways { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem 2rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .recap__takeaways li { padding-block: .5rem; font-size: 1.05rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .cov__summary-prompt { font-size: 1rem; }
+    :root[data-lesson='threat-hunting'] .present__slide .th-pipe__band { margin-bottom: .25rem; font-size: 1.25rem; }
   }
 }

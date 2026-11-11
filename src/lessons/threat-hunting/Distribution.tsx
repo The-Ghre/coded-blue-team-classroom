@@ -9,7 +9,7 @@ export function Distribution() {
   const bars = Array.from({ length: 36 }, (_, i) => ({ id: i, height: 5 + 178 / (1 + i * 0.38) ** 1.5 }))
   if (ascending) bars.reverse()
   return (
-    <figure className="hunt-distribution">
+    <figure className="hunt-distribution" hidden>
       <div className="hunt-distribution__heading">
         <figcaption>Stack counting · parent → child process</figcaption>
         <button type="button" className="btn" aria-pressed={ascending} onClick={() => setAscending(v => !v)}>
