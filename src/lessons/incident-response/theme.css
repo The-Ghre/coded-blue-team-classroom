@@ -195,3 +195,13 @@
 @media screen and (min-width: 700px) {
   :root[data-lesson='incident-response'] .present__slide { contain: layout paint; }
 }
+
+@media screen and (max-width: 699px) {
+  /* Table and preformatted content must not size the mobile stage's grid track. */
+  :root[data-lesson='incident-response'] .present__stage { grid-template-columns: minmax(0, 1fr); }
+  :root[data-lesson='incident-response'] .present__slide { min-width: 0; }
+  :root[data-lesson='incident-response'] .present__slide .compare__table { table-layout: fixed; }
+  :root[data-lesson='incident-response'] .present__slide .compare__table :is(th, td) { white-space: normal; padding: .75rem .5rem; }
+  :root[data-lesson='incident-response'] .present__slide .compare__table tbody th { width: auto; }
+  :root[data-lesson='incident-response'] .present__slide .block--deliverables .code__body { white-space: pre-wrap; }
+}
