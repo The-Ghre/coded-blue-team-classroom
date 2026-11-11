@@ -21,6 +21,19 @@ import { Detail, Footer, Head } from '../shared'
    a separate path inside "opened". The rings draw in the order you ask.
    ========================================================================= */
 
+/** "Who clicked? Proxy and DNS logs…" → the question, then the evidence. */
+function splitQuestion(point: string): [string, string] | null {
+  const i = point.indexOf('? ')
+  if (i <= 0 || i > 60) return null
+  return [point.slice(0, i + 1), point.slice(i + 2)]
+}
+
+/** "From the TLS certificate, search…" → "TLS certificate". */
+function pivotSource(point: string): string | null {
+  const m = /^From (?:the )?([^,]{2,28}),/.exec(point)
+  return m ? m[1] : null
+}
+
 function splitTerm(point: string): [string, string] | null {
   const i = point.indexOf(' — ')
   if (i <= 0 || i > 48) return null
@@ -72,11 +85,48 @@ function Ripples({ active, onHover }: { active: number | null; onHover: (i: numb
   )
 }
 
+/*
+  Pivoting: one indicator on one line; from it, a crossline with a dropper
+  for every pivot path the content names. The hooks set one after another —
+  the infrastructure each path can turn up before it is used.
+*/
+function Longline({ sources }: { sources: string[] }) {
+  const n = sources.length
+  const xs = sources.map((_, i) => 60 + (i * 280) / Math.max(1, n - 1))
+  return (
+    <figure className="pi-longline" aria-hidden="true">
+      <svg viewBox="0 0 400 250" focusable="false">
+        <path className="pi-longline__main" d="M200 -40 V70" />
+        <path className="pi-longline__cross" d={`M${xs[0]} 112 Q200 128 ${xs[n - 1]} 112`} pathLength={1} />
+        <path className="pi-longline__stem" d="M200 82 V118" />
+        <g className="pi-longline__origin">
+          <circle cx="200" cy="76" r="9" />
+          <text x="200" y="50">one indicator</text>
+        </g>
+        {xs.map((x, i) => {
+          const y = 112 + 16 * (1 - Math.pow((x - 200) / 140, 2))
+          return (
+            <g key={i} className="pi-longline__drop" style={{ '--i': i } as React.CSSProperties}>
+              <path d={`M${x} ${y} V${178}`} />
+              <path className="pi-longline__hook" d={`M${x} 178 C${x} 192 ${x + 14} 192 ${x + 14} 180 M${x + 14} 180 L${x + 10} 186`} />
+              <text x={x} y="222">
+                {sources[i]}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+    </figure>
+  )
+}
+
 export function ConceptPlate({ block, mode }: BlockOverrideProps<ConceptBlock>) {
   const [active, setActive] = useState<number | null>(null)
   const isImpact = block.id === 'impact' && block.points.length === RINGS.length
   const termed = block.points.every((p) => splitTerm(p))
 
+  const sources = block.points.map(pivotSource).filter((x): x is string => !!x)
+  const isPivot = !isImpact && sources.length >= 3
   const List = isImpact ? 'ol' : 'ul'
   const points = (
     <List
@@ -85,7 +135,7 @@ export function ConceptPlate({ block, mode }: BlockOverrideProps<ConceptBlock>) 
       }`}
     >
       {block.points.map((p, i) => {
-        const t = splitTerm(p)
+        const t = termed ? splitTerm(p) : isImpact ? splitQuestion(p) : null
         return (
           <li
             key={i}
@@ -102,7 +152,7 @@ export function ConceptPlate({ block, mode }: BlockOverrideProps<ConceptBlock>) 
             )}
             {t ? (
               <span className="pi-points__body">
-                <span className="pi-points__term">{t[0]}</span>
+                <span className="pi-points__term">{t[0]}</span>{' '}
                 <span className="pi-points__desc">{t[1]}</span>
               </span>
             ) : (
@@ -121,6 +171,11 @@ export function ConceptPlate({ block, mode }: BlockOverrideProps<ConceptBlock>) 
       {isImpact ? (
         <div className="pi-impact">
           <Ripples active={active} onHover={setActive} />
+          {points}
+        </div>
+      ) : isPivot ? (
+        <div className="pi-impact pi-impact--pivot">
+          <Longline sources={sources} />
           {points}
         </div>
       ) : (

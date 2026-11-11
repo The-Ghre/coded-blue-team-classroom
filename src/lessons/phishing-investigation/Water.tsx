@@ -71,9 +71,9 @@ void main() {
   float depth = clamp((surfaceY - uv.y) / surfaceY, 0.0, 1.0);
 
   // Ground: lake green, darker with depth. Practical half: later, warmer, lower.
-  vec3 topT = vec3(0.059, 0.294, 0.275);
+  vec3 topT = vec3(0.047, 0.255, 0.239);
   vec3 deepT = vec3(0.020, 0.133, 0.125);
-  vec3 topP = vec3(0.078, 0.239, 0.212);
+  vec3 topP = vec3(0.066, 0.208, 0.184);
   vec3 deepP = vec3(0.016, 0.098, 0.102);
   vec3 top = mix(topT, topP, uHalf);
   vec3 deep = mix(deepT, deepP, uHalf);
@@ -89,7 +89,7 @@ void main() {
   vec3 lightT = vec3(0.62, 0.86, 0.72);
   vec3 lightP = vec3(0.98, 0.72, 0.42);
   vec3 light = mix(lightT, lightP, uHalf);
-  float shaftAmt = (0.05 + 0.025 * uFocus) * mix(1.0, 0.8, uHalf);
+  float shaftAmt = (0.042 + 0.02 * uFocus) * mix(1.0, 0.8, uHalf);
   col += light * shafts * shaftFade * shaftAmt;
 
   // Caustic ridges, strongest just under the surface.
@@ -97,8 +97,8 @@ void main() {
   float c1 = ridge(cp + vec2(t * 0.11, t * 0.07));
   float c2 = ridge(cp * 1.31 - vec2(t * 0.09, -t * 0.05) + 3.7);
   float caustic = pow(c1 * c2, 7.0);
-  float causticFade = (1.0 - smoothstep(0.0, 0.32, depth)) * (1.0 - uCalm * 0.8);
-  col += light * caustic * causticFade * 0.11;
+  float causticFade = (1.0 - smoothstep(0.0, 0.2, depth)) * (1.0 - uCalm * 0.8);
+  col += light * caustic * causticFade * 0.075;
 
   // Marine snow: sparse particles drifting slowly down through the column.
   float snow = 0.0;

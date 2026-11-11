@@ -15,19 +15,26 @@ import { LureRig } from '../Lure'
 
 export function TitlePlate({ block, mode }: BlockOverrideProps<TitleBlock>) {
   const session = getSession('phishing-investigation')
+  // On the study page the hero above already carries the name and the lure,
+  // so the title block reads as the opening line, not a second masthead.
+  const slide = mode === 'slide'
+  // One h1 per view: the study page's hero already owns it.
+  const Heading = slide ? 'h1' : 'h2'
   return (
     <section className="block block--title pi-title" data-mode={mode}>
       <div className="pi-title__text">
-        <h1 className="block--title__h pi-title__h">
+        <Heading className="block--title__h pi-title__h">
           <span className="pi-title__num">{block.title}</span>
-          {session && <span className="pi-title__name">{session.title}</span>}
-        </h1>
+          {slide && session && <span className="pi-title__name">{session.title}</span>}
+        </Heading>
         {block.lead && <p className="block--title__lead pi-title__lead">{block.lead}</p>}
         <p className="pi-title__plate">{block.overline}</p>
       </div>
-      <div className="pi-title__rig">
-        <LureRig />
-      </div>
+      {slide && (
+        <div className="pi-title__rig">
+          <LureRig />
+        </div>
+      )}
     </section>
   )
 }

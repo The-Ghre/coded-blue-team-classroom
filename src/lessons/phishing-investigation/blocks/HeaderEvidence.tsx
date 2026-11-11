@@ -227,6 +227,21 @@ export function HeaderEvidence({ block, mode }: BlockOverrideProps<EvidenceBlock
         </div>
       </div>
 
+      {/* Paper has no clicks: every line prints with its annotation. */}
+      <ol className="pi-read__print">
+        {block.lines.map((line, i) => (
+          <li key={i}>
+            <code>{line.text}</code>
+            {line.note && (
+              <div className="evidence__note">
+                <EvidenceChip kind={line.note.kind} /> <strong>{line.note.label}</strong>
+                <p>{line.note.body}</p>
+              </div>
+            )}
+          </li>
+        ))}
+      </ol>
+
       <div className="proves">
         <div className="proves__col proves__col--yes">
           <div className="proves__head">
