@@ -162,3 +162,14 @@
     :root[data-lesson='incident-response']::view-transition-new(slide), :root[data-lesson='incident-response']::view-transition-old(slide) { animation: none; }
   }
 }
+
+@media screen {
+  :root[data-lesson='incident-response'] .present__stage { min-height: 0; overflow: hidden; align-items: stretch; }
+  :root[data-lesson='incident-response'] .present__slide { min-height: 0; max-height: 100%; overflow-y: auto; overflow-x: hidden; scrollbar-gutter: stable; padding: .5rem; overscroll-behavior: contain; }
+  :root[data-lesson='incident-response'] .present__slide * { min-width: 0; overflow-wrap: anywhere; }
+  :root[data-lesson='incident-response'] .present__slide:focus-visible { outline-offset: -3px; }
+  @media (max-width: 699px) {
+    :root[data-lesson='incident-response'] .present__stage { overflow-y: auto; }
+    :root[data-lesson='incident-response'] .present__slide { max-height: none; overflow: visible; }
+  }
+}
