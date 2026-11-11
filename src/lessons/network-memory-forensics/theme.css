@@ -1560,7 +1560,10 @@
       overflow: hidden;
     }
 
+    /* The cylinder engraves these labels itself; the caption carries them
+       only where the engraving is too small to read. */
     & .nmf-lid__caption {
+      display: none;
       margin: 0;
       padding: 0.35rem 0.9rem 0.55rem;
       font-family: var(--font-mono);
@@ -2053,6 +2056,10 @@
       & .nmf-lid .nmf-cyl__row-label,
       & .nmf-lid .nmf-cyl__time {
         display: none;
+      }
+
+      & .nmf-lid__caption {
+        display: block;
       }
     }
   }
