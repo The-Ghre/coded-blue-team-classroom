@@ -5,23 +5,17 @@ primary_target: "src/lessons/phishing-investigation/index.ts"
 related_targets: []
 ---
 
-# Session 03 — Phishing Investigation (lesson kit)
+# Message / Source
+Mode: Experience for the projected opening, Read for study; Operate for reported email decisions.
 
-Scope: the lesson world for Session 03 across present (showpiece), study, workshop and overview. Mode: Experience on present; Read on study/workshop/overview (world carries the ground and chrome, prose stays calm).
-Audience: CODED Defensive track students and instructors; projected in a dim classroom, studied on laptops and phones.
-Constraints: content from src/content only, synthetic data labelled, no real brand imitation, IBM Plex only, reduced motion composed, print stays ink-on-paper.
-Decision: the user waived the direction round ("You decide all 10"); the assigned direction was chosen without a decision page.
+Mechanism: compare what a message claims with the transport and impact evidence behind it. Audience: Gulf ESL learners in a projected classroom, later reading and investigating independently. Real practice: preserve .eml, trace Received hops, compare sending domains, inspect defanged links, establish impact, contain, pivot.
 
-## Direction contract
+Seven grounded directions, ordered by resonance: 1. unfolded .eml anatomy (ivory/plum, large envelope); 2. header comparison proof (white/red, aligned fields); 3. mail delivery route (cool grey/teal, branching hops); 4. link destination inspection (cream/vermilion, underlined domain); 5. recipient impact ledger (white/ink, sequential rows); 6. Message / Source (lavender paper/plum source, offset envelope cover opening onto routing); 7. campaign correspondence index (chalk/berry, connected sender records). Seed dc0139ad assigned 6. Choose it without a decision page as explicitly requested.
 
-THESIS: A phishing email is a lure: a painted counterfeit with a hook, held on a line by someone you cannot see. The investigation follows the line back to the hand. Refuses the category default of a dark SOC dashboard with a mail-client mock.
+World: very pale lavender ground, deep aubergine ink, vermilion mismatches, teal corroboration. IBM Plex Sans Condensed headlines, Sans reading, Mono only for source fields. First viewport: headline and controls left, a large email with its visible face displaced above an exposed source record right. Signature: keyboard-operable message/source toggle unfolds the cover, reveals destination and traces the routing chain bottom to top. Source remains legible at rest. Study uses measured source sheets, presentation uses a compact routing margin. Existing block and interaction renderers keep all teaching text and behaviour.
 
-OWN-WORLD: Lake water in daylight — committed deep lake green ground with light shafts and caustics from a surface line; a monofilament hairline is the one curve on every screen; lure enamels (chartreuse, brass, coral) as named roles; specimen plates numbered in Plex Serif, labels in Plex Sans Condensed caps, headers in Plex Mono. State is a mark (knot tied, line cut), never a hue alone.
+Network retry restored catalog. Challengers declined on audience identification and product clarity: PC98 fixed-cell screen (raise: stable regions through state changes); comic page (raise: sharp hierarchy between visible message and evidence); data-sublime barcode field (raise: precise density); luminescent understory (raise: attention guided by one signal); paper automata (raise: disclosure visibly exposes structure). Other catalog direction is not adopted; literal practice and accessible inspection outrank foreign imagery. No borrowing of motifs. No generated assets.
 
-STORY: Students learn that what the target sees is paint; truth is the line underneath, read from origin upward; impact spreads as ripples, asked from the outside in; one line leads to the boat that holds several.
+Risk: a familiar email envelope needs actual routing structure to avoid becoming a generic mail illustration. Preserve source field names, connected hops and differing sender/destination. No real-brand imitation; new specimen uses only defanged .example data and explicit synthetic label. Existing lesson facts remain untouched.
 
-FIRST VIEWPORT: Title slide — water surface across the top fifth, one line descending in a catenary to a large SVG lure hanging beside the giant condensed title; the lure turns toward the pointer; the lead sits below the hook.
-
-FORM: Candidate 7 of 7 (angling lure plates, the subject's own vocabulary). seed:0ccd7f9812f935ce. Raises — Specimen (declined): the counterfeit character is shown at specimen scale. Cutting bench (declined): state is a mark, not a hue. Woodblock (declined): header lines register onto one fixed record that never moves. Curved crease (declined): one line rules each composition. Rain cityscape (declined): light is time-indexed to deck progress, practical half late and low. Telop (declined): pressure scales with consequence in the impact rings.
-
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+Verification: see final report. Review captures are local ignored artifacts, not lesson code.
