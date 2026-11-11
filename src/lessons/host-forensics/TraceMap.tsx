@@ -14,10 +14,9 @@ export function TraceMap() {
           {deleted ? 'Restore executable in schematic' : 'Delete executable in schematic'}
         </button>
       </div>
-      <svg viewBox="0 0 1000 286" role="img" aria-label={`Two host file trees. Executable ${deleted ? 'deleted' : 'present'}. Independent execution records remain: Prefetch and UserAssist on Windows; auditd and syslog on Linux.`}>
+      <div className="hf-map__trees">
         {['Windows', 'Linux'].map((host, i) => {
-          const x = i * 510
-          return <g key={host} transform={`translate(${x} 0)`} className={`hf-map__host hf-map__host--${i}`}>
+          return <svg key={host} viewBox="0 0 490 286" role="img" aria-label={`${host}: executable ${deleted ? 'deleted' : 'present'}; independent execution records remain.`} className={`hf-map__host hf-map__host--${i}`}>
             <text x="14" y="35" className="hf-map__platform">{host}</text>
             <path d="M15 62H472M36 83V248M36 104H79M36 172H79M36 240H79" className="hf-map__tree" />
             <g className="hf-map__object">
@@ -32,9 +31,9 @@ export function TraceMap() {
               <path d="M443 161l6 6 12-14M443 229l6 6 12-14" />
             </g>
             <path d="M36 142V240H72" className="hf-map__pulse" pathLength="100" />
-          </g>
+          </svg>
         })}
-      </svg>
+      </div>
       <p className="hf-map__status" aria-live="polite">{deleted ? 'Executable deleted. Independent execution records remain.' : 'Executable present. Independent execution records remain.'}</p>
     </div>
   )

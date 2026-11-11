@@ -85,3 +85,39 @@
   :root[data-lesson='host-forensics']::view-transition-new(slide),
   :root[data-lesson='host-forensics']::view-transition-old(slide) { animation: none; }
 }
+@media screen {
+  :root[data-lesson='host-forensics'] .hf-map__trees { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding-inline: 1rem; }
+  :root[data-lesson='host-forensics'] .hf-map__trees svg { min-width: 0; width: 100%; }
+  :root[data-lesson='host-forensics'] .hf-title { grid-template-columns: 1fr; gap: 1.25rem; }
+  :root[data-lesson='host-forensics'] .hf-title .block--title__h { font-size: 4rem; }
+  :root[data-lesson='host-forensics'] .hf-title .hf-map__trees svg { min-height: 0; max-height: 220px; }
+  :root[data-lesson='host-forensics'] .hf-title .block--title { display: grid; grid-template-columns: auto 1fr; gap: .75rem 2rem; align-items: center; }
+  :root[data-lesson='host-forensics'] .hf-title .block--title > .eyebrow { grid-column: 1 / -1; order: 3; }
+  :root[data-lesson='host-forensics'] .hf-reader__nav { display: flex; align-items: center; justify-content: flex-end; gap: 1rem; padding-top: .75rem; margin-top: 1rem; border-top: 1px solid var(--line-strong); font-variant-numeric: tabular-nums; }
+  :root[data-lesson='host-forensics'] .hf-reader__pane[hidden] { display: none; }
+  :root[data-lesson='host-forensics'] .hf-reader :is(.proves__col,.proves):not(:has(li)),
+  :root[data-lesson='host-forensics'] .hf-reader .evidence:not(:has(li)),
+  :root[data-lesson='host-forensics'] .hf-reader .recap__study:not(:has(li)),
+  :root[data-lesson='host-forensics'] .hf-reader .concept__points:empty { display: none; }
+  :root[data-lesson='host-forensics'] .hf-reader .proves:has(.proves__col:only-child) { grid-template-columns: 1fr; }
+  :root[data-lesson='host-forensics'] .hf-reader .proves { grid-template-columns: 1fr; }
+  :root[data-lesson='host-forensics'] .hf-reader .lead { font-size: 1.25rem; line-height: 1.5; }
+  :root[data-lesson='host-forensics'] .hf-reader .concept__points li { font-size: 1.15rem; line-height: 1.45; }
+  :root[data-lesson='host-forensics'] .hf-reader .concept__points { gap: .75rem; }
+  :root[data-lesson='host-forensics'] .hf-reader :is(.redblue,.callout) { font-size: 1rem; }
+  :root[data-lesson='host-forensics'] .hf-reader .evidence__note { margin-block: .5rem; }
+  :root[data-lesson='host-forensics'] .present__slide .block__head { margin-bottom: .75rem; }
+}
+@media screen and (max-width: 700px) {
+  :root[data-lesson='host-forensics'] .hf-map__trees { grid-template-columns: 1fr; gap: 0; padding-inline: .5rem; }
+  :root[data-lesson='host-forensics'] .hf-map__trees svg { width: 100%; }
+  :root[data-lesson='host-forensics'] .hf-title .block--title { display: block; }
+  :root[data-lesson='host-forensics'] .hf-reader__nav { gap: .5rem; justify-content: space-between; }
+  :root[data-lesson='host-forensics'] .hf-reader__nav .btn { font-size: .8rem; }
+}
+@media screen {
+  :root[data-lesson='host-forensics'] .present__slide .scenario__narrative { font-size: 1.2rem; line-height: 1.5; max-width: 75ch; }
+  :root[data-lesson='host-forensics'] .present__slide .scenario__driver { padding: 1rem; margin-top: 1rem; }
+  :root[data-lesson='host-forensics'] .present__slide .scenario__setting { margin-block: .75rem; }
+  :root[data-lesson='host-forensics'] .present__slide .deliverables__list { margin-bottom: 1rem; }
+}
