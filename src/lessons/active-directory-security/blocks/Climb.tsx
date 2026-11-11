@@ -76,7 +76,7 @@ export function Climb({ block, mode }: BlockOverrideProps<EvidenceBlock>) {
     const t0 = performance.now()
     choose(0)
     const tick = (now: number) => {
-      const step = (now - t0) / STEP_MS
+      const step = Math.max(0, (now - t0) / STEP_MS)
       const i = Math.min(n - 1, Math.floor(step))
       const k = Math.min(1, step - i)
       const a = rows[i].minutes
