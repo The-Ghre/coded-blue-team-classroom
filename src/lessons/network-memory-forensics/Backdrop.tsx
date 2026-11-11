@@ -20,10 +20,10 @@ import { rng } from './parts'
              in blued steel that no score contains
      lanes   three groups of teeth that strike together at one moment
 
-   On a slide the text keeps a clear field: the mechanism is painted on its
-   own layer and the slide's text boxes are cut out of it. On reading pages
-   the drum stands upright in the right-hand margin, away from the prose,
-   and is left out entirely where there is no margin.
+   The mechanism keeps to a strip along the foot of the slide, which the
+   stage reserves as padding, so it never sits under a line of text. On
+   reading pages the room is the lamp alone: the cylinder appears there as
+   the page header's band, not behind the prose.
 
    Plain 2D canvas, a capped pixel ratio, paused when hidden, and one
    composed still under reduced motion.
@@ -98,10 +98,6 @@ function pinsFor(motif: Motif): DrumPin[] {
   return pins
 }
 
-/* Elements that carry words; their boxes are cut out of the mechanism. */
-const TEXT_SELECTOR =
-  'h1,h2,h3,h4,p,li,dt,dd,th,td,figcaption,summary,button,label,code,.mono-label,.duration,.ev,.nmf-print,.nmf-pinprint,.evidence,.code'
-
 interface Mech {
   w: number
   h: number
@@ -114,15 +110,11 @@ interface Mech {
   sweepAt: number
   sweepDir: number
   t: number
-  cut: DOMRect[]
 }
 
 export function Backdrop({ surface, half, block, slideIndex, direction, focusMode, reducedMotion }: StageProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const layerRef = useRef<HTMLCanvasElement | null>(null)
-  /* The clear field, blurred once whenever the slide's text moves, then
-     reused every frame. */
-  const maskRef = useRef<HTMLCanvasElement | null>(null)
   const visible = useIsVisible(canvasRef)
   const motif = motifFor(surface, half, block)
   const page = surface !== 'present'
@@ -141,7 +133,6 @@ export function Backdrop({ surface, half, block, slideIndex, direction, focusMod
     sweepAt: -10,
     sweepDir: 1,
     t: 0,
-    cut: [],
   })
 
   function draw(dt: number, still: boolean) {
@@ -185,8 +176,8 @@ export function Backdrop({ surface, half, block, slideIndex, direction, focusMod
     ctx.fillStyle = lamp
     ctx.fillRect(0, 0, w, h)
 
-    /* A reading page with no margin to spare: the lamp alone. */
-    if (page && (w < 1100 || w / h < 1.25)) return
+    /* A reading page: the lamp alone. */
+    if (page) return
 
     /* ---- the mechanism, on its own layer ---- */
     let layer = layerRef.current
@@ -204,25 +195,18 @@ export function Backdrop({ surface, half, block, slideIndex, direction, focusMod
     lc.clearRect(0, 0, layer.width, layer.height)
     lc.setTransform(dpr, 0, 0, dpr, 0, 0)
     lc.filter = 'none'
-    if (page) {
-      /* Upright in the right margin: the frame's bottom edge is the screen's right edge. */
-      const depth = Math.min(w * 0.2, 380)
-      lc.translate(w - depth, h)
-      lc.rotate(-Math.PI / 2)
-      paintMechanism(lc, h, depth, s, still)
-    } else {
-      paintMechanism(lc, w, h, s, still)
-    }
+    paintMechanism(lc, w, h, s, still)
     lc.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-    /* the clear field: the slide's text is cut out of the mechanism */
-    const mask = maskRef.current
-    if (s.cut.length && mask && mask.width === layer.width && mask.height === layer.height) {
-      lc.setTransform(1, 0, 0, 1, 0, 0)
-      lc.globalCompositeOperation = 'destination-out'
-      lc.drawImage(mask, 0, 0)
-      lc.globalCompositeOperation = 'source-over'
-    }
+    /* the strip's upper edge falls off into the room */
+    lc.setTransform(dpr, 0, 0, dpr, 0, 0)
+    lc.globalCompositeOperation = 'destination-in'
+    const fade = lc.createLinearGradient(0, h - stripHeight(h) - 34, 0, h - stripHeight(h) - 4)
+    fade.addColorStop(0, 'rgba(0,0,0,0)')
+    fade.addColorStop(1, 'rgba(0,0,0,1)')
+    lc.fillStyle = fade
+    lc.fillRect(0, 0, w, h)
+    lc.globalCompositeOperation = 'source-over'
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.drawImage(layer, 0, 0)
   }
@@ -250,40 +234,10 @@ export function Backdrop({ surface, half, block, slideIndex, direction, focusMod
     s.sweepDir = direction
   }, [slideIndex, direction])
 
-  /* Size, and the clear field under the slide's text. */
+  /* Size. */
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    const measureCut = () => {
-      const s = state.current
-      if (page) {
-        s.cut = []
-        return
-      }
-      const slide = canvas.closest('.present')?.querySelector('.present__slide')
-      const host = canvas.getBoundingClientRect()
-      s.cut = slide
-        ? Array.from(slide.querySelectorAll(TEXT_SELECTOR))
-            .map((el) => el.getBoundingClientRect())
-            .filter((r) => r.width > 0 && r.height > 0 && r.bottom > host.top && r.top < host.bottom)
-            .map((r) => new DOMRect(r.left - host.left, r.top - host.top, r.width, r.height))
-        : []
-      let mask = maskRef.current
-      if (!mask) {
-        mask = document.createElement('canvas')
-        maskRef.current = mask
-      }
-      mask.width = canvas.width
-      mask.height = canvas.height
-      const mc = mask.getContext('2d')
-      if (!mc) return
-      mc.setTransform(s.dpr, 0, 0, s.dpr, 0, 0)
-      mc.clearRect(0, 0, s.w, s.h)
-      mc.filter = 'blur(10px)'
-      mc.fillStyle = '#000'
-      for (const r of s.cut) mc.fillRect(r.x - 16, r.y - 14, r.width + 32, r.height + 28)
-      mc.filter = 'none'
-    }
     const resize = () => {
       const rect = canvas.getBoundingClientRect()
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
@@ -293,37 +247,14 @@ export function Backdrop({ surface, half, block, slideIndex, direction, focusMod
       s.w = rect.width
       s.h = rect.height
       s.dpr = dpr
-      measureCut()
       draw(0, reducedMotion)
     }
     resize()
     const ro = new ResizeObserver(resize)
     ro.observe(canvas)
-    let raf = 0
-    const schedule = () => {
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => {
-        measureCut()
-        if (reducedMotion) draw(0, true)
-      })
-    }
-    const timers = [0, 120, 720].map((ms) => window.setTimeout(schedule, ms))
-    const stage = canvas.closest('.present')?.querySelector('.present__stage')
-    const onClick = () => {
-      window.setTimeout(schedule, 40)
-      window.setTimeout(schedule, 520)
-    }
-    stage?.addEventListener('scroll', schedule, { passive: true })
-    document.addEventListener('click', onClick, true)
-    return () => {
-      ro.disconnect()
-      timers.forEach(clearTimeout)
-      cancelAnimationFrame(raf)
-      stage?.removeEventListener('scroll', schedule)
-      document.removeEventListener('click', onClick, true)
-    }
+    return () => ro.disconnect()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slideIndex, page, reducedMotion])
+  }, [reducedMotion])
 
   useFrameLoop((t, dt) => {
     state.current.t = t
@@ -337,8 +268,18 @@ export function Backdrop({ surface, half, block, slideIndex, direction, focusMod
    The drum and comb, in a frame w×h with the drum lying along the bottom
    --------------------------------------------------------------------------- */
 
+/** Height of the strip the mechanism occupies at the foot of the frame. */
+export function stripHeight(h: number) {
+  const R = drumRadius(h)
+  return R * 1.27 + 9
+}
+
+function drumRadius(h: number) {
+  return Math.min(h * 0.11, 96)
+}
+
 function paintMechanism(c: CanvasRenderingContext2D, w: number, h: number, s: Mech, still: boolean) {
-  const R = Math.min(h * 0.11, 96)
+  const R = drumRadius(h)
   const cy = h + R * 0.18
   const x0 = w * 0.04
   const x1 = w * 0.96

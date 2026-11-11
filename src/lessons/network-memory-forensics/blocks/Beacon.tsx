@@ -218,6 +218,50 @@ function PinPrint({ beacon, user }: { beacon: number[]; user: number[] }) {
   )
 }
 
+/* ---------- The governor -------------------------------------------------
+   A music box keeps time with a governor: a fan-fly that spins against the
+   air. Jitter makes the governor wobble; the beat stays on its marks. The
+   strip sets the beacon's first twelve arrivals against an exact 240-second
+   grid (the ghost positions): at 0% every pin sits on its mark, and even at
+   50% each pin stays near its own mark rather than wandering into the next.
+   --------------------------------------------------------------------------- */
+
+function Governor({ beacon, base, jitter }: { beacon: number[]; base: number; jitter: number }) {
+  const n = 12
+  let t = 0
+  const arrivals = beacon.slice(0, n).map((v) => (t += v))
+  const span = Math.max(base * (n + 0.5), (arrivals[arrivals.length - 1] ?? 0) + base * 0.5)
+  return (
+    <div
+      className="nmf-governor nmf-decor"
+      hidden
+      aria-hidden="true"
+      style={{ '--wob': `${jitter * 44}deg`, '--wob-t': `${0.9 + jitter}s` } as CSSProperties}
+    >
+      <svg className="nmf-governor__fan" viewBox="-30 -30 60 60" focusable="false">
+        <g className="nmf-governor__sway">
+          <line x1={0} y1={-26} x2={0} y2={26} className="nmf-governor__spindle" />
+          <g className="nmf-governor__vanes">
+            <rect x={-22} y={-5} width={44} height={10} rx={1.5} className="nmf-governor__vane" />
+            <circle r={4} className="nmf-governor__hub" />
+          </g>
+        </g>
+      </svg>
+      <div className="nmf-governor__beat">
+        {Array.from({ length: n }, (_, i) => (
+          <span key={`g${i}`} className="nmf-governor__ghost" style={{ left: `${((i + 1) * base * 100) / span}%` }} />
+        ))}
+        {arrivals.map((a, i) => (
+          <span key={i} className="nmf-governor__pin" style={{ left: `${(a * 100) / span}%` }} />
+        ))}
+      </div>
+      <span className="nmf-governor__label">
+        First 12 connections against an exact {base}-second beat · jitter ±{Math.round(jitter * 100)}%
+      </span>
+    </div>
+  )
+}
+
 /* ---------- Listening ------------------------------------------------------
    Opt-in sonification of the same two series. Time is compressed so the
    beacon's 240-second beat becomes a quarter of a second, and the user's
@@ -357,6 +401,7 @@ function BeaconDarkroom({ data }: { data: unknown }) {
         <p className="beacon__preset-note" aria-live="polite">
           {preset.note}
         </p>
+        <Governor beacon={beacon} base={base} jitter={preset.jitter} />
       </div>
 
       <PinPrint beacon={beacon} user={user} />

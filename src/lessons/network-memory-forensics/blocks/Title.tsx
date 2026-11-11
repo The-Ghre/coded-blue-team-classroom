@@ -29,7 +29,6 @@ export function Title({ block, mode }: BlockOverrideProps<TitleBlock>) {
   return (
     <section className="block block--title nmf-title" data-mode={mode}>
       <div className="nmf-title__plate">
-        <p className="nmf-title__engraving">{block.overline}</p>
         <Decor className="nmf-title__band">
           <Cylinder
             rows={rows}
@@ -43,9 +42,14 @@ export function Title({ block, mode }: BlockOverrideProps<TitleBlock>) {
         </Decor>
       </div>
       <div className="nmf-title__body">
-        <Heading className="block--title__h nmf-title__h nmf-rise">{block.title}</Heading>
+        {/* In study the shared title classes are left off, so the printed
+            handout sizes this as the h2 it is, under the page's h1. */}
+        <Heading className={`${mode === 'study' ? '' : 'block--title__h '}nmf-title__h nmf-rise`}>{block.title}</Heading>
         {session && <p className="nmf-title__session">{session.title}</p>}
-        {block.lead && <p className="block--title__lead nmf-title__lead">{block.lead}</p>}
+        {block.lead && (
+          <p className={`${mode === 'study' ? '' : 'block--title__lead '}nmf-title__lead`}>{block.lead}</p>
+        )}
+        <p className="nmf-title__colophon">{block.overline}</p>
       </div>
     </section>
   )

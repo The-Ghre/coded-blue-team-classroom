@@ -39,9 +39,12 @@ export function Hero({ session, half, surface, eyebrow, lead, actions }: HeroPro
   const bracket = practical ? { row: 3, col: 29 } : { row: beaconRow, col: 23 }
 
   return (
-    <header className="nmf-hero" data-surface={surface} data-half={half}>
+    <header
+      className={`nmf-hero ${surface === 'overview' ? 'overview__head' : 'study__header'}`}
+      data-surface={surface}
+      data-half={half}
+    >
       <div className="nmf-hero__plate">
-        <p className="nmf-hero__engraving">{eyebrow}</p>
         <Decor className="nmf-hero__band">
           <Cylinder
             rows={rows}
@@ -54,6 +57,7 @@ export function Hero({ session, half, surface, eyebrow, lead, actions }: HeroPro
       </div>
       <div className="nmf-hero__body">
         <h1 className="nmf-hero__title nmf-rise">{session.title}</h1>
+        <p className="nmf-hero__engraving">{eyebrow}</p>
         {surface !== 'overview' && <p className="nmf-hero__caption">{session.summary}</p>}
         {lead &&
           (typeof lead === 'string' ? (

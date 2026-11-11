@@ -3,7 +3,7 @@ import type { EvidenceBlock } from '@/types/content'
 import { EVIDENCE_META } from '@/types/content'
 import type { BlockOverrideProps } from '../../types'
 import { EvidenceChip, MonoLabel, SyntheticBadge } from '@/components/brand/Brand'
-import { Detail, Footer, Head, IndexBracket } from '../parts'
+import { Cylinder, Decor, Detail, Footer, Head, IndexBracket, rng, type Pin } from '../parts'
 
 /* =========================================================================
    EVIDENCE — the cylinder, read pin by pin
@@ -19,15 +19,63 @@ import { Detail, Footer, Head, IndexBracket } from '../parts'
    only the open one shows.
    ========================================================================= */
 
+/* ---------------------------------------------------------------------------
+   The lid, open: explorer.exe's address space as a pinned cylinder. Mapped
+   pages are faint pins; one region holds a whole binary, set in blued steel,
+   that no score (no file on disk) contains. Selecting the malfind lines
+   brackets that region; selecting netscan, cmdline or pstree brackets the
+   tooth it plays, the connection.
+   --------------------------------------------------------------------------- */
+
+const LID_ROWS = 6
+const LID_COLS = 40
+const INJECT = { row: 2, from: 26, to: 30 }
+
+function lidPins(): Pin[] {
+  const r = rng(2344)
+  const pins: Pin[] = []
+  for (let row = 0; row < LID_ROWS; row++)
+    for (let col = 0; col < LID_COLS; col++) {
+      const inRegion = row >= INJECT.row && row <= INJECT.row + 1 && col >= INJECT.from && col <= INJECT.to
+      if (inRegion) pins.push({ row, col, kind: 'inject' })
+      else if (r() < 0.3) pins.push({ row, col, kind: 'human' })
+    }
+  return pins
+}
+
+function Lid({ focus }: { focus: 'region' | 'tooth' | null }) {
+  const centre = Math.round((INJECT.from + INJECT.to) / 2)
+  return (
+    <Decor className="nmf-lid">
+      <Cylinder
+        rows={LID_ROWS}
+        cols={LID_COLS}
+        pins={lidPins()}
+        rowLabels={[{ row: 0, label: 'EXPLORER.EXE · PID 2344' }]}
+        timeLabels={[{ col: centre, label: '0x7ff000200000 · RWX · MZ' }]}
+        bracket={
+          focus === 'region'
+            ? { row: INJECT.row + 0.5, col: centre, w: (INJECT.to - INJECT.from + 1) * 26 + 6, h: 50 }
+            : focus === 'tooth'
+              ? { row: INJECT.row + 0.5, col: LID_COLS + 1.9, w: 70, h: 50 }
+              : undefined
+        }
+      />
+    </Decor>
+  )
+}
+
 export function Evidence({ block, mode }: BlockOverrideProps<EvidenceBlock>) {
   const [open, setOpen] = useState<number | null>(null)
   const panelId = useId()
+  const focus = open === null ? null : open <= 2 ? 'region' : 'tooth'
 
   return (
     <section className="block block--evidence nmf-ev">
       <Head block={block} />
       {block.lead && <p className="lead">{block.lead}</p>}
       <SyntheticBadge>{block.source}</SyntheticBadge>
+      <Lid focus={focus} />
 
       <div className="evidence nmf-ev__sheet">
         <div className="evidence__head nmf-ev__head">

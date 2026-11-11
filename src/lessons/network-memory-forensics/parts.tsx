@@ -56,7 +56,7 @@ export interface CylinderProps {
   timeLabels?: { col: number; label: string }[]
   /** Engraved at the start of the rows they name. */
   rowLabels?: { row: number; label: string }[]
-  bracket?: { row: number; col: number }
+  bracket?: { row: number; col: number; w?: number; h?: number }
   className?: string
   /** Which end stays in view when the band is narrower than its drawing. */
   anchor?: 'start' | 'end'
@@ -159,7 +159,16 @@ export function Cylinder({
           </text>
         </g>
       ))}
-      {bracket && <BracketPath cx={x(bracket.col)} cy={y(bracket.row)} w={22} h={22} animate={animate} />}
+      {bracket && (
+        <BracketPath
+          key={`${bracket.row}-${bracket.col}`}
+          cx={x(bracket.col)}
+          cy={y(bracket.row)}
+          w={bracket.w ?? 22}
+          h={bracket.h ?? 22}
+          animate={animate}
+        />
+      )}
     </svg>
   )
 }

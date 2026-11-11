@@ -384,7 +384,7 @@
 
     & .ev--attack {
       border-left-width: 1px;
-      box-shadow: inset 3px 0 0 var(--ev-attack);
+      background: color-mix(in srgb, var(--ev-attack) 18%, transparent);
     }
 
     /* Concept bullets are pins. */
@@ -646,13 +646,18 @@
         inset 0 1px 0 rgba(238, 241, 245, 0.14);
     }
 
+    & .nmf-hero.study__header,
+    & .nmf-hero.overview__head {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
     & .nmf-hero__engraving {
-      margin: 0;
-      padding: 0.55rem 1rem 0.5rem;
+      margin: var(--s-3) 0 0;
       font-family: var(--nmf-cond);
       font-weight: 600;
-      font-size: 0.8125rem;
-      letter-spacing: 0.2em;
+      font-size: 0.875rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--nmf-steel);
     }
@@ -767,6 +772,16 @@
       line-height: 1.45;
       color: var(--text-muted);
       max-width: 46ch;
+    }
+
+    & .nmf-title__colophon {
+      margin-top: var(--s-5);
+      font-family: var(--nmf-cond);
+      font-weight: 600;
+      font-size: 0.875rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
     }
 
     & .nmf-title[data-mode='study'] .nmf-title__h {
@@ -1028,6 +1043,21 @@
     }
   }
 
+  @keyframes nmf-spin {
+    to {
+      transform: rotateY(360deg);
+    }
+  }
+
+  @keyframes nmf-governor-sway {
+    from {
+      transform: rotate(calc(var(--wob) * -1));
+    }
+    to {
+      transform: rotate(var(--wob));
+    }
+  }
+
   @keyframes nmf-grow {
     from {
       transform: scaleY(0.15);
@@ -1145,6 +1175,88 @@
       font-family: var(--nmf-serif);
       font-style: italic;
       font-size: 1rem;
+    }
+
+    /* The governor: a fan-fly that wobbles with jitter, over a beat that holds. */
+    & .nmf-governor[hidden] {
+      display: grid;
+    }
+
+    & .nmf-governor {
+      grid-template-columns: 4.5rem minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      align-items: center;
+      column-gap: 1rem;
+      margin-top: var(--s-4);
+    }
+
+    & .nmf-governor__fan {
+      grid-row: span 2;
+      width: 4.5rem;
+      height: 4.5rem;
+      overflow: visible;
+    }
+
+    & .nmf-governor__sway {
+      transform-origin: 0 0;
+      animation: nmf-governor-sway var(--wob-t) ease-in-out infinite alternate;
+    }
+
+    & .nmf-governor__vanes {
+      transform-origin: 0 0;
+      animation: nmf-spin 0.9s linear infinite;
+    }
+
+    & .nmf-governor__spindle {
+      stroke: var(--nmf-steel-dim);
+      stroke-width: 2;
+    }
+
+    & .nmf-governor__vane {
+      fill: var(--nmf-blued-deep);
+      stroke: var(--nmf-blued-soft);
+      stroke-width: 1;
+    }
+
+    & .nmf-governor__hub {
+      fill: var(--nmf-steel);
+    }
+
+    & .nmf-governor__beat {
+      position: relative;
+      height: 1.6rem;
+      background: linear-gradient(to bottom, #3d4249, #aeb4bd 40%, #8b929c 70%, #3d4249);
+    }
+
+    & .nmf-governor__ghost,
+    & .nmf-governor__pin {
+      position: absolute;
+      top: 50%;
+      border-radius: 50%;
+    }
+
+    & .nmf-governor__ghost {
+      width: 11px;
+      height: 11px;
+      margin: -5.5px 0 0 -5.5px;
+      border: 1px dashed rgba(20, 22, 26, 0.6);
+    }
+
+    & .nmf-governor__pin {
+      width: 7px;
+      height: 7px;
+      margin: -3.5px 0 0 -3.5px;
+      background: #0d0f12;
+      box-shadow: 0 0 0 1.5px #ffffff;
+      transition: left 460ms var(--ease);
+    }
+
+    & .nmf-governor__label {
+      font-family: var(--nmf-cond);
+      font-weight: 600;
+      font-size: 0.8125rem;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
     }
 
     /* The pin print. */
@@ -1395,6 +1507,29 @@
   }
 
   /* =======================================================================
+     THE LID, OPEN (malfind)
+     ======================================================================= */
+
+  :root[data-lesson='network-memory-forensics'] {
+    & .nmf-lid {
+      margin: var(--s-4) 0 var(--s-5);
+      width: 100%;
+      aspect-ratio: 1166 / 176;
+      background: #22262d;
+      box-shadow:
+        0 24px 50px -28px rgba(0, 0, 0, 0.95),
+        inset 0 1px 0 rgba(238, 241, 245, 0.14);
+      overflow: hidden;
+    }
+
+    & .nmf-lid .nmf-cyl__time {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      fill: var(--nmf-blued-soft);
+    }
+  }
+
+  /* =======================================================================
      EVIDENCE — the manuscript, bracketed
      ======================================================================= */
 
@@ -1527,8 +1662,13 @@
       font-size: clamp(1.15rem, 0.98rem + 0.75vw, 1.6rem);
     }
 
+    /* The mechanism's strip at the foot of the room is reserved: slide
+       content scrolls above it, never across it. */
     & .present__stage {
       padding-inline: max(var(--s-7), 4.5rem);
+      padding-bottom: 4.5rem;
+      -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 4rem), transparent);
+      mask-image: linear-gradient(to bottom, #000 calc(100% - 4rem), transparent);
     }
 
     /* A grid item's min-content would let a long code line or table widen
@@ -1882,7 +2022,9 @@
       & .nmf-order__step,
       & .nmf-dga__q,
       & .nmf-vol__bar,
-      & .nmf-comb__steel {
+      & .nmf-comb__steel,
+      & .nmf-governor__sway,
+      & .nmf-governor__vanes {
         animation: none !important;
       }
 
