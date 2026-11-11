@@ -130,3 +130,26 @@
     & .pi-reader__body pre { white-space: pre-wrap; overflow-wrap: anywhere; }
   }
 }
+@media screen {
+  :root[data-lesson='phishing-investigation'] {
+    & .shell__nav a, & .shell__rail-item, & .shell__footer-nav a { color: var(--text-muted); }
+    & .shell__rail-item[aria-current], & .shell__brand { color: var(--text); }
+    & .shell__rail-item[aria-current] { border-color: var(--accent); }
+    & .wordmark { color: var(--text); }
+  }
+}
+@media screen {
+  :root[data-lesson='phishing-investigation'] {
+    & .ix { background: var(--bg-raised); }
+    & .ix__bar, & .ix__tabs { background: var(--surface); }
+    & .ix__tab[aria-current='true'] { background: var(--surface-2); }
+    & .interaction__teaches, & .brief__scenario { border-left-width: 1px; }
+    & .shell__rail-num { color: var(--accent); }
+  }
+}
+@media screen and (max-width: 760px) {
+  :root[data-lesson='phishing-investigation'] {
+    & .ix__tabs { flex-wrap: wrap; }
+    & .ix__tab { flex: 1 1 40%; }
+  }
+}
