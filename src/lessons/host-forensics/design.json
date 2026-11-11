@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-11T16:49:28Z",
+  "title": "Design System: Residual Records",
+  "scope": "src/lessons/host-forensics/**",
+  "extensions": {
+    "shadows": [
+      {
+        "name": "medium",
+        "value": "0 8px 24px -14px #17232d40",
+        "purpose": "Existing medium shared surfaces within this screen theme."
+      },
+      {
+        "name": "large",
+        "value": "0 16px 40px -24px #17232d50",
+        "purpose": "Existing large shared surfaces within this screen theme."
+      }
+    ],
+    "motion": [
+      {
+        "name": "branch-pulse",
+        "value": "6s linear infinite",
+        "purpose": "Trace branch dash movement; pauses offscreen and becomes static under reduced motion."
+      },
+      {
+        "name": "slide-registration",
+        "value": "380ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "Directional slide registration with a 10px translation and 5% clip inset; disabled under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "700px"
+      }
+    ],
+    "componentNotes": {
+      "code-surface": "Screen-only secondary surface with graphite text and standard line border; transparent code body and nested code. Header uses tertiary surface with the same text and border. Shared sizing and global white-paper print treatment remain unchanged."
+    },
+    "typographyMeta": {
+      "schematic-controls": {
+        "purpose": "Schematic toolbar labels."
+      },
+      "slide-heading": {
+        "purpose": "Responsive presentation block headings."
+      },
+      "title-slide": {
+        "purpose": "Title slide subject heading."
+      },
+      "pane-lead": {
+        "purpose": "Lead copy inside presentation reading panes."
+      },
+      "mobile-pane-controls": {
+        "purpose": "Reading-pane buttons at the phone breakpoint."
+      },
+      "scenario": {
+        "purpose": "Presentation scenario narrative."
+      },
+      "concept-point": {
+        "purpose": "Concept bullet copy inside reading panes."
+      },
+      "body": {
+        "purpose": "Inherited shared prose size."
+      }
+    }
+  }
+}
