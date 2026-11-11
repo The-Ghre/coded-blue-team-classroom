@@ -8,6 +8,7 @@ import Hero from './Hero'
 import { TitleSheet } from './blocks/TitleSheet'
 import { ConceptSheet } from './blocks/Concept'
 import { Climb, canClimb } from './blocks/Climb'
+import { ReadingPanes } from './blocks/ReadingPanes'
 import { Sheet } from './blocks/Sheet'
 
 /** Effective Access: directory relationships, credential propagation and revocation. */
@@ -49,7 +50,7 @@ const kit: LessonKit = {
   Backdrop,
   Overlay,
   Hero,
-  blocks,
+  blocks: Object.fromEntries(Object.entries(blocks).map(([kind, Renderer]) => [kind, (props: BlockOverrideProps) => createElement(ReadingPanes, { ...props, Default: (paneProps: { block: Block; mode: BlockOverrideProps['mode'] }) => createElement(Renderer as typeof Sheet, { ...props, ...paneProps }) })])) as BlockOverrides,
 }
 
 export default kit
