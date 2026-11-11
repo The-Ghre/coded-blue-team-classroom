@@ -5,28 +5,50 @@ primary_target: "src/lessons/incident-response/index.ts"
 related_targets: []
 ---
 
-# Session 05 — Incident Response and Digital Evidence (lesson kit)
+# Preservation Ledger — Session 05
 
-Scope: the lesson kit in `src/lessons/incident-response/` — projected slides (the showpiece), the study and workshop reading pages, and the session overview. Visitor mode: Experience on the presentation, Read on study/workshop/overview (the world carries the page, never at the cost of reading).
+Mode: Experience for projection; Read for study, workshop and overview.
+Mechanism: every response action changes evidence; collect volatile state before it disappears and preserve an accountable record.
+Audience scene: an instructor projecting decisions under time pressure and ESL learners following the same evidence afterwards.
 
-Audience and job: CODED Defensive-track students in a projected classroom and alone afterwards; instructors projecting by keyboard. They must leave knowing that evidence decays in a known order and that every response action either preserves it or destroys it. Constraints: kit folder only, IBM Plex family only, no new dependencies, content and interaction behaviour unchanged, body ≥7:1 and other text ≥4.5:1, reduced motion composed, print stays ink on paper.
+Seven grounded directions, ordered by resonance: incident command action log; evidence acquisition diagram; response swimlane; custody transfer register; volatility survival chart; multi-source reconstruction sheet; Preservation Ledger. The seventh combines an acquisition boundary, five unequal survival traces and an unbroken custody spine. Roll e09749c7 assigned candidate 7. Catalog service unavailable: degraded roll, no challengers or quality-bar boards. User explicitly waived decision page and questions. Code-led only.
 
-Decision: direction chosen by the build session — the user waived the question probe and decision page ("You decide all 10"). Challengers from the roll were all declined; their disciplines are written in as raises.
+World: neutral mineral-white ground #f5f5f4, near-black ink #202020, crimson acquisition and custody #801a32, crimson loss #84203b. IBM Plex Sans Condensed headings, Sans reading, Mono only for source data and measurements. No darkroom, film, amber, decorative terminal, dashboard or repeated card grid.
 
-## Direction contract
+First viewport: session title occupies the left, a five-source acquisition illustration on the right. Each trace breaks at a different point before a collection boundary; after collection the evidence becomes parallel, stable, recorded lines. The overview is one vertically sequenced evidence register of full, wrapping section names, with Theory followed by Workshop on a crimson custody spine. Signature: collection and reboot controls retain the existing volatility exercise and all feedback; captured rows become solid sealed records, lost rows become interrupted traces. The hash demonstration retains live SHA-256 computation and all annotations. Timeline remains the original keyboard-controlled reconstruction.
 
-THESIS: Evidence is a latent image. It is invisible until developed, it fades in a known order, and the wrong light destroys it; only fixing makes it permanent. The lesson is developed in a darkroom under safelight. It refuses the category default of a dark SOC console with red alerts and glowing terminals.
+Motion: canvas traces decay at different rates before the boundary, stable after it; stops offscreen or hidden, DPR 1.5, composed reduced-motion frame. Navigation advances the ledger with a short clip reveal. No text depends on animation. All CSS scoped within screen media; native print untouched.
 
-OWN-WORLD: Umber-black darkroom ground lit by one amber safelight (dark-green safelight for the workshop half). Silver-grey fibre-print surfaces, 35mm negative strips with sprocket holes and condensed edge print, contact sheets, china-marker circles and crosses in yellow and red. Plex Sans Condensed for edge print and labels, Plex Serif for prose leads, Plex Mono for frame numbers. Raise (luminous understory): state is print density — latent, developing, fixed — never hue alone. Raise (normalled jackfield): preserved, lost and verified read as line pattern (unbroken, gapped, crossed). Raise (kaiju broadcast): full white light appears only at the destructive act. Raise (teletext): the 3:2 frame is the sacred unit; frames scale, never reflow. Raise (deep dive): one time axis rules each sequence. Raise (pixorama): a closer look rewards more detail.
+Truth: all original data, synthetic labels, annotations, feedback and interaction logic retained. Existing darkroom decorative wrappers replaced; core practice retained. Risks: dense projection slides require measured fitting without hiding content; mobile uses reading flow.
 
-STORY: Students watch each slide develop out of the dark, scrub evidence fading tier by tier, lose RAM by choosing the wrong order, watch three hashes register, and leave knowing sequence is the skill.
+## Verification and review — 2026-11-11
 
-FIRST VIEWPORT: Title slide — a full-bleed print in the developer tray: SESSION 5 rises from latent to fixed density, the session title and lead in Serif beneath, a vertical negative strip on the left edge numbering all nineteen frames with the current one exposed. Study and overview open on a contact sheet of every section as frames, studied frames fixed, unstudied ones latent; the h1 sits on the sheet, actions below in plain reach.
+Implementation checkpoint: fd9c37d. Scope remained the incident-response kit and this surface brief; shared source/content/dependencies unchanged. Scenario's ten-minute countdown and task inject schedule remain mounted, with a straight remaining-time trace replacing the decorative timer dial. Volatility collection/reboot feedback, phase-skip feedback, custody annotations, live SHA-256 bit-flip and shared TimelineReconstruct remain.
 
-FORM: Darkroom process, candidate 3 of 7 on my ordered list (evidence bag seal, scene markers, darkroom, hangar reconstruction, nuclide chart, ICS board, burn patterns). seed:a7d61606e76fe6da. Signature interaction: the volatility test strip — collect tiers in order while the clock advances; a reboot turns the white light on. Motion grammar: develop-in slide transitions, silver grain in WebGL, china-marker strokes drawn on.
+Checks completed: npx tsc -b and npm run build passed; Impeccable detect --json src/lessons/incident-response returned [] (before final timer restoration and contrast correction); git diff --check passed after EOF cleanup. Calculated palette contrast: primary ink 13.35:1 on ground, 10.83:1 on deepest surface; body muted 9.11:1 / 7.39:1; accent 8.90:1 / 7.22:1. Dim labels 7.77:1 / 6.30:1. Crimson prose uses the pale warning background. This is token calculation, not a computed-style audit.
 
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+Independent Impeccable finish reviewer: direction supported by source; no visual approval. Requested correction: body-use contrast; darkened muted/dim/accent/attack tokens. Final reviewer disposition: RECAPTURE. The named body-use contrast concern is resolved in source; review remains pending rendered evidence.
 
-## Open
+BLOCKED checks: every-slide projection traversal, overview/study/workshop at 1440×900 and 390×844, keyboard-only interaction traversal, reduced-motion observation, print preview, console check and screenshots. The browser access host is unavailable; native Chrome access was not approved. No screenshots were fabricated, and none exist in .impeccable/review for this run. Port 5185 was already in use when the authorized server startup was retried; existing process was left untouched. Do not treat source media queries as verified slide fit. Integrator must perform the full browser matrix before approving this branch.
 
-DESIGN.md is deferred to the parent session, which documents the merged ten-lesson system once.
+Shared DESIGN.md and design sidecar are intentionally untouched under the user's strict per-lesson write scope; this brief records this kit's direction for integration.
+
+
+## Resume verification — 2026-11-11
+
+Scoped control corrections: anchor hover no longer inherits white text; primary button hover retains white on deep teal; disabled buttons retain opaque readable text; shared code/evidence/interaction/detail/diagram containers use white grounds instead of inherited navy; hint and extension labels use dark ochre; checked deliverable glyphs use white on dark green; native input accents and placeholders follow the light palette. Shared source and lesson content remain unchanged.
+
+Source audit covered base.css, app.css, slides.css, teaching.css and interactions.css, including inherited hover, selected, checked, disabled, placeholder and focus rules. This is not a computed-style or rendered contrast audit. Calculated minimum ratios across the six light grounds: main text 10.83:1; muted body 7.39:1; dim labels 6.30:1; accent 7.22:1; accent-soft 5.84:1. Six evidence foreground/background pairs range 6.17–7.77:1 (label threshold 4.5:1). White primary/checked/negation glyph pairs range 8.01–10.05:1.
+
+Fresh Vite server: http://127.0.0.1:5285/ with strictPort. Initial sandbox listen EPERM resolved through permitted escalation; local HTTP check returned 200. No old worktree server reused. npx tsc -b and npm run build passed. Impeccable engine 0.1.21 from the existing permitted /private/tmp cache returned [] for detect --json src/lessons/incident-response; mechanical selector corrections followed. git diff --check passed. Default launcher could not write its engine cache; existing engine used without installation.
+
+Independent finish reviewer disposition: **recapture**. Required desktop/mobile initial, overview, study, workshop, every-slide, reduced-motion, keyboard and print captures are absent. Exact current browser inventory blocker: `Browsers: Error: The browser access host is unavailable`. Native Chrome actions previously denied were not retried. No alternative browser automation bypass was attempted. No screenshots were fabricated or claimed. Rendered contrast, clipping/overflow, interaction traversal, console errors, print and reduced-motion observation remain unverified. Successful source checks do not establish visual completion. Full rendered review remains required before ship approval.
+
+
+## Integrator palette revision — 2026-11-11
+
+Replaced mint/teal grounds with neutral mineral whites and grays (#f5f5f4, #ffffff, #ececeb, #e5e5e4, #dddddc), near-black body text, and crimson #801a32 acquisition/custody rules. Confirmed evidence uses slate-violet rather than forest; response uses muted wine. Six evidence shapes, glyphs and words remain intact. Overview groups now form one vertical sequence at every width, with crimson acquisition boundaries and a custody spine. Preservation behavior, canvas decay, reduced-motion still composition, SHA-256, timers and shared interactions are unchanged.
+
+Fresh Vite process serves this worktree at http://127.0.0.1:5385/ (strictPort); host HTTP check returned 200. Sandbox listen initially returned EPERM; permitted escalation started it successfully. npx tsc -b and npm run build passed. Existing permitted cached Impeccable engine detect returned []; git diff --check passed. Token contrast against the darkest neutral surface: text 11.99:1, muted 8.63:1, dim 7.17:1; crimson accent is darker than the initial 6.98:1 candidate and clears 7:1. Evidence label pairs range 6.17–7.78:1; white primary text 11.36:1. These are source token calculations, not rendered computed-style measurements.
+
+Fresh browser inventory again returned `Browsers: Error: The browser access host is unavailable`. Previously denied native Chrome actions were not repeated. No browser automation bypass or fabricated captures. Remaining blockers: all-slide fit and traversal, overview/study/workshop at 1440×900 and 390×844, rendered contrast/overflow, keyboard interaction traversal, reduced-motion observation, print preview, console check and valid screenshots. Fresh independent finish review disposition: **RECAPTURE**, with no clear newly introduced source blocker found; rendered approval remains pending browser access. Shared design files remain untouched under the per-lesson scope.

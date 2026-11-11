@@ -1,6 +1,6 @@
 import type { Block } from '@/types/content'
 import type { RenderMode } from '@/components/teaching/blocks'
-import { Duration, Eyebrow, MonoLabel, ProvenanceTag, SourceRefs } from '@/components/brand/Brand'
+import { Duration, MonoLabel, ProvenanceTag, SourceRefs } from '@/components/brand/Brand'
 import { getSession } from '@/content'
 import { useLesson } from '@/lessons/LessonContext'
 
@@ -11,10 +11,10 @@ import { useLesson } from '@/lessons/LessonContext'
    re-composes.
    ========================================================================= */
 
-export function KitHead({ block, kicker }: { block: Block; kicker: string }) {
+export function KitHead({ block }: { block: Block; kicker: string }) {
   return (
     <header className="block__head">
-      <Eyebrow>{kicker}</Eyebrow>
+      
       <h2 className="block__title">{block.title}</h2>
       {block.minutes !== undefined && (
         <div className="block__meta">
@@ -105,3 +105,18 @@ export function splitDash(text: string): { name?: string; body: string } {
   return { name: text.slice(0, i), body: text.slice(i + 3) }
 }
 
+
+/** Acquisition is a copy boundary: volatile source on the left, stable copy on the right. */
+export function Acquisition() {
+  return <figure className="ir-acquisition" aria-label="Evidence collection: volatile traces become a preserved copy">
+    <svg viewBox="0 0 440 290" role="img" aria-label="Five evidence traces decay before acquisition and remain intact after collection">
+      <path className="ir-acquisition__boundary" d="M242 22V256" />
+      {[0,1,2,3,4].map(i => <g key={i}>
+        <path className="ir-acquisition__source" style={{'--lane':i} as import('react').CSSProperties} d={`M20 ${55+i*42}h${35+i*31}m12 0h14m12 0h8`} />
+        <path className="ir-acquisition__copy" d={`M242 ${55+i*42}H420`} />
+        <rect x="236" y={49+i*42} width="12" height="12" />
+      </g>)}
+      <path className="ir-acquisition__bracket" d="M266 34v-14h154v14M266 250v14h154v-14" />
+    </svg><figcaption><span>Volatile state</span><span>Preserved copy</span></figcaption>
+  </figure>
+}
