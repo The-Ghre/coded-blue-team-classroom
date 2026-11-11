@@ -106,6 +106,27 @@
   @keyframes fj-connect { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
   @keyframes fj-record-in { from { transform: translateY(20px); clip-path: inset(0 0 12%); } to { transform: none; clip-path: inset(0); } }
   @keyframes fj-record-out { to { transform: translateY(-12px); opacity: 0; } }
+  /* Constrain the frame, never the teaching content. One persistent renderer
+     lives inside the reading region, including every expanded feedback state. */
+  :root[data-lesson='log-analysis'] .present__stage { min-height: 0; overflow: hidden; padding: 1.5rem 3rem; }
+  :root[data-lesson='log-analysis'] .present__slide { height: 100%; min-height: 0; }
+  :root[data-lesson='log-analysis'] .fj-reader { height: 100%; display: flex; flex-direction: column; min-height: 0; }
+  :root[data-lesson='log-analysis'] .fj-reader__nav { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: .5rem; border-bottom: 1px solid var(--line-strong); padding: 0 0 .5rem; margin-bottom: .75rem; }
+  :root[data-lesson='log-analysis'] .fj-reader__nav span { margin-right: auto; font-size: .875rem; color: var(--text-muted); }
+  :root[data-lesson='log-analysis'] .fj-reader[data-dense='false'] .fj-reader__nav { display: none; }
+  :root[data-lesson='log-analysis'] .fj-reader__pane { min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-gutter: stable; padding: .5rem .75rem 1.5rem .5rem; }
+  :root[data-lesson='log-analysis'] .fj-reader__pane > div { min-width: 0; }
+  :root[data-lesson='log-analysis'] .fj-reader__pane .block { margin: 0; }
+  :root[data-lesson='log-analysis'] .fj-reader__pane :is(code, pre, td, th) { overflow-wrap: anywhere; }
+  @media (max-width: 600px) {
+    :root[data-lesson='log-analysis'] .present__stage { overflow-y: auto; display: block; padding: 1rem; }
+    :root[data-lesson='log-analysis'] .present__slide,
+    :root[data-lesson='log-analysis'] .fj-reader { height: auto; }
+    :root[data-lesson='log-analysis'] .fj-reader__pane { overflow: visible; padding: .25rem; }
+    :root[data-lesson='log-analysis'] .fj-reader__nav { display: none; }
+    :root[data-lesson='log-analysis'] :is(.block, .ix, .loghunt__line, .loghunt__line code) { min-width: 0; overflow-wrap: anywhere; }
+    :root[data-lesson='log-analysis'] .loghunt__line code { white-space: pre-wrap; }
+  }
   @media (max-width: 60rem) {
     :root[data-lesson='log-analysis'] .fj-hero { grid-template-columns: minmax(0,1fr); gap: 2rem; }
     :root[data-lesson='log-analysis'] .fj-record { min-height: 100px; }
