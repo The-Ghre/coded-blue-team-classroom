@@ -162,3 +162,36 @@
     :root[data-lesson='incident-response']::view-transition-new(slide), :root[data-lesson='incident-response']::view-transition-old(slide) { animation: none; }
   }
 }
+
+@media screen {
+  :root[data-lesson='incident-response'] .present__stage { min-height: 0; overflow: hidden; align-items: stretch; }
+  :root[data-lesson='incident-response'] .present__slide { min-height: 0; max-height: calc(100dvh - 210px); overflow-y: auto; overflow-x: hidden; scrollbar-gutter: stable; padding: .5rem; overscroll-behavior: contain; }
+  :root[data-lesson='incident-response'] .present__slide * { min-width: 0; overflow-wrap: anywhere; }
+  :root[data-lesson='incident-response'] .present__slide:focus-visible { outline-offset: -3px; }
+  @media (max-width: 699px) {
+    :root[data-lesson='incident-response'] .present__stage { overflow-y: auto; }
+    :root[data-lesson='incident-response'] .present__slide { max-height: none; overflow: visible; }
+  }
+}
+@media screen {
+  :root[data-lesson='incident-response'] .ir-strip-ix { display: block; }
+  :root[data-lesson='incident-response'] .ir-strip-ix__controls { flex-wrap: wrap; }
+  :root[data-lesson='incident-response'] .ir-strip-ix__controls button { flex-shrink: 0; }
+}
+@media screen and (min-width: 700px) {
+  :root[data-lesson='incident-response'] .present__stage { grid-template-rows: minmax(0, 1fr); }
+  :root[data-lesson='incident-response'] .present__slide { box-sizing: border-box; height: 100%; max-height: calc(100dvh - 220px); }
+}
+@media print {
+  .ir-acquisition svg, .ir-code, .ir-sleeve__code { display: none; }
+  .ir-acquisition figcaption { display: block; }
+}
+@media screen and (min-width: 700px) {
+  :root[data-lesson='incident-response'] .present__slide { height: auto; max-height: min(60dvh, calc(100dvh - 220px)); align-self: start; }
+}
+@media print {
+  .ir-acquisition figcaption span + span::before { content: ' / '; }
+}
+@media screen and (min-width: 700px) {
+  :root[data-lesson='incident-response'] .present__slide { contain: layout paint; }
+}
