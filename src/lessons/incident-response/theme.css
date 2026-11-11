@@ -178,3 +178,20 @@
   :root[data-lesson='incident-response'] .ir-strip-ix__controls { flex-wrap: wrap; }
   :root[data-lesson='incident-response'] .ir-strip-ix__controls button { flex-shrink: 0; }
 }
+@media screen and (min-width: 700px) {
+  :root[data-lesson='incident-response'] .present__stage { grid-template-rows: minmax(0, 1fr); }
+  :root[data-lesson='incident-response'] .present__slide { box-sizing: border-box; height: 100%; max-height: calc(100dvh - 220px); }
+}
+@media print {
+  .ir-acquisition svg, .ir-code, .ir-sleeve__code { display: none; }
+  .ir-acquisition figcaption { display: block; }
+}
+@media screen and (min-width: 700px) {
+  :root[data-lesson='incident-response'] .present__slide { height: auto; max-height: min(60dvh, calc(100dvh - 220px)); align-self: start; }
+}
+@media print {
+  .ir-acquisition figcaption span + span::before { content: ' / '; }
+}
+@media screen and (min-width: 700px) {
+  :root[data-lesson='incident-response'] .present__slide { contain: layout paint; }
+}
