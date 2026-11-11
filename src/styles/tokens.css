@@ -197,9 +197,12 @@
   }
 }
 
-/* Print: the classroom inverts to ink-on-paper for clean lesson PDFs. */
+/* Print: the classroom inverts to ink-on-paper for clean lesson PDFs.
+   html:root[data-lesson] outranks any lesson kit's :root[data-lesson='x']
+   tokens, so a lesson's screen palette can never reach paper. */
 @media print {
-  :root {
+  :root,
+  html:root[data-lesson] {
     --bg: #ffffff;
     --bg-raised: #ffffff;
     --surface: #ffffff;

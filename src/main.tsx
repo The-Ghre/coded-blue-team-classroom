@@ -8,6 +8,7 @@ import './styles/app.css'
 import './styles/teaching.css'
 import './styles/interactions.css'
 import './styles/slides.css'
+import './styles/lessons.css'
 import './styles/print.css'
 
 /**

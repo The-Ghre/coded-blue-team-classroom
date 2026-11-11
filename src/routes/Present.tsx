@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { getSession, getSlides } from '@/content'
 import { BlockView } from '@/components/teaching/blocks'
@@ -6,6 +7,8 @@ import { MonoLabel, Wordmark } from '@/components/brand/Brand'
 import { useAnnounce, useDocumentTitle, useFullscreen, useShortcuts } from '@/lib/hooks'
 import { useProgress } from '@/lib/progress'
 import { NotFound } from './NotFound'
+import { LessonBackdrop, LessonOverlay } from '@/lessons/LessonLayers'
+import { PresentCtx, useReducedMotion } from '@/motion'
 
 /* =========================================================================
    PRESENTATION MODE
@@ -34,11 +37,30 @@ export function Present() {
   const [helpOpen, setHelpOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const idleTimer = useRef<number | null>(null)
+  const reducedMotion = useReducedMotion()
+  const pendingTransition = useRef<{ skipTransition: () => void } | null>(null)
+  /* The slide most recently asked for. Relative steps read this rather than
+     the rendered index, so two presses inside one frame move two slides. */
+  const intended = useRef(0)
+  /* The last slide this player navigated to itself, so the index-sync effect
+     below can tell its own navigations from browser back/forward. */
+  const committedByPlayer = useRef<number | null>(null)
 
   const slides = session ? getSlides(session) : []
   const parsed = Number(index)
   const current = Number.isFinite(parsed) ? Math.min(Math.max(parsed, 0), slides.length - 1) : 0
   const slide = slides[current]
+
+  /* Direction of travel, derived from the index rather than from which key
+     was pressed, so browser back/forward and the overview animate correctly. */
+  const previous = useRef<number | null>(null)
+  const [direction, setDirection] = useState<-1 | 0 | 1>(0)
+  useEffect(() => {
+    if (previous.current !== null && previous.current !== current) {
+      setDirection(current > previous.current ? 1 : -1)
+    }
+    previous.current = current
+  }, [current])
 
   useDocumentTitle(
     session ? `${current + 1}/${slides.length} · ${session.title}` : 'Not found',
@@ -48,11 +70,88 @@ export function Present() {
     (next: number) => {
       if (!session) return
       const clamped = Math.min(Math.max(next, 0), slides.length - 1)
-      if (clamped === current) return
-      navigate(`/session/${session.slug}/present/${clamped}`)
+      if (clamped === intended.current) return
+      const from = intended.current
+      intended.current = clamped
+      const to = `/session/${session.slug}/present/${clamped}`
+
+      /* View Transitions: the DOM swaps immediately and the outgoing and
+         incoming slides animate as snapshots, so a transition never delays
+         the next key press. Lesson kits choreograph them in CSS through
+         ::view-transition-old(slide) / ::view-transition-new(slide), reading
+         :root[data-slide-dir] for direction. */
+      const root = document.documentElement
+      root.dataset.slideDir = clamped > from ? 'forward' : 'back'
+      const doc = document as Document & {
+        startViewTransition?: (cb: () => void) => {
+          skipTransition: () => void
+          updateCallbackDone: Promise<void>
+        }
+      }
+
+      // A transition already waiting for its frame: finish it instantly and
+      // navigate directly, so rapid key presses are never coalesced.
+      if (pendingTransition.current) {
+        pendingTransition.current.skipTransition()
+        pendingTransition.current = null
+      }
+
+      if (!doc.startViewTransition || reducedMotion) {
+        committedByPlayer.current = clamped
+        navigate(to)
+        return
+      }
+
+      /* The update callback waits for the browser's next rendering frame.
+         On a busy main thread or a throttled background tab that frame can
+         be late, and navigation must never wait on decoration: if the
+         callback has not run within 120ms, navigate anyway and drop the
+         animation. `committed` guarantees exactly one history entry. */
+      let committed = false
+      const commit = () => {
+        if (committed) return
+        committed = true
+        committedByPlayer.current = clamped
+        flushSync(() => navigate(to))
+      }
+      const vt = doc.startViewTransition(commit)
+      // Skipping must commit this navigation synchronously, before the next
+      // one, or an older target could land after a newer one.
+      const handle = {
+        skipTransition: () => {
+          commit()
+          vt.skipTransition()
+        },
+      }
+      pendingTransition.current = handle
+      const safety = window.setTimeout(() => {
+        if (!committed) {
+          commit()
+          vt.skipTransition()
+        }
+      }, 120)
+      vt.updateCallbackDone
+        .catch(() => undefined)
+        .finally(() => {
+          window.clearTimeout(safety)
+          if (pendingTransition.current === handle) pendingTransition.current = null
+        })
     },
-    [session, slides.length, current, navigate],
+    [session, slides.length, navigate, reducedMotion],
   )
+
+  const step = useCallback((delta: number) => go(intended.current + delta), [go])
+
+  /* Keep the intended slide honest when the URL changes by other means:
+     browser back/forward, the overview, a deep link. */
+  useEffect(() => {
+    if (current === committedByPlayer.current) {
+      committedByPlayer.current = null
+      return
+    }
+    intended.current = current
+  }, [current])
+
 
   /* Redirect an out-of-range index to a valid one so a stale or hand-typed
      URL lands somewhere real rather than on a blank screen. */
@@ -100,14 +199,14 @@ export function Present() {
   /* Shortcuts stand down while typing or inside a control — see
      isTypingTarget in lib/hooks. */
   useShortcuts({
-    ArrowRight: () => go(current + 1),
-    ArrowLeft: () => go(current - 1),
+    ArrowRight: () => step(1),
+    ArrowLeft: () => step(-1),
     ' ': (e) => {
       e.preventDefault()
-      go(current + 1)
+      step(1)
     },
-    PageDown: () => go(current + 1),
-    PageUp: () => go(current - 1),
+    PageDown: () => step(1),
+    PageUp: () => step(-1),
     Home: () => go(0),
     End: () => go(slides.length - 1),
     f: () => void toggleFullscreen(),
@@ -123,9 +222,28 @@ export function Present() {
 
   const isPractical = session.practical.blocks.some((b) => b.id === slide.id)
   const progressPct = ((current + 1) / slides.length) * 100
+  const stage = {
+    surface: 'present' as const,
+    session,
+    slideIndex: current,
+    slideCount: slides.length,
+    block: slide,
+    half: isPractical ? ('practical' as const) : ('theory' as const),
+    direction,
+    focusMode: !chromeVisible,
+    reducedMotion,
+  }
 
   return (
-    <div className={`present${chromeVisible ? ' chrome-on' : ' chrome-off'}`}>
+    <PresentCtx.Provider
+      value={{ presenting: true, slideIndex: current, direction, focusMode: !chromeVisible }}
+    >
+    <div
+      className={`present${chromeVisible ? ' chrome-on' : ' chrome-off'}`}
+      data-half={stage.half}
+      data-kind={slide.kind}
+    >
+      <LessonBackdrop {...stage} />
       {/* ---------------- Top bar ---------------- */}
       <header className="present__top">
         <div className="present__top-left">
@@ -172,10 +290,12 @@ export function Present() {
 
       {/* ---------------- Slide ---------------- */}
       <main className="present__stage">
-        <div className="present__slide" key={slide.id}>
+        <div className="present__slide" key={slide.id} data-kind={slide.kind}>
           <BlockView block={slide} mode="slide" />
         </div>
       </main>
+
+      <LessonOverlay {...stage} />
 
       {/* ---------------- Bottom bar ---------------- */}
       <footer className="present__bottom">
@@ -186,7 +306,7 @@ export function Present() {
           <button
             type="button"
             className="btn btn--icon"
-            onClick={() => go(current - 1)}
+            onClick={() => step(-1)}
             disabled={current === 0}
             aria-label="Previous slide"
           >
@@ -203,7 +323,7 @@ export function Present() {
           <button
             type="button"
             className="btn btn--icon"
-            onClick={() => go(current + 1)}
+            onClick={() => step(1)}
             disabled={current === slides.length - 1}
             aria-label="Next slide"
           >
@@ -348,5 +468,6 @@ export function Present() {
         </div>
       )}
     </div>
+    </PresentCtx.Provider>
   )
 }

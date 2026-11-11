@@ -6,6 +6,8 @@ import { Eyebrow, MonoLabel } from '@/components/brand/Brand'
 import { useProgress } from '@/lib/progress'
 import { useDocumentTitle } from '@/lib/hooks'
 import { NotFound } from './NotFound'
+import { LessonBackdrop, LessonHero } from '@/lessons/LessonLayers'
+import { useReducedMotion } from '@/motion'
 
 /**
  * Study and practical are the same reader over different halves of the
@@ -20,6 +22,7 @@ export function Study({ area }: { area: 'theory' | 'practical' }) {
   const { forSession, toggleBlock, markViewed } = useProgress()
   const [activeId, setActiveId] = useState<string | null>(null)
   const observerRef = useRef<IntersectionObserver | null>(null)
+  const reducedMotion = useReducedMotion()
   // Evaluated once at mount: the contents list starts collapsed on a phone
   // and open on a laptop, where it is a persistent sidebar.
   const [isNarrow] = useState(
@@ -80,7 +83,17 @@ export function Study({ area }: { area: 'theory' | 'practical' }) {
   const minutes = blocks.reduce((t, b) => t + (b.minutes ?? 0), 0)
 
   return (
-    <div className="study">
+    <div className="study" data-half={area}>
+      <LessonBackdrop
+        surface="study"
+        session={session}
+        slideIndex={0}
+        slideCount={0}
+        half={area}
+        direction={0}
+        focusMode={false}
+        reducedMotion={reducedMotion}
+      />
       {/* ---------------- Contents rail ---------------- */}
       <aside className="study__rail" aria-label="Contents">
         <div className="study__rail-inner">
@@ -161,20 +174,40 @@ export function Study({ area }: { area: 'theory' | 'practical' }) {
 
       {/* ---------------- Reading column ---------------- */}
       <div className="study__content">
-        <header className="study__header">
-          <Eyebrow>
-            Session {String(session.number).padStart(2, '0')} ·{' '}
-            {area === 'theory' ? 'Theory' : session.practical.title}
-          </Eyebrow>
-          <h1>{session.title}</h1>
-          {area === 'practical' && (
-            <p className="lead">
-              Every resource this workshop references is self-contained and synthetic. There is no
-              live SIEM, no connected EDR and no remote lab — each briefing states exactly what is
-              simulated and what would differ with real tooling.
-            </p>
-          )}
-        </header>
+        <LessonHero
+          surface="study"
+          session={session}
+          slideIndex={0}
+          slideCount={0}
+          half={area}
+          direction={0}
+          focusMode={false}
+          reducedMotion={reducedMotion}
+          eyebrow={`Session ${String(session.number).padStart(2, '0')} · ${
+            area === 'theory' ? 'Theory' : session.practical.title
+          }`}
+          lead={
+            area === 'practical'
+              ? 'Every resource this workshop references is self-contained and synthetic. There is no live SIEM, no connected EDR and no remote lab — each briefing states exactly what is simulated and what would differ with real tooling.'
+              : undefined
+          }
+          fallback={
+            <header className="study__header">
+              <Eyebrow>
+                Session {String(session.number).padStart(2, '0')} ·{' '}
+                {area === 'theory' ? 'Theory' : session.practical.title}
+              </Eyebrow>
+              <h1>{session.title}</h1>
+              {area === 'practical' && (
+                <p className="lead">
+                  Every resource this workshop references is self-contained and synthetic. There is
+                  no live SIEM, no connected EDR and no remote lab — each briefing states exactly
+                  what is simulated and what would differ with real tooling.
+                </p>
+              )}
+            </header>
+          }
+        />
 
         {blocks.map((block, i) => {
           const complete = progress.completed.includes(block.id)

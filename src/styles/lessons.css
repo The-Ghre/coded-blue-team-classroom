@@ -1,0 +1,148 @@
+/* =========================================================================
+   LESSON LAYERS — the slots a lesson kit paints into
+   =========================================================================
+   Kits own what is drawn inside these layers. This file owns where the
+   layers sit, that they never take the pointer, and that they vanish from
+   print — so no kit has to remember any of it.
+   ========================================================================= */
+
+.lesson-layer {
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+}
+
+/* Presentation: behind the stage (z 2) and the chrome (z 3). */
+.lesson-layer--backdrop.lesson-layer--present {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Study, workshop and overview: fixed behind the whole page. With no
+   stacking context above it, z-index -1 paints over the canvas background
+   and under every piece of in-flow content. */
+.lesson-layer--backdrop.lesson-layer--study,
+.lesson-layer--backdrop.lesson-layer--overview {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+/* Overlay: above the slide (same z, later in the DOM), under the chrome. */
+.lesson-layer--overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+/* =========================================================================
+   SLIDE TRANSITIONS
+   =========================================================================
+   Slide navigation runs through document.startViewTransition when the
+   browser supports it. The default below is a short, directional settle;
+   kits replace it with their own choreography:
+
+     :root[data-lesson='x'][data-slide-dir='forward']::view-transition-new(slide) { … }
+
+   The DOM has already changed when these run, so they never hold back the
+   next key press. Keep any kit transition under ~700ms.
+   ========================================================================= */
+
+.present__slide {
+  view-transition-name: slide;
+}
+
+@supports (view-transition-name: none) {
+  /* The CSS entry animation would double up with the view transition. */
+  .present__slide {
+    animation: none;
+  }
+}
+
+::view-transition-old(slide),
+::view-transition-new(slide) {
+  animation-duration: 360ms;
+  animation-timing-function: var(--coded-ease);
+}
+
+:root[data-slide-dir='forward']::view-transition-old(slide) {
+  animation-name: vt-slide-out-left;
+}
+
+:root[data-slide-dir='forward']::view-transition-new(slide) {
+  animation-name: vt-slide-in-right;
+}
+
+:root[data-slide-dir='back']::view-transition-old(slide) {
+  animation-name: vt-slide-out-right;
+}
+
+:root[data-slide-dir='back']::view-transition-new(slide) {
+  animation-name: vt-slide-in-left;
+}
+
+/* Only the slide moves; the chrome and backdrop stay put. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+@keyframes vt-slide-out-left {
+  to {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+@keyframes vt-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes vt-slide-out-right {
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes vt-slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* =========================================================================
+   SHARED MOTION HELPERS
+   ========================================================================= */
+
+/* SplitWords renders inline-block words so each can be transformed. */
+.split-word {
+  display: inline-block;
+  white-space: pre;
+}
+
+/* =========================================================================
+   PRINT
+   =========================================================================
+   Decoration never prints. Kits keep their rules inside @media screen; this
+   is the backstop if one forgets.
+   ========================================================================= */
+
+@media print {
+  .lesson-layer {
+    display: none !important;
+  }
+}

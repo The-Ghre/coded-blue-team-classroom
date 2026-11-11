@@ -36,6 +36,8 @@ import {
 } from '@/components/brand/Brand'
 import { Diagram } from '@/components/teaching/Diagram'
 import { Interaction } from '@/components/interactions/Interaction'
+import { KitBoundary, useLesson } from '@/lessons/LessonContext'
+import type { ComponentType } from 'react'
 
 export type RenderMode = 'slide' | 'study'
 
@@ -908,7 +910,26 @@ function RecapView({ block, mode }: BlockProps<RecapBlock>) {
    Dispatcher
    ========================================================================= */
 
+/**
+ * Renders a block, letting the active lesson kit replace or wrap the shared
+ * renderer for this kind. A failing override falls back to the shared
+ * renderer, so a kit bug can cost a lesson its styling, never its content.
+ */
 export function BlockView({ block, mode }: { block: Block; mode: RenderMode }) {
+  const { kit } = useLesson()
+  const Override = kit?.blocks?.[block.kind] as
+    | ComponentType<{ block: Block; mode: RenderMode; Default: typeof DefaultBlockView }>
+    | undefined
+  if (!Override) return <DefaultBlockView block={block} mode={mode} />
+  return (
+    <KitBoundary label={`${kit!.slug} ${block.kind} override`} fallback={<DefaultBlockView block={block} mode={mode} />}>
+      <Override block={block} mode={mode} Default={DefaultBlockView} />
+    </KitBoundary>
+  )
+}
+
+/** The shared renderer for every block kind, with no lesson styling applied. */
+export function DefaultBlockView({ block, mode }: { block: Block; mode: RenderMode }) {
   switch (block.kind) {
     case 'title':
       return <TitleView block={block} mode={mode} />

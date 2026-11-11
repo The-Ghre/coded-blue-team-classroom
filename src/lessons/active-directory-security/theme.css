@@ -1,0 +1,7 @@
+/* Lesson world: active-directory-security.
+   Every rule lives inside @media screen and under :root[data-lesson='active-directory-security'],
+   so this world never leaks into another lesson or into a printed handout. */
+@media screen {
+  :root[data-lesson='active-directory-security'] {
+  }
+}

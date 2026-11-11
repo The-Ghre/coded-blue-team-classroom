@@ -22,3 +22,10 @@ yarn-error.log*
 /answer-keys/
 *.solution.*
 *.answers.*
+
+# Impeccable working files. Surface briefs (.impeccable/surfaces/) are
+# committed; review captures and machine-local config are not.
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/build/
+.impeccable/config.local.json

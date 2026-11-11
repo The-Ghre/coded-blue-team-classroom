@@ -4,6 +4,8 @@ import { Eyebrow, EvidenceLegend, MonoLabel } from '@/components/brand/Brand'
 import { useProgress } from '@/lib/progress'
 import { useDocumentTitle } from '@/lib/hooks'
 import { NotFound } from './NotFound'
+import { LessonBackdrop, LessonHero } from '@/lessons/LessonLayers'
+import { useReducedMotion } from '@/motion'
 
 export function SessionOverview() {
   const { slug } = useParams()
@@ -12,6 +14,7 @@ export function SessionOverview() {
     session ? `Session ${session.number}: ${session.title} — CODED Blue Team Classroom` : 'Not found',
   )
   const { forSession, resetSession } = useProgress()
+  const reducedMotion = useReducedMotion()
 
   if (!session) return <NotFound />
 
@@ -21,42 +24,70 @@ export function SessionOverview() {
     ? slides.findIndex((b) => b.id === progress.lastBlockId)
     : -1
 
+  const actionsNode = (
+    <div className="overview__actions">
+      <Link className="btn btn--primary" to={`/session/${session.slug}/present`}>
+        <span aria-hidden="true">▸</span> Present
+      </Link>
+      <Link className="btn" to={`/session/${session.slug}/study`}>
+        Study the theory
+      </Link>
+      <Link className="btn" to={`/session/${session.slug}/practical`}>
+        Open the workshop
+      </Link>
+      {resumeIndex >= 0 && (
+        <Link
+          className="btn btn--ghost"
+          to={
+            progress.lastMode === 'present'
+              ? `/session/${session.slug}/present/${resumeIndex}`
+              : `/session/${session.slug}/${
+                  progress.lastMode === 'practical' ? 'practical' : 'study'
+                }#${progress.lastBlockId}`
+          }
+        >
+          Resume: {slides[resumeIndex]?.title}
+        </Link>
+      )}
+    </div>
+  )
+
   return (
     <article className="overview">
-      <header className="overview__head">
-        <Eyebrow>
-          Session {String(session.number).padStart(2, '0')} ·{' '}
-          {session.track === 'core' ? 'Core track' : 'Extension session'}
-        </Eyebrow>
-        <h1>{session.title}</h1>
-        <p className="lead overview__abstract">{session.abstract}</p>
-
-        <div className="overview__actions">
-          <Link className="btn btn--primary" to={`/session/${session.slug}/present`}>
-            <span aria-hidden="true">▸</span> Present
-          </Link>
-          <Link className="btn" to={`/session/${session.slug}/study`}>
-            Study the theory
-          </Link>
-          <Link className="btn" to={`/session/${session.slug}/practical`}>
-            Open the workshop
-          </Link>
-          {resumeIndex >= 0 && (
-            <Link
-              className="btn btn--ghost"
-              to={
-                progress.lastMode === 'present'
-                  ? `/session/${session.slug}/present/${resumeIndex}`
-                  : `/session/${session.slug}/${
-                      progress.lastMode === 'practical' ? 'practical' : 'study'
-                    }#${progress.lastBlockId}`
-              }
-            >
-              Resume: {slides[resumeIndex]?.title}
-            </Link>
-          )}
-        </div>
-      </header>
+      <LessonBackdrop
+        surface="overview"
+        session={session}
+        slideIndex={0}
+        slideCount={slides.length}
+        half="theory"
+        direction={0}
+        focusMode={false}
+        reducedMotion={reducedMotion}
+      />
+      <LessonHero
+        surface="overview"
+        session={session}
+        slideIndex={0}
+        slideCount={slides.length}
+        half="theory"
+        direction={0}
+        focusMode={false}
+        reducedMotion={reducedMotion}
+        eyebrow={`Session ${String(session.number).padStart(2, '0')} · ${session.track === 'core' ? 'Core track' : 'Extension session'}`}
+        lead={session.abstract}
+        actions={actionsNode}
+        fallback={
+          <header className="overview__head">
+            <Eyebrow>
+              Session {String(session.number).padStart(2, '0')} ·{' '}
+              {session.track === 'core' ? 'Core track' : 'Extension session'}
+            </Eyebrow>
+            <h1>{session.title}</h1>
+            <p className="lead overview__abstract">{session.abstract}</p>
+            {actionsNode}
+          </header>
+        }
+      />
 
       <div className="overview__grid">
         <section className="overview__panel">
