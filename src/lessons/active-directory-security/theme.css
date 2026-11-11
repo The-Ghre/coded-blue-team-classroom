@@ -468,6 +468,23 @@
     & .adw-wrap[data-echo] > .block > .block__head > .eyebrow {
       display: none;
     }
+    /* With the label gone, the time is read as a field of the drawing title,
+       left under the rule where the scale line would sit. */
+    & .adw-wrap[data-echo] > .block > .block__head > .block__meta {
+      grid-column: 1 / -1;
+      text-align: left;
+      padding-left: 0;
+    }
+    & .adw-wrap[data-echo] > .block > .block__head > .block__meta::before {
+      content: 'Time';
+      margin-right: 0.8em;
+      font-family: var(--adw-cond);
+      font-size: var(--fs-micro);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
     & .block__head > .block__meta {
       order: 3;
       grid-column: 2;
@@ -903,7 +920,34 @@
       font-size: clamp(1.8rem, 1rem + 1.9vw, 2.75rem);
     }
     & .present__slide .lead {
-      font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.35rem);
+      font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.3rem);
+      margin-bottom: var(--s-3);
+    }
+    & .present__slide .concept__points {
+      gap: var(--s-2);
+    }
+    & .present__slide .concept__points li {
+      font-size: clamp(1rem, 0.92rem + 0.35vw, 1.2rem);
+      line-height: 1.45;
+    }
+    & .present__slide .adw-concept--clouded .concept__points {
+      gap: var(--s-4);
+    }
+    & .present__slide .check__list {
+      gap: var(--s-3);
+    }
+    & .present__slide .check__option {
+      padding-block: 0.4rem;
+    }
+    & .present__slide .adw-reset__transmittal th,
+    & .present__slide .adw-reset__transmittal td {
+      padding-block: 0.25rem;
+    }
+    & .present__slide .adw-reset__feedback {
+      min-height: 0;
+    }
+    & .present__slide .block__head {
+      margin-bottom: var(--s-3);
     }
     & .present__slide:not([data-kind='title']) {
       padding-block: var(--s-4) var(--s-5) !important;
@@ -1011,39 +1055,6 @@
       border: 1.5px solid var(--adw-ink);
       box-shadow: inset 0 0 0 4px transparent, inset 0 0 0 5px rgba(var(--adw-ink-rgb), 0.5);
     }
-    & .adw-sheet__cols,
-    & .adw-sheet__rows {
-      position: absolute;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: space-around;
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      font-weight: 600;
-      color: var(--text-dim);
-    }
-    & .adw-sheet__cols {
-      left: 30px;
-      right: 58px;
-      bottom: 12px;
-      height: 14px;
-    }
-    & .adw-sheet__rows {
-      flex-direction: column;
-      top: 10px;
-      bottom: 10px;
-      left: 8px;
-      width: 18px;
-      align-items: center;
-    }
-    & .adw-sheet__rows li {
-      display: grid;
-      place-items: center;
-      width: 17px;
-      height: 17px;
-    }
     & .adw-sheet__strip {
       position: absolute;
       top: 10px;
@@ -1099,16 +1110,7 @@
       top: 64px;
       bottom: 98px;
     }
-    & .present.chrome-on .adw-sheet__rows {
-      top: 64px;
-      bottom: 98px;
-    }
-    & .present.chrome-on .adw-sheet__cols {
-      opacity: 0;
-    }
-    & .adw-sheet__strip,
-    & .adw-sheet__rows,
-    & .adw-sheet__cols {
+    & .adw-sheet__strip {
       transition: top 600ms var(--adw-ease), bottom 600ms var(--adw-ease), opacity 400ms var(--adw-ease);
     }
     @media (max-width: 52rem) {
@@ -1137,9 +1139,7 @@
       grid-area: letters;
       justify-self: start;
       padding: var(--s-2) var(--s-4) var(--s-3) 0;
-      /* A drafting wipeout: plan linework stops where the lettering starts. */
-      background: rgba(229, 228, 236, 0.9);
-      box-shadow: 0 0 0 var(--s-3) rgba(229, 228, 236, 0.9);
+
     }
     & .adw-title__h {
       margin: 0;
@@ -1167,7 +1167,6 @@
       max-width: 46ch;
       padding: var(--s-2) var(--s-4);
       border-left: 1px solid var(--adw-ink);
-      background: rgba(229, 228, 236, 0.9);
     }
     & .adw-title__note-label {
       display: block;

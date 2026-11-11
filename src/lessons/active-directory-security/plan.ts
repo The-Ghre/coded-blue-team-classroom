@@ -11,11 +11,14 @@
 export const PLAN_W = 200
 export const PLAN_H = 120
 
-export type Prim =
-  | { t: 'line'; x1: number; y1: number; x2: number; y2: number; w: number; dash?: number[] }
+/** `room`: a room's name or number tag, left off the cover sheet. */
+type Tagged = { tag?: 'room' }
+
+export type Prim = Tagged &
+  ({ t: 'line'; x1: number; y1: number; x2: number; y2: number; w: number; dash?: number[] }
   | { t: 'arc'; cx: number; cy: number; r: number; a0: number; a1: number; w: number }
   | { t: 'circle'; cx: number; cy: number; r: number; w: number }
-  | { t: 'text'; x: number; y: number; s: string; size: number; align?: CanvasTextAlign; weight?: number }
+  | { t: 'text'; x: number; y: number; s: string; size: number; align?: CanvasTextAlign; weight?: number })
 
 export interface Room {
   id: string
@@ -224,12 +227,12 @@ function buildDrawing(): Prim[] {
   ROOMS.forEach((r, i) => {
     const cx = r.x + r.w / 2
     const cy = r.id === 'dc01' ? r.y + 14 : r.y + r.h / 2
-    P.push({ t: 'text', x: cx, y: cy, s: r.label, size: r.id === 'dc01' ? 3 : 2.2, align: 'center', weight: 600 })
-    P.push({ t: 'circle', cx, cy: cy + 4.6, r: 2.1, w: 0.25 })
-    P.push({ t: 'text', x: cx, y: cy + 5.35, s: String(101 + i), size: 1.6, align: 'center' })
+    P.push({ t: 'text', x: cx, y: cy, s: r.label, size: r.id === 'dc01' ? 3 : 2.2, align: 'center', weight: 600, tag: 'room' })
+    P.push({ t: 'circle', cx, cy: cy + 4.6, r: 2.1, w: 0.25, tag: 'room' })
+    P.push({ t: 'text', x: cx, y: cy + 5.35, s: String(101 + i), size: 1.6, align: 'center', tag: 'room' })
   })
-  P.push({ t: 'text', x: 100, y: 58.2, s: 'CORRIDOR', size: 2, align: 'center', weight: 600 })
-  P.push({ t: 'text', x: 155, y: 104, s: 'TIER 0', size: 2, align: 'center', weight: 600 })
+  P.push({ t: 'text', x: 100, y: 58.2, s: 'CORRIDOR', size: 2, align: 'center', weight: 600, tag: 'room' })
+  P.push({ t: 'text', x: 155, y: 104, s: 'TIER 0', size: 2, align: 'center', weight: 600, tag: 'room' })
 
   /* Dimension string across the top. */
   P.push({ t: 'line', x1: X0, y1: 7, x2: X1, y2: 7, w: 0.2 })

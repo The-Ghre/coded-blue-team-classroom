@@ -106,14 +106,21 @@ function drawPrim(ctx: CanvasRenderingContext2D, p: Prim, s: number, frac: numbe
 }
 
 /** Draws the plan up to `progress` (0–1) of its ink. */
-function drawPlan(ctx: CanvasRenderingContext2D, s: number, progress: number, lengths: number[], total: number) {
+function drawPlan(
+  ctx: CanvasRenderingContext2D,
+  s: number,
+  progress: number,
+  lengths: number[],
+  total: number,
+  bare = false,
+) {
   ctx.strokeStyle = `rgb(${INK})`
   ctx.fillStyle = `rgb(${INK})`
   let budget = progress * total
   for (let i = 0; i < DRAWING.length; i++) {
     const L = lengths[i]
     if (budget <= 0) break
-    drawPrim(ctx, DRAWING[i], s, Math.min(1, budget / L))
+    if (!(bare && DRAWING[i].tag === 'room')) drawPrim(ctx, DRAWING[i], s, Math.min(1, budget / L))
     budget -= L
   }
   ctx.setLineDash([])
@@ -207,7 +214,10 @@ export default function Backdrop(props: StageProps) {
 
     ctx.clearRect(0, 0, width, height)
 
-    const key = `${width}x${height}:${fontsReady}`
+    // The cover sheet is lettered over the plan, so its room annotations
+    // stand down there: no label is ever half under the title.
+    const bare = propsRef.current.surface === 'present' && propsRef.current.block?.kind === 'title'
+    const key = `${width}x${height}:${fontsReady}:${bare}`
     if (plot >= 1 && (!cache.current || cache.current.key !== key)) {
       const c = cache.current?.canvas ?? document.createElement('canvas')
       const dpr = ctx.getTransform().a
@@ -217,7 +227,7 @@ export default function Backdrop(props: StageProps) {
       cc.setTransform(dpr, 0, 0, dpr, 0, 0)
       cc.clearRect(0, 0, width, height)
       cc.translate(ox, oy)
-      drawPlan(cc, s, 1, lengths, total)
+      drawPlan(cc, s, 1, lengths, total, bare)
       cache.current = { canvas: c, key }
     }
 
@@ -248,7 +258,7 @@ export default function Backdrop(props: StageProps) {
     } else {
       ctx.save()
       ctx.translate(ox, oy)
-      drawPlan(ctx, s, eased, lengths, total)
+      drawPlan(ctx, s, eased, lengths, total, bare)
       ctx.restore()
     }
 
