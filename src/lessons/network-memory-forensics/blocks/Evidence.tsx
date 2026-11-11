@@ -61,6 +61,7 @@ function Lid({ focus }: { focus: 'region' | 'tooth' | null }) {
               : undefined
         }
       />
+      <p className="nmf-lid__caption">explorer.exe · PID 2344 · 0x7ff000200000 · PAGE_EXECUTE_READWRITE · MZ</p>
     </Decor>
   )
 }

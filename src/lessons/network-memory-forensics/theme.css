@@ -648,6 +648,7 @@
 
     & .nmf-hero.study__header,
     & .nmf-hero.overview__head {
+      max-width: none;
       border-bottom: 0;
       padding-bottom: 0;
     }
@@ -1197,6 +1198,37 @@
       overflow: visible;
     }
 
+    /* On the projected slide the governor is sized for the back row. */
+    & .present__slide .nmf-governor {
+      grid-template-columns: clamp(4.5rem, 2rem + 5vw, 8rem) minmax(0, 1fr);
+      column-gap: 1.5rem;
+    }
+
+    & .present__slide .nmf-governor__fan {
+      width: clamp(4.5rem, 2rem + 5vw, 8rem);
+      height: clamp(4.5rem, 2rem + 5vw, 8rem);
+    }
+
+    & .present__slide .nmf-governor__beat {
+      height: 2.4rem;
+    }
+
+    & .present__slide .nmf-governor__ghost {
+      width: 16px;
+      height: 16px;
+      margin: -8px 0 0 -8px;
+    }
+
+    & .present__slide .nmf-governor__pin {
+      width: 10px;
+      height: 10px;
+      margin: -5px 0 0 -5px;
+    }
+
+    & .present__slide .nmf-governor__label {
+      font-size: 1rem;
+    }
+
     & .nmf-governor__sway {
       transform-origin: 0 0;
       animation: nmf-governor-sway var(--wob-t) ease-in-out infinite alternate;
@@ -1511,15 +1543,30 @@
      ======================================================================= */
 
   :root[data-lesson='network-memory-forensics'] {
-    & .nmf-lid {
+    & .nmf-lid[hidden] {
+      display: block;
       margin: var(--s-4) 0 var(--s-5);
+      background: #22262d;
+    }
+
+    & .nmf-lid .nmf-cyl {
       width: 100%;
+      height: auto;
       aspect-ratio: 1166 / 176;
       background: #22262d;
       box-shadow:
         0 24px 50px -28px rgba(0, 0, 0, 0.95),
         inset 0 1px 0 rgba(238, 241, 245, 0.14);
       overflow: hidden;
+    }
+
+    & .nmf-lid__caption {
+      margin: 0;
+      padding: 0.35rem 0.9rem 0.55rem;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: var(--nmf-blued-soft);
+      overflow-wrap: anywhere;
     }
 
     & .nmf-lid .nmf-cyl__time {
@@ -1662,13 +1709,10 @@
       font-size: clamp(1.15rem, 0.98rem + 0.75vw, 1.6rem);
     }
 
-    /* The mechanism's strip at the foot of the room is reserved: slide
-       content scrolls above it, never across it. */
+    /* The mechanism lies behind the bottom bar only; the stage is free. */
     & .present__stage {
       padding-inline: max(var(--s-7), 4.5rem);
-      padding-bottom: 4.5rem;
-      -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 4rem), transparent);
-      mask-image: linear-gradient(to bottom, #000 calc(100% - 4rem), transparent);
+
     }
 
     /* A grid item's min-content would let a long code line or table widen
@@ -2003,6 +2047,11 @@
       }
 
       & .nmf-pinprint__tick[data-minor='true'] {
+        display: none;
+      }
+
+      & .nmf-lid .nmf-cyl__row-label,
+      & .nmf-lid .nmf-cyl__time {
         display: none;
       }
     }

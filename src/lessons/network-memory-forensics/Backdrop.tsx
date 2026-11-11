@@ -20,8 +20,9 @@ import { rng } from './parts'
              in blued steel that no score contains
      lanes   three groups of teeth that strike together at one moment
 
-   The mechanism keeps to a strip along the foot of the slide, which the
-   stage reserves as padding, so it never sits under a line of text. On
+   The mechanism keeps to a strip along the foot of the room no taller than
+   the player's bottom bar, so it lies behind the controls and can never
+   sit under a line of slide text. On
    reading pages the room is the lamp alone: the cylinder appears there as
    the page header's band, not behind the prose.
 
@@ -110,6 +111,8 @@ interface Mech {
   sweepAt: number
   sweepDir: number
   t: number
+  /** Height the strip may occupy: the player's bottom bar. */
+  stripMax: number
 }
 
 export function Backdrop({ surface, half, block, slideIndex, direction, focusMode, reducedMotion }: StageProps) {
@@ -133,6 +136,7 @@ export function Backdrop({ surface, half, block, slideIndex, direction, focusMod
     sweepAt: -10,
     sweepDir: 1,
     t: 0,
+    stripMax: 100,
   })
 
   function draw(dt: number, still: boolean) {
@@ -201,7 +205,7 @@ export function Backdrop({ surface, half, block, slideIndex, direction, focusMod
     /* the strip's upper edge falls off into the room */
     lc.setTransform(dpr, 0, 0, dpr, 0, 0)
     lc.globalCompositeOperation = 'destination-in'
-    const fade = lc.createLinearGradient(0, h - stripHeight(h) - 34, 0, h - stripHeight(h) - 4)
+    const fade = lc.createLinearGradient(0, h - stripHeight(h, s.stripMax), 0, h - stripHeight(h, s.stripMax) + 24)
     fade.addColorStop(0, 'rgba(0,0,0,0)')
     fade.addColorStop(1, 'rgba(0,0,0,1)')
     lc.fillStyle = fade
@@ -247,6 +251,8 @@ export function Backdrop({ surface, half, block, slideIndex, direction, focusMod
       s.w = rect.width
       s.h = rect.height
       s.dpr = dpr
+      const bar = canvas.closest('.present')?.querySelector('.present__bottom')
+      if (bar) s.stripMax = Math.max(48, bar.getBoundingClientRect().height)
       draw(0, reducedMotion)
     }
     resize()
@@ -269,17 +275,16 @@ export function Backdrop({ surface, half, block, slideIndex, direction, focusMod
    --------------------------------------------------------------------------- */
 
 /** Height of the strip the mechanism occupies at the foot of the frame. */
-export function stripHeight(h: number) {
-  const R = drumRadius(h)
-  return R * 1.27 + 9
+export function stripHeight(h: number, max: number) {
+  return drumRadius(h, max) * 1.27 + 9
 }
 
-function drumRadius(h: number) {
-  return Math.min(h * 0.11, 96)
+function drumRadius(h: number, max: number) {
+  return Math.max(16, Math.min(h * 0.11, 96, (max - 12) / 1.27))
 }
 
 function paintMechanism(c: CanvasRenderingContext2D, w: number, h: number, s: Mech, still: boolean) {
-  const R = drumRadius(h)
+  const R = drumRadius(h, s.stripMax)
   const cy = h + R * 0.18
   const x0 = w * 0.04
   const x1 = w * 0.96
@@ -294,7 +299,7 @@ function paintMechanism(c: CanvasRenderingContext2D, w: number, h: number, s: Me
     const y0 = cy - R * Math.sin(a1)
     const y1 = cy - R * Math.sin(a0)
     const light = Math.pow(Math.max(0, Math.cos((a0 + a1) / 2 - 0.35)), 2)
-    const v = Math.round(16 + light * 34)
+    const v = Math.round(14 + light * 26)
     c.fillStyle = `rgb(${v}, ${v + 3}, ${v + 9})`
     c.fillRect(x0 - pitch, y0, x1 - x0 + pitch * 2, y1 - y0 + 0.5)
   }
