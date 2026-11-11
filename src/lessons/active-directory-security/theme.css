@@ -184,3 +184,10 @@
     }
   }
 }
+@media screen {
+  :root[data-lesson='active-directory-security'] {
+    & .present__stage { grid-template-columns: minmax(0, 1fr); }
+    & .present__slide { min-width: 0; max-width: 100%; }
+    & .ad-reader__nav { min-width: 0; }
+  }
+}
