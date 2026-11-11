@@ -28,3 +28,29 @@ Scope: only this lesson kit and this surface brief. Shared DESIGN.md intentional
 - Preview running from this worktree at http://127.0.0.1:5181. An existing IPv6 localhost:5181 listener serves the old kit; use the IPv4 URL explicitly.
 - CUA browser host unavailable. No screenshots could be captured. Every-slide desktop/mobile fit, overview/study/workshop at both viewports, keyboard-only operation, rendered reduced motion, print preview, and console errors are NOT verified.
 - Independent finish reviewer verdict: RECAPTURE. Required desktop.png/mobile.png, every-slide captures and keyboard/reduced-motion/print evidence missing. No visual ship verdict claimed; integration needs that review before approval.
+
+## Resume verification — 2026-11-11 (supersedes prior preview/browser status)
+
+Preview: **http://127.0.0.1:5281/session/soc-operations**. Port 5181 was occupied by PID 21261 on IPv6; it was left untouched. New Vite listener PID 82771 binds IPv4 127.0.0.1:5281. `lsof -a -p 82771 -d cwd` resolved exactly to `/Users/coded/Desktop/CODED/CyS-Bootcamp/Current-Cohort/3-Defensive/Lessons-ESL/worktrees-v2/01-soc-operations`. The Vite `__vite__css` string from `/src/lessons/soc-operations/theme.css` was decoded and compared byte-for-byte to the local file: true (pre-fix CSS SHA-256 `d66898c8f196e5ade344457678bfdbf96cf9a1a4c06820d8ac82dd92e4801b33`). This is not the old `../worktrees` server.
+
+Native Chrome became available after the first getApp timeout, although browser inventory still reported `The browser access host is unavailable`. Via permitted CUA native controls, DevTools Responsive dimensions were visibly confirmed at **1440×900** and **390×844**. Arrow-key navigation traversed all 21 slides at both sizes, saving screenshots and AX transcripts. This verifies slide navigation, not the entire keyboard-only exercise flow.
+
+Evidence (machine-local, intentionally ignored by Git): `.impeccable/review/` contains **51 PNGs**, with SHA-256 manifest `capture-sha256.json`:
+- `desktop-slide-00.png` through `desktop-slide-20.png`, matching `.txt` AX transcripts: first fix-round desktop recaptures.
+- `mobile-slide-00.png` through `mobile-slide-20.png`, matching `.txt` AX transcripts: initial mobile captures, before width correction.
+- `desktop-overview.png`, `desktop-study.png`, `desktop-practical.png`, and corresponding `mobile-*.png`: initial viewport captures, not exhaustive full-page checks.
+- `overview-native.png`, `desktop.png` (initial opening slide), `print-study.png`, `print-study.txt` (18-page native print preview), `console.txt`.
+
+Independent reviewer: separate `finish_review` agent, read-only review of source and native captures; no browser contention or reviewer edits. First verdict **FIX**: numerous dense slides overflowed, mobile console clipped horizontally, diagrams inherited a dark translucent ground, and print retained decorative mint/coral canvas and collapsed metadata spacing. Two scoped fix rounds were implemented in commit `a04c6a3`: presentation spacing and two-column composition; console width containment; actual concept list-item sizing; task/check/evidence/brief/deliverable reflow; light diagram surface; print-only removal of decorative flows and spaced metadata. All teaching content, shared renderers, interaction gates and feedback remain unchanged.
+
+Reviewer’s latest rendered verdict remains **FIX**, not SHIP. On the first-round desktop recaptures, zero-based slides **2, 6, 9, 14, 15** still clipped (scenario closing question, pipeline callout, evidence conclusions, briefing setup, tasks 3–4). The second fix round addresses these areas and diagram contrast in source, but final recapture was blocked. Mobile width and print corrections also remain visually unverified. No issue is claimed resolved solely from CSS inspection.
+
+Precise remaining native-control blocker: after the desktop recapture, DevTools focus/command-menu actions ceased reliably changing state. Coordinate click returned `Computer Use server error -10005: noWindowsAvailable`; clicking a freshly observed Run command menu target returned `Accessibility error: AXError.invalidUIElement`. Reacquiring Chrome, raising its exposed window, and resetting/reinitializing CUA did not recover navigation: Cmd+L, paste of `/present/0`, Return left both URL and AX tree at `/present/20`. Repeated no-op input was stopped. No alternate browser automation or OS input mechanism was used.
+
+Still required: final screenshots of all corrected slides/surfaces; complete reading-page scroll coverage at both sizes; keyboard-only TriageConsole checks → decision → feedback and visible focus; rendered reduced-motion still/instant transitions; post-fix print recapture; rendered contrast measurements. These checks are **blocked/unverified**, not passes.
+
+Console evidence: React development warning `validateDOMNesting: <div> cannot appear as a descendant of <p>` traces to shared `MonoLabel` (`src/components/brand/Brand.tsx`) inside shared `ScenarioView` (`src/components/teaching/blocks.tsx`). It occurs in presentation and study. Fixing shared markup is outside the lesson-agent scope and needs integrator action. No uncaught runtime exception was observed during captured navigation; a clean-console verdict is not claimed.
+
+Tooling: current Impeccable launcher 0.1.21 still cannot create its external cache; existing installed engine 0.1.5 detector returned `[]`. UI-edit design hook also reported no deterministic findings. Detector cleanliness is not visual approval.
+
+Final committed source checks: `npx tsc -b` PASS; `npm run build` PASS (261 modules, SOC CSS `soc-operations-CoHOluoU.css`, 11.03 kB); `git diff --check` PASS. Final port-5281 served CSS again equals local bytes, SHA-256 `0a0ba71339052347aa184560d926dcffe2e4d34dd1cfc51c51c06616b758e760`. Source build and server identity are cleared; the visual/interaction gate remains open.
