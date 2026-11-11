@@ -8,6 +8,7 @@ export function ReadingPane<B extends Block>({ block, mode, Default }: BlockOver
     <p className="pi-reader__cue">Read the evidence · Scroll or focus the pane and use ↑ ↓</p>
     <div className="pi-reader__body" tabIndex={0} role="region" aria-label={`${block.title} content`}
       onKeyDown={event => {
+        if ((event.target as HTMLElement).closest('button, a, input, select, textarea, summary') && event.key !== 'Escape') event.stopPropagation()
         if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) event.stopPropagation()
       }}>
       <Default block={block} mode={mode} />

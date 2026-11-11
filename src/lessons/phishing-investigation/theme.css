@@ -153,3 +153,15 @@
     & .ix__tab { flex: 1 1 40%; }
   }
 }
+@media print {
+  :root[data-lesson='phishing-investigation'] {
+    & .pi-message__drawing, & .pi-message__caption button { display: none; }
+    & .pi-message { margin: 0 0 6mm; }
+  }
+}
+@media screen {
+  :root[data-lesson='phishing-investigation'] .pi-reader__body { position: relative; }
+}
+@media screen {
+  :root[data-lesson='phishing-investigation'] .diagram { background: var(--surface); }
+}
