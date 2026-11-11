@@ -3,15 +3,15 @@
   :root[data-lesson='incident-response'] {
     --bg: #f2f5f2; --bg-raised: #ffffff; --surface: #e5ece7;
     --surface-2: #dce7e0; --surface-3: #d2e1d8; --surface-panel: #e5ece7;
-    --text: #172c2b; --text-muted: #354e48; --text-dim: #4b6059;
+    --text: #172c2b; --text-muted: #2f4741; --text-dim: #3b5149;
     --line: #c1cfc7; --line-strong: #81998d; --card: #ffffff; --card-brd: #b8cabe;
-    --accent: #006158; --accent-deep: #004b44; --accent-soft: #005c53; --focus: #9c2543;
+    --accent: #004d45; --accent-deep: #004b44; --accent-soft: #005c53; --focus: #9c2543;
     --ev-observation: #244f77; --ev-observation-bg: #e5edf5;
     --ev-hypothesis: #765000; --ev-hypothesis-bg: #f5edda;
     --ev-confirmed: #005b43; --ev-confirmed-bg: #dfefe5;
     --ev-uncertain: #743c70; --ev-uncertain-bg: #f0e6ee;
     --ev-response: #005b63; --ev-response-bg: #deedef;
-    --ev-attack: #a12c46; --ev-attack-bg: #f8e6ea;
+    --ev-attack: #84203b; --ev-attack-bg: #f8e6ea;
     --pillar-endpoint: #244f77; --pillar-network: #514680;
     --pillar-identity: #765000; --pillar-cloud: #005b43;
     --r-sm: 2px; --r-md: 3px; --r-lg: 4px; --r-xl: 4px;
@@ -104,6 +104,17 @@
   :root[data-lesson='incident-response']::view-transition-old(slide) { animation: none; }
   @keyframes ir-acquire { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
   @keyframes ir-decay { to { stroke-dashoffset: -72; } }
+  :root[data-lesson='incident-response'] .ir-scenario { position: relative; }
+  :root[data-lesson='incident-response'] .ir-timer { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; color: var(--ev-attack); }
+  :root[data-lesson='incident-response'] .ir-timer__read { font: 600 1.5rem var(--font-mono); font-variant-numeric: tabular-nums; }
+  :root[data-lesson='incident-response'] .ir-timer__track { stroke: var(--line); stroke-width: 6; }
+  :root[data-lesson='incident-response'] .ir-timer__remaining { stroke: var(--ev-attack); stroke-width: 6; }
+  :root[data-lesson='incident-response'] .ir-window { position: relative; margin: 2rem 0; padding-top: 1.5rem; }
+  :root[data-lesson='incident-response'] .ir-window__film { display: flex; border-block: 1px solid var(--line-strong); }
+  :root[data-lesson='incident-response'] .ir-window__frame { flex: var(--len); display: flex; justify-content: space-between; padding: .6rem; border-right: 1px solid var(--line); background: var(--surface); color: var(--text); }
+  :root[data-lesson='incident-response'] .ir-window__inject { position: absolute; left: calc(var(--at) / var(--total) * 100%); top: 0; height: 4.5rem; border-left: 1px dashed var(--ev-attack); }
+  :root[data-lesson='incident-response'] .ir-window__inject-label { position: absolute; left: .2rem; white-space: nowrap; font-size: .7rem; color: var(--ev-attack); }
+  :root[data-lesson='incident-response'] .ir-window__axis { display: flex; justify-content: space-between; color: var(--text-muted); font-size: .8rem; }
   @media (min-width: 70rem) {
     :root[data-lesson='incident-response'] .present__stage { padding: 1rem 3rem; align-items: safe center; }
     :root[data-lesson='incident-response'] .present__slide .block { gap: .7rem; }
