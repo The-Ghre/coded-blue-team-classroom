@@ -236,3 +236,9 @@
   .de-reading__hint {display:none}
   .de-reading__body {max-height:none;overflow:visible}
 }
+@media screen and (max-width:999px) {
+  :root[data-lesson='detection-engineering'] .present__slide .de-walk {
+    max-height:none;
+    overflow:visible;
+  }
+}
