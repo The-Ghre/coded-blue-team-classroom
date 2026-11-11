@@ -5,28 +5,18 @@ primary_target: "src/lessons/incident-response/index.ts"
 related_targets: []
 ---
 
-# Session 05 — Incident Response and Digital Evidence (lesson kit)
+# Preservation Ledger — Session 05
 
-Scope: the lesson kit in `src/lessons/incident-response/` — projected slides (the showpiece), the study and workshop reading pages, and the session overview. Visitor mode: Experience on the presentation, Read on study/workshop/overview (the world carries the page, never at the cost of reading).
+Mode: Experience for projection; Read for study, workshop and overview.
+Mechanism: every response action changes evidence; collect volatile state before it disappears and preserve an accountable record.
+Audience scene: an instructor projecting decisions under time pressure and ESL learners following the same evidence afterwards.
 
-Audience and job: CODED Defensive-track students in a projected classroom and alone afterwards; instructors projecting by keyboard. They must leave knowing that evidence decays in a known order and that every response action either preserves it or destroys it. Constraints: kit folder only, IBM Plex family only, no new dependencies, content and interaction behaviour unchanged, body ≥7:1 and other text ≥4.5:1, reduced motion composed, print stays ink on paper.
+Seven grounded directions, ordered by resonance: incident command action log; evidence acquisition diagram; response swimlane; custody transfer register; volatility survival chart; multi-source reconstruction sheet; Preservation Ledger. The seventh combines an acquisition boundary, five unequal survival traces and an unbroken custody spine. Roll e09749c7 assigned candidate 7. Catalog service unavailable: degraded roll, no challengers or quality-bar boards. User explicitly waived decision page and questions. Code-led only.
 
-Decision: direction chosen by the build session — the user waived the question probe and decision page ("You decide all 10"). Challengers from the roll were all declined; their disciplines are written in as raises.
+World: cool mineral-white ground #f2f5f2, near-black ink #172c2b, deep teal sealed evidence #006158, crimson loss #a12c46. IBM Plex Sans Condensed headings, Sans reading, Mono only for source data and measurements. No darkroom, film, amber, decorative terminal, dashboard or repeated card grid.
 
-## Direction contract
+First viewport: session title occupies the left, a five-source acquisition illustration on the right. Each trace breaks at a different point before a collection boundary; after collection the evidence becomes parallel, stable, recorded lines. The overview is an evidence register of full, wrapping section names. Signature: collection and reboot controls retain the existing volatility exercise and all feedback; captured rows become solid sealed records, lost rows become interrupted traces. The hash demonstration retains live SHA-256 computation and all annotations. Timeline remains the original keyboard-controlled reconstruction.
 
-THESIS: Evidence is a latent image. It is invisible until developed, it fades in a known order, and the wrong light destroys it; only fixing makes it permanent. The lesson is developed in a darkroom under safelight. It refuses the category default of a dark SOC console with red alerts and glowing terminals.
+Motion: canvas traces decay at different rates before the boundary, stable after it; stops offscreen or hidden, DPR 1.5, composed reduced-motion frame. Navigation advances the ledger with a short clip reveal. No text depends on animation. All CSS scoped within screen media; native print untouched.
 
-OWN-WORLD: Umber-black darkroom ground lit by one amber safelight (dark-green safelight for the workshop half). Silver-grey fibre-print surfaces, 35mm negative strips with sprocket holes and condensed edge print, contact sheets, china-marker circles and crosses in yellow and red. Plex Sans Condensed for edge print and labels, Plex Serif for prose leads, Plex Mono for frame numbers. Raise (luminous understory): state is print density — latent, developing, fixed — never hue alone. Raise (normalled jackfield): preserved, lost and verified read as line pattern (unbroken, gapped, crossed). Raise (kaiju broadcast): full white light appears only at the destructive act. Raise (teletext): the 3:2 frame is the sacred unit; frames scale, never reflow. Raise (deep dive): one time axis rules each sequence. Raise (pixorama): a closer look rewards more detail.
-
-STORY: Students watch each slide develop out of the dark, scrub evidence fading tier by tier, lose RAM by choosing the wrong order, watch three hashes register, and leave knowing sequence is the skill.
-
-FIRST VIEWPORT: Title slide — a full-bleed print in the developer tray: SESSION 5 rises from latent to fixed density, the session title and lead in Serif beneath, a vertical negative strip on the left edge numbering all nineteen frames with the current one exposed. Study and overview open on a contact sheet of every section as frames, studied frames fixed, unstudied ones latent; the h1 sits on the sheet, actions below in plain reach.
-
-FORM: Darkroom process, candidate 3 of 7 on my ordered list (evidence bag seal, scene markers, darkroom, hangar reconstruction, nuclide chart, ICS board, burn patterns). seed:a7d61606e76fe6da. Signature interaction: the volatility test strip — collect tiers in order while the clock advances; a reboot turns the white light on. Motion grammar: develop-in slide transitions, silver grain in WebGL, china-marker strokes drawn on.
-
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
-
-## Open
-
-DESIGN.md is deferred to the parent session, which documents the merged ten-lesson system once.
+Truth: all original data, synthetic labels, annotations, feedback and interaction logic retained. Existing darkroom decorative wrappers replaced; core practice retained. Risks: dense projection slides require measured fitting without hiding content; mobile uses reading flow.
