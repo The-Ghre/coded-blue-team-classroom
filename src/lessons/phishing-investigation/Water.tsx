@@ -73,23 +73,23 @@ void main() {
   // Ground: lake green, darker with depth. Practical half: later, warmer, lower.
   vec3 topT = vec3(0.047, 0.255, 0.239);
   vec3 deepT = vec3(0.020, 0.133, 0.125);
-  vec3 topP = vec3(0.066, 0.208, 0.184);
-  vec3 deepP = vec3(0.016, 0.098, 0.102);
+  vec3 topP = vec3(0.118, 0.161, 0.110);
+  vec3 deepP = vec3(0.027, 0.063, 0.063);
   vec3 top = mix(topT, topP, uHalf);
   vec3 deep = mix(deepT, deepP, uHalf);
   top = mix(top, deep, uCalm * 0.55);
   vec3 col = mix(top, deep, smoothstep(0.0, 0.85, pow(depth, 0.8)));
 
   // Light shafts. Their slant follows the deck: morning to evening.
-  float slant = mix(-0.42, 0.5, uProgress);
+  float slant = mix(mix(-0.42, 0.5, uProgress), 0.95, uHalf);
   float sx = p.x + (1.0 - uv.y) * slant;
   float shafts = smoothstep(0.5, 0.95, noise(vec2(sx * 4.2, t * 0.035)))
                + 0.6 * smoothstep(0.55, 1.0, noise(vec2(sx * 9.0 + 7.0, t * 0.05)));
   float shaftFade = (1.0 - smoothstep(0.0, 0.75, depth)) * (1.0 - uCalm * 0.7);
   vec3 lightT = vec3(0.62, 0.86, 0.72);
-  vec3 lightP = vec3(0.98, 0.72, 0.42);
+  vec3 lightP = vec3(1.0, 0.64, 0.30);
   vec3 light = mix(lightT, lightP, uHalf);
-  float shaftAmt = (0.042 + 0.02 * uFocus) * mix(1.0, 0.8, uHalf);
+  float shaftAmt = (0.042 + 0.02 * uFocus) * mix(1.0, 1.35, uHalf);
   col += light * shafts * shaftFade * shaftAmt;
 
   // Caustic ridges, strongest just under the surface.
@@ -117,7 +117,7 @@ void main() {
 
   // Above the surface: the underside mirror, pale and streaked.
   vec3 air = mix(vec3(0.22, 0.42, 0.38), vec3(0.32, 0.5, 0.44), noise(vec2(p.x * 2.0 + t * 0.05, uv.y * 30.0)));
-  air = mix(air, air * vec3(1.15, 0.95, 0.8), uHalf);
+  air = mix(air, air * vec3(1.35, 0.95, 0.62), uHalf);
   col = mix(air, col, below);
 
   // The meniscus: one bright line where the two meet.
@@ -252,6 +252,35 @@ export function Water(props: StageProps) {
   const showRig = presenting && props.block?.kind !== 'title'
   const depth = targets.current.progress
 
+  /* Reading pages: the sounding line follows the reader down the page. It
+     is driven by the reader's own scrolling, so it moves only when they do,
+     and it surfaces only once the hero's lure has left the screen. */
+  const readRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (presenting) return
+    const el = readRef.current
+    if (!el) return
+    let raf = 0
+    const update = () => {
+      raf = 0
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0
+      el.style.setProperty('--pi-depth', p.toFixed(4))
+      el.dataset.surfaced = window.scrollY > window.innerHeight * 0.55 ? 'true' : 'false'
+    }
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [presenting])
+
   return (
     <div ref={hostRef} className="pi-water" data-surface={props.surface}>
       {presenting && (
@@ -273,6 +302,25 @@ export function Water(props: StageProps) {
               <LureRig interactive={false} lineAbove={1800} />
             </div>
           )}
+        </div>
+      )}
+      {!presenting && (
+        <div ref={readRef} className="pi-sounding pi-sounding--read" data-surfaced="false">
+          <svg className="pi-sounding__scale" viewBox="0 0 24 100" preserveAspectRatio="none">
+            {Array.from({ length: 33 }, (_, i) => (
+              <line
+                key={i}
+                x1={i % 4 === 0 ? 8 : 15}
+                x2="24"
+                y1={i * 3.125}
+                y2={i * 3.125}
+                vectorEffect="non-scaling-stroke"
+              />
+            ))}
+          </svg>
+          <div className="pi-sounding__rig">
+            <LureRig interactive={false} lineAbove={1800} />
+          </div>
         </div>
       )}
     </div>

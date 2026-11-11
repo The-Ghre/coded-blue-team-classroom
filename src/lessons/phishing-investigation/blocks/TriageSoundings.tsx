@@ -76,6 +76,18 @@ function StateMark({ state }: { state: 'pending' | 'correct' | 'incorrect' }) {
   )
 }
 
+/**
+ * The correct option's feedback opens by congratulating whoever chose it
+ * ("Correct, and the ordering…"). Quoted under "The better call" after a
+ * wrong pick, that opening reads as praise for the wrong choice, so it is
+ * set without the verdict word. The explanation itself is unchanged.
+ */
+function asBetterCall(text?: string): string | undefined {
+  if (!text) return text
+  const rest = text.replace(/^Correct[.,]\s*(?:and\s+)?/, '')
+  return rest === text ? text : rest.charAt(0).toUpperCase() + rest.slice(1)
+}
+
 const STATE_WORD = {
   pending: 'not decided',
   correct: 'decided correctly',
@@ -262,7 +274,7 @@ export function TriageSoundings({ data }: { data: unknown }) {
                   <div className="pi-sound__feedback-head">
                     <EvidenceChip kind="response" label="The better call" />
                   </div>
-                  <p>{alert.options.find((o) => o.correct)?.feedback}</p>
+                  <p>{asBetterCall(alert.options.find((o) => o.correct)?.feedback)}</p>
                 </>
               )}
               <div className="pi-sound__nav">

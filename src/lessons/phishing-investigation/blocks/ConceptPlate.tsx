@@ -96,12 +96,16 @@ function Longline({ sources }: { sources: string[] }) {
   return (
     <figure className="pi-longline" aria-hidden="true">
       <svg viewBox="0 0 400 250" focusable="false">
-        <path className="pi-longline__main" d="M200 -40 V70" />
+        {/* The hand that holds the line: one hull, more than one line over the side. */}
+        <path className="pi-longline__other" d="M164 14 Q100 10 14 26" />
+        <path className="pi-longline__other" d="M236 14 Q300 10 386 26" />
+        <path className="pi-longline__hull" d="M150 6 H250 L238 22 H162 Z" />
+        <path className="pi-longline__main" d="M200 22 V67" />
         <path className="pi-longline__cross" d={`M${xs[0]} 112 Q200 128 ${xs[n - 1]} 112`} />
         <path className="pi-longline__stem" d="M200 82 V118" />
         <g className="pi-longline__origin">
           <circle cx="200" cy="76" r="9" />
-          <text x="200" y="50">one indicator</text>
+          <text x="222" y="50" textAnchor="start">one indicator</text>
         </g>
         {xs.map((x, i) => {
           // On the crossline: a quadratic from (60,112) via (200,128) to (340,112).

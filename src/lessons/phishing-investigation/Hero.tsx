@@ -19,7 +19,7 @@ export function Hero({ session, eyebrow, lead, actions, surface, half }: HeroPro
         {actions && <div className="pi-hero__actions">{actions}</div>}
       </div>
       <div className="pi-hero__rig">
-        <LureRig />
+        <LureRig curve />
       </div>
     </header>
   )

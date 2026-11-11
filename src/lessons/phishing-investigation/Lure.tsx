@@ -41,9 +41,14 @@ export interface LureRigProps {
   interactive?: boolean
   /** Units of line drawn above the tie point (clipped by whatever holds the rig). */
   lineAbove?: number
+  /**
+   * Hang the lure from a rod held off-frame above and to the left, so the
+   * line falls in a catenary. Off, the line is a plumb sounding line.
+   */
+  curve?: boolean
 }
 
-export function LureRig({ className, interactive = true, lineAbove = 2400 }: LureRigProps) {
+export function LureRig({ className, interactive = true, lineAbove = 2400, curve = false }: LureRigProps) {
   const uid = useId().replace(/:/g, '')
   const rigRef = useRef<HTMLDivElement>(null)
   const groupRef = useRef<SVGGElement>(null)
@@ -66,6 +71,11 @@ export function LureRig({ className, interactive = true, lineAbove = 2400 }: Lur
     return () => window.removeEventListener('pointermove', onMove)
   }, [interactive, reduced])
 
+  const linePath = (bow: number) =>
+    curve
+      ? `M${TIE.x - lineAbove * 0.3} ${-lineAbove * 0.45} Q${(TIE.x - 40 + bow).toFixed(1)} ${-180} ${TIE.x} ${TIE.y - 6}`
+      : `M${TIE.x} ${-lineAbove} Q${(TIE.x + bow).toFixed(1)} ${(-lineAbove / 2).toFixed(0)} ${TIE.x} ${TIE.y - 6}`
+
   const apply = () => {
     const s = state.current
     groupRef.current?.setAttribute('transform', `rotate(${s.angle.toFixed(2)} ${TIE.x} ${TIE.y})`)
@@ -73,10 +83,7 @@ export function LureRig({ className, interactive = true, lineAbove = 2400 }: Lur
     lensRef.current?.setAttribute('cy', s.ly.toFixed(1))
     ringRef.current?.setAttribute('cx', s.lx.toFixed(1))
     ringRef.current?.setAttribute('cy', s.ly.toFixed(1))
-    lineRef.current?.setAttribute(
-      'd',
-      `M${TIE.x} ${-lineAbove} Q${(TIE.x + s.bow).toFixed(1)} ${(-lineAbove / 2).toFixed(0)} ${TIE.x} ${TIE.y - 6}`,
-    )
+    lineRef.current?.setAttribute('d', linePath(curve ? s.bow * 0.5 : s.bow))
   }
 
   useFrameLoop((t) => {
@@ -158,7 +165,7 @@ export function LureRig({ className, interactive = true, lineAbove = 2400 }: Lur
         <path
           ref={lineRef}
           className="pi-lure__line"
-          d={`M${TIE.x} ${-lineAbove} Q${TIE.x} ${-lineAbove / 2} ${TIE.x} ${TIE.y - 6}`}
+          d={linePath(0)}
           fill="none"
         />
 
@@ -185,14 +192,13 @@ export function LureRig({ className, interactive = true, lineAbove = 2400 }: Lur
                 <path d="M46 222 L98 200 L98 214 L46 240 Z" />
                 <path d="M50 272 L100 252 L100 264 L54 290 Z" />
               </g>
-              <ellipse cx="132" cy="122" rx="15" ry="30" className="pi-lure__gill" />
+              <path d="M118 104 C130 112 136 128 134 150 C128 132 122 118 112 110 Z" className="pi-lure__gill" />
               <path d="M70 70 C64 140 66 240 92 330" className="pi-lure__sheen" />
             </g>
             <path d={BODY} className="pi-lure__edge" />
-            <path d="M88 108 C104 118 124 118 140 108" className="pi-lure__gillline" />
-            <circle cx="116" cy="84" r="11" className="pi-lure__eye" />
-            <circle cx="117.5" cy="85" r="5.2" className="pi-lure__pupil" />
-            <circle cx="113" cy="80.5" r="2" className="pi-lure__glint" />
+            <path d="M110 100 C104 114 104 128 112 142" className="pi-lure__gillline" />
+            <circle cx="116" cy="84" r="9" className="pi-lure__eye" />
+            <circle cx="116" cy="84" r="6" className="pi-lure__pupil" />
           </g>
 
           {/* Always there, whatever the paint says. */}
