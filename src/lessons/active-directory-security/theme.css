@@ -3,7 +3,7 @@
     --bg: #290c17; --bg-raised: #32121f; --surface: #3b1726; --surface-2: #431c2d; --surface-3: #4a2233; --surface-panel: #381522;
     --text: #fff2df; --text-muted: #e9cbbb; --text-dim: #e9cbbb;
     --line: #774b59; --line-strong: #be8990; --card: #381522; --card-brd: #90606d;
-    --accent: #ffc0ad; --accent-deep: #ffdac7; --accent-soft: #ffc0ad; --focus: #ffc0ad;
+    --accent: #ffc0ad; --accent-deep: #70263c; --accent-soft: #ffc0ad; --focus: #ffc0ad;
     --ev-observation: #bddff4; --ev-hypothesis: #f5d69e; --ev-confirmed: #c7e4bb; --ev-uncertain: #e6c2ed; --ev-response: #bce7e1; --ev-attack: #ffc0ad;
     --ev-observation-bg: #291d30; --ev-hypothesis-bg: #362519; --ev-confirmed-bg: #252a21; --ev-uncertain-bg: #352139; --ev-response-bg: #202b2c; --ev-attack-bg: #42202d;
     --pillar-endpoint: #bddff4; --pillar-network: #e6c2ed; --pillar-identity: #f5d69e; --pillar-cloud: #c7e4bb;
@@ -88,7 +88,6 @@
     & .evidence__line { min-height: 44px; }
     & .ad-hero__map { border-block: 1px solid var(--line-strong); padding-block: 1rem; }
     & .ad-hero__map .ad-graph { max-height: 520px; }
-    & .ad-title .ad-graph { max-height: 330px; }
     & .adw-reset__transmittal tr[data-acked="true"] { color: var(--accent); background: var(--surface); }
     & .adw-reset__held { font-variant-numeric: tabular-nums; }
     & .adw-reset__ack { display: inline-flex; align-items: center; gap: .4rem; }
