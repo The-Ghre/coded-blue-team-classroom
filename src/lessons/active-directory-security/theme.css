@@ -171,3 +171,16 @@
     }
   }
 }
+@media screen {
+  :root[data-lesson='active-directory-security'] {
+    & .present__slide .adw-climb__stage { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 1.5rem; }
+    & .present__slide .adw-climb__section { display: block; position: sticky; top: 0; align-self: start; background: var(--bg); }
+    & .present__slide .adw-climb__section .ad-graph { min-width: 0; width: 100%; }
+    & .present__slide .adw-climb__section .ad-graph text { font-size: 18px; }
+    @media (max-width: 800px) {
+      & .present__slide .adw-climb__stage { grid-template-columns: 1fr; }
+      & .present__slide .adw-climb__section { position: static; }
+      & .present__slide .adw-climb__section .ad-graph { min-width: 620px; }
+    }
+  }
+}
