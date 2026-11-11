@@ -5,19 +5,10 @@ import { EvidenceChip, MonoLabel, SyntheticBadge } from '@/components/brand/Bran
 import { useReducedMotion } from '@/motion'
 import type { BlockOverrideProps } from '../../types'
 import { Detail, Footer, SheetHead } from './parts'
+import { AccessGraph } from '../AccessGraph'
 
-/* =========================================================================
-   THE CLIMB — twenty minutes of a domain falling, drawn as a section
-   =========================================================================
-   The shared evidence annotator, rebuilt as a construction sheet: on the
-   left, Section A–A through the building's stair, one storey per event, the
-   red route solid where svc_backup has been and dashed where it has yet to
-   go; on the right, the six lines as a schedule, each one a button that
-   opens its annotation exactly as the shared renderer does. A time rule
-   under both runs 03:00 → 03:22 on one clock. Everything the shared
-   renderer shows — caption, synthetic label, every annotation, what the
-   excerpt proves and does not prove — is here.
-   ========================================================================= */
+/** Six events, one account: event selection advances the corresponding
+ * relationship. Source lines, annotations and evidence limits stay intact. */
 
 interface Parsed {
   time: string
@@ -117,12 +108,12 @@ export function Climb({ block, mode }: BlockOverrideProps<EvidenceBlock>) {
 
   const current = reached > 0 ? rows[reached - 1] : null
   const sectionLabel = current
-    ? `Section A–A. Event ${reached} of ${n} reached: ${current.time}, Event ID ${current.event}, ${current.target}.`
-    : `Section A–A. No event selected yet; svc_backup is on the ground floor at WORKSTATION-14.`
+    ? `Privilege path. Event ${reached} of ${n} reached: ${current.time}, Event ID ${current.event}, ${current.target}.`
+    : `Privilege path. No event selected yet; svc_backup originates at WORKSTATION-14.`
 
   return (
     <section className="block block--evidence adw-climb" data-reached={reached}>
-      <SheetHead block={block} kicker="Annotated evidence · Section A–A" />
+      <SheetHead block={block} kicker="Annotated evidence · privilege path" />
       {block.lead && <p className="lead">{block.lead}</p>}
       <SyntheticBadge>{block.source}</SyntheticBadge>
 
@@ -130,8 +121,8 @@ export function Climb({ block, mode }: BlockOverrideProps<EvidenceBlock>) {
         <figure className="adw-climb__section" role="img" aria-label={sectionLabel}>
           <SectionDrawing rows={rows} reached={reached} />
           <figcaption aria-hidden="true">
-            <span>Section A–A</span>
-            <span>One storey per event</span>
+            <span>Privilege path</span>
+            <span>Synthetic relationships</span>
           </figcaption>
         </figure>
 
@@ -291,126 +282,6 @@ export function Climb({ block, mode }: BlockOverrideProps<EvidenceBlock>) {
   )
 }
 
-/* -------------------------------------------------------------------------
-   Section A–A: slabs, a stair in alternating flights, and the route.
-   ------------------------------------------------------------------------- */
-
-const W = 320
-const H = 400
-const GROUND = 372
-const STOREY = 54
-const STAIR_L = 34
-const STAIR_R = 118
-
-function SectionDrawing({ rows, reached }: { rows: Parsed[]; reached: number }) {
-  const n = rows.length
-  const storey = Math.min(STOREY, (GROUND - 24) / n)
-  const levelY = (k: number) => GROUND - storey * k
-
-  // The walking line up the stair: alternating flights, landing at each slab.
-  const flight = (k: number) => {
-    const y0 = levelY(k)
-    const y1 = levelY(k + 1)
-    const goingRight = k % 2 === 0
-    const x0 = goingRight ? STAIR_L : STAIR_R
-    const x1 = goingRight ? STAIR_R : STAIR_L
-    return { x0, y0, x1, y1 }
-  }
-  const pathTo = (count: number) => {
-    let d = `M${STAIR_L - 18} ${GROUND} L${STAIR_L} ${GROUND}`
-    for (let k = 0; k < count; k++) {
-      const f = flight(k)
-      d += ` L${f.x1} ${f.y1}`
-    }
-    return d
-  }
-
-  return (
-    <svg className="adw-section" viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
-      {/* Ground, hatched as earth. */}
-      <line className="adw-section__ground" x1={4} y1={GROUND} x2={W - 4} y2={GROUND} />
-      {Array.from({ length: 26 }, (_, i) => (
-        <line
-          key={i}
-          className="adw-section__earth"
-          x1={8 + i * 12}
-          y1={GROUND + 4}
-          x2={2 + i * 12}
-          y2={GROUND + 14}
-        />
-      ))}
-
-      {/* Slabs and treads. */}
-      {rows.map((r, k) => {
-        const y = levelY(k + 1)
-        const f = flight(k)
-        const treads = 7
-        return (
-          <g key={k} className="adw-section__storey" data-passed={k < reached} data-current={k === reached - 1}>
-            <rect className="adw-section__slab" x={STAIR_R + 6} y={y - 3} width={W - STAIR_R - 12} height={6} />
-            <line className="adw-section__landing" x1={STAIR_L - 10} y1={y} x2={STAIR_R + 6} y2={y} />
-            {Array.from({ length: treads }, (_, t) => {
-              const a = t / treads
-              const b = (t + 1) / treads
-              const xa = f.x0 + (f.x1 - f.x0) * a
-              const xb = f.x0 + (f.x1 - f.x0) * b
-              const ya = f.y0 + (f.y1 - f.y0) * a
-              const yb = f.y0 + (f.y1 - f.y0) * b
-              return <path key={t} className="adw-section__tread" d={`M${xa} ${ya} L${xa} ${yb} L${xb} ${yb}`} />
-            })}
-            <text className="adw-section__when" x={STAIR_R + 14} y={y - 24}>
-              {r.time} · {r.event}
-            </text>
-            <text
-              className="adw-section__where"
-              x={STAIR_R + 14}
-              y={y - 9}
-              data-long={r.target.length > 18 || undefined}
-            >
-              {r.target}
-            </text>
-          </g>
-        )
-      })}
-
-      {/* Ground floor origin. */}
-      <text className="adw-section__when" x={STAIR_R + 14} y={GROUND - 24}>
-        Origin
-      </text>
-      <text className="adw-section__where" x={STAIR_R + 14} y={GROUND - 9}>
-        WORKSTATION-14
-      </text>
-
-      {/* The whole climb, dashed: the path that exists. */}
-      <path className="adw-section__path adw-section__path--all" d={pathTo(n)} />
-      {/* The climb so far, solid red: the path taken. */}
-      <path
-        className="adw-section__path adw-section__path--taken"
-        d={pathTo(reached)}
-        key={reached}
-      />
-      {/* Where svc_backup stands now. */}
-      {(() => {
-        const x = reached === 0 ? STAIR_L - 18 : flight(reached - 1).x1
-        const y = reached === 0 ? GROUND : levelY(reached)
-        return (
-          <g className="adw-section__marker" transform={`translate(${x} ${y})`}>
-            <path d="M0 -17 L9 -3 L-9 -3 Z" />
-            <text y={-6.5} textAnchor="middle">
-              !
-            </text>
-          </g>
-        )
-      })()}
-
-      {/* Section bubble and the privilege axis. */}
-      <g className="adw-section__axis-arrow">
-        <line x1={9} y1={GROUND - 30} x2={9} y2={GROUND - 150} />
-        <path d={`M5 ${GROUND - 142} L9 ${GROUND - 152} L13 ${GROUND - 142}`} />
-      </g>
-      <text className="adw-section__axis" transform={`translate(20 ${GROUND - 40}) rotate(-90)`}>
-        Privilege
-      </text>
-    </svg>
-  )
+function SectionDrawing({ reached }: { rows: Parsed[]; reached: number }) {
+  return <AccessGraph reached={reached} compact />
 }

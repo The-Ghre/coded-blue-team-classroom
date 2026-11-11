@@ -10,13 +10,7 @@ import { ConceptSheet } from './blocks/Concept'
 import { Climb, canClimb } from './blocks/Climb'
 import { Sheet } from './blocks/Sheet'
 
-/**
- * Lesson world: active-directory-security — AS-BUILT.
- * The domain as a building's construction drawings: a floor plan nobody
- * re-drew, a red route through doors keyed years ago, a section that climbs
- * one storey per event, and a key revision issued twice. See theme.css for
- * the palette and src/lessons/README.md for the kit contract.
- */
+/** Effective Access: directory relationships, credential propagation and revocation. */
 
 function EvidenceSheet(props: BlockOverrideProps<EvidenceBlock>) {
   if (canClimb(props.block)) return createElement(Climb, props)
