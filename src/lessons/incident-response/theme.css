@@ -24,6 +24,18 @@
   :root[data-lesson='incident-response'] a { text-underline-offset: .2em; }
   :root[data-lesson='incident-response'] :is(h1,h2,h3) { font-family: 'IBM Plex Sans Condensed', var(--font-sans); text-wrap: balance; }
   :root[data-lesson='incident-response'] .btn--primary { color: #fff; }
+  /* Shared controls were authored for navy surfaces. Keep every state legible here. */
+  :root[data-lesson='incident-response'] a:hover { color: var(--accent); }
+  :root[data-lesson='incident-response'] .btn:hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
+  :root[data-lesson='incident-response'] .btn--primary,
+  :root[data-lesson='incident-response'] .btn--primary:hover:not(:disabled) { background: var(--accent-deep); border-color: var(--accent); color: #fff; }
+  :root[data-lesson='incident-response'] .btn:disabled { opacity: 1; color: var(--text-muted); background: var(--surface-2); border-color: var(--line-strong); }
+  :root[data-lesson='incident-response'] :is(.code,.evidence,.ix,.detail,.diagram,.scard__outcomes-body,.triage__summary,.loghunt__lines,.beacon__chart,.rule__output) { background: var(--bg-raised); }
+  :root[data-lesson='incident-response'] :is(.hints__tier-num,.shell__rail-item[data-track='extension'] .shell__rail-num,.scard[data-track='extension'] .scard__num,.search__result-area[data-area='practical'],.sourcemap__sessions em) { color: var(--ev-hypothesis); }
+  :root[data-lesson='incident-response'] .deliverables__item input:checked ~ .deliverables__box::after,
+  :root[data-lesson='incident-response'] .rule__not { color: #fff; }
+  :root[data-lesson='incident-response'] :is(input,select,textarea) { accent-color: var(--accent); }
+  :root[data-lesson='incident-response'] :is(input,textarea)::placeholder { color: var(--text-dim); opacity: 1; }
   :root[data-lesson='incident-response'] .ir-backdrop { width: 100%; height: 100%; }
   :root[data-lesson='incident-response'] .ir-hero { padding-block: 2rem; }
   :root[data-lesson='incident-response'] .ir-hero__intro { display: grid; grid-template-columns: 1.5fr 1fr; align-items: center; gap: 3rem; padding-bottom: 3rem; border-bottom: 1px solid var(--line-strong); }
