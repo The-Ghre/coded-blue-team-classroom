@@ -216,7 +216,8 @@ function ExposurePrint({ beacon, user }: { beacon: number[]; user: number[] }) {
   }, [beacon, user, reduced])
 
   return (
-    <figure className="nmf-xprint beacon__chart">
+    /* Screen only: `hidden` keeps it off paper, the screen stylesheet reveals it. */
+    <figure className="nmf-xprint nmf-decor" hidden>
       <div className="nmf-xprint__plate" aria-hidden="true">
         <span className="nmf-xprint__row-label">Beacon</span>
         <span className="nmf-xprint__row-label">User</span>

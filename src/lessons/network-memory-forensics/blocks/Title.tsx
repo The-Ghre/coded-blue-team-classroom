@@ -17,6 +17,7 @@ export function Title({ block, mode }: BlockOverrideProps<TitleBlock>) {
   const { presenting } = usePresentState()
   const session = getSession('network-memory-forensics')
   const frames = beaconFrames(12, 2 * 60 + 16)
+  const Heading = mode === 'study' ? 'h2' : 'h1'
 
   return (
     <section className="block block--title nmf-title" data-mode={mode}>
@@ -34,7 +35,8 @@ export function Title({ block, mode }: BlockOverrideProps<TitleBlock>) {
         <p className="nmf-title__edge">{block.overline}</p>
       </div>
       <div className="nmf-title__body">
-        <h1 className="block--title__h nmf-title__h nmf-develop">{block.title}</h1>
+        {/* One h1 per view: on the study page the page header owns it. */}
+        <Heading className="block--title__h nmf-title__h nmf-develop">{block.title}</Heading>
         {session && <p className="nmf-title__session">{session.title}</p>}
         {block.lead && <p className="block--title__lead nmf-title__lead">{block.lead}</p>}
       </div>

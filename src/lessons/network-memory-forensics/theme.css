@@ -574,8 +574,11 @@
       transform: rotate(-0.35deg);
     }
 
+    /* Full height on wide screens (the whole strip, edge print and all);
+       on a phone the minimum height wins and the strip crops sideways. */
     & .nmf-hero__strip {
-      height: clamp(5.5rem, 4rem + 4vw, 8.5rem);
+      aspect-ratio: 1454 / 168;
+      min-height: 5.5rem;
       overflow: hidden;
     }
 
@@ -1350,6 +1353,20 @@
 
     & .present__stage {
       padding-left: max(var(--s-7), 4.5rem);
+    }
+
+    /* A grid item's min-content would let a long code line or table widen
+       the slide past a phone screen; let the scroll containers scroll. */
+    & .present__slide,
+    & .present__slide .block,
+    & .present__slide .nmf-with-print > * {
+      min-width: 0;
+    }
+
+    & .present__slide .code__body,
+    & .present__slide .beacon__metrics {
+      max-width: 100%;
+      overflow-x: auto;
     }
 
     /* Prints sit beside the text on a projector. */
