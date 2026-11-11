@@ -2,9 +2,9 @@
 
 ## Direction contract
 THESIS: Privilege follows existing configuration; persistence is authority that survives a response. Render AD relationships directly, without physical metaphors.
-OWN-WORLD: Pale mint #edf5ee, deep forest #102c23, dark coral #ac302e. Plex Sans Condensed headings, Sans reading, Mono event fields. User silhouettes, group pairs, directory objects and directional permission edges.
+OWN-WORLD: Dark oxblood #290c17, burgundy surfaces #3b1726–#4a2233, warm ivory #fff2df, pale salmon #ffc0ad relationship highlights. Plex Sans Condensed headings, Sans reading, Mono event fields. User silhouettes, group pairs, directory objects and directional permission edges.
 STORY: Read the configuration path, inspect each authentication event, then revoke both retained KRBTGT key generations with replication verification.
-FIRST VIEWPORT: Large left-aligned title above a wide ascending relationship map. Branches show incidental permissions; coral selects the consequential path. Abstract and real page actions follow. Slides give text priority; event evidence and reset simulation keep their existing controls.
+FIRST VIEWPORT: A single-column privilege climb, rising from svc_backup through observed authentication and membership to Domain root replication. The title precedes the diagram; real actions and abstract follow. This is a vertical relationship composition, with no split hero. Replication acknowledgements remain explicit in the double-reset register; checked rows gain salmon emphasis. On mobile the labelled graph scrolls at its readable 620px width.
 FORM: Code-led relationship diagram; seed: none (unavailable). Launcher context and concept-seed attempted; engine download blocked. No decision page by explicit user instruction.
 SIGNATURE: Selecting each evidence event advances the drawn path. Double reset visibly shifts the current and previous keys, with each domain controller acknowledging replication before the next step. Backdrop uses CanvasStage, capped DPR 1.5 and composed reduced-motion still.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
@@ -19,3 +19,12 @@ Documentation stays in this brief because the user forbids edits outside the kit
 - Main body ink contrast is 10.27:1 or higher against all defined neutral surfaces; secondary ink strengthened to #234332. No palette declarations escape the screen-scoped lesson root. No shared files or lesson data changed.
 - No new raster assets, dependencies, or instructor material. Documentation is confined to this surface brief as required by the user's edit boundary.
 - Final independent verdict pass: all three named fixes resolved statically after removing the title graph height cap. Disposition remains recapture for rendered verification; no visual approval claimed. Two static fix rounds completed.
+
+## Integrator revision — 11 November 2026
+- Replaced rejected mint/forest/coral world with oxblood, ivory and pale salmon; removed former palette values from kit.
+- Six event relationships, selection states, synthetic labelling and KRBTGT verification gating preserved. Backdrop signal now travels upward; reduced-motion still remains composed.
+- `npx tsc -b` and `npm run build` passed after initial revision (265 modules); final post-edit checks recorded below.
+- Installed engine 0.1.5 invoked through the requested launcher with `IMPECCABLE_BIN=/Users/coded/.impeccable/bin/0.1.5/impeccable`; `detect --json src/lessons/active-directory-security` returned `[]` (exit 0).
+- WCAG token calculation: primary minimum 12.13:1; secondary minimum 8.75:1; salmon minimum 8.54:1 across neutral surfaces. Evidence foreground/background pairs minimum 9.07:1. These are token calculations, not rendered/composited measurements.
+- Browser retry through IAB failed: “The browser access host is unavailable”. No native actions retried. No rendered evidence produced; overview/study/workshop, all-slide fit at both requested sizes, keyboard operation, reduced-motion rendering, console and print preview remain unverified.
+- Port 5190 was free. Initial sandbox bind returned EPERM; authorized escalation successfully started Vite from this worktree at http://127.0.0.1:5190/ (strictPort).
