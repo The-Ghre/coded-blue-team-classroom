@@ -17,3 +17,14 @@ Candidates ordered by resonance: 1. Alert queue and handover; 2. Six-question wo
 Seed 760ec3ff assigned candidate 3. Challenger verdicts: vertical feed declined (loses identification and clarity; keep single selected-item focus); fight poster declined (both; keep hierarchy courage); Versailles declined (both; keep navigational sequence); cloud quarry declined (both; keep density contrast); datamatics competitive on identification but loses clarity and colour taxonomy; retain grounded candidate; nixie counter declined (both; keep state change precision). No foreign motifs borrowed. User delegated choice and forbade decision pages.
 Risk: schematic motion must stay peripheral to real evidence, and must not imply severity proves maliciousness.
 Scope: only this lesson kit and this surface brief. Shared DESIGN.md intentionally preserved by user scope.
+
+## Verification — 2026-11-11
+- Full lesson TypeScript and markdown sources read; kit contract and motion helpers inspected.
+- `npx tsc -b`: PASS. `npm run build`: PASS (261 modules). Required commands needed escalation because node_modules points outside the writable worktree and TypeScript writes its cache there.
+- Final `impeccable detect src/lessons/soc-operations --json`: PASS, `[]` using installed engine 0.1.5; current launcher engine 0.1.21 could not install in sandbox.
+- Source-level palette calculation across four main backgrounds: primary body minimum 11.32:1, secondary body minimum 7.22:1, dim label minimum 6.07:1. Evidence foregrounds minimum 6.24:1 across those grounds. Rendered combinations remain unverified.
+- All teaching blocks use shared Default renderers; title override only adds an aria-hidden diagram alongside Default. Shared TriageConsole untouched. No new dependencies, source content changes, or answer-key files.
+- CSS entirely under screen media and lesson root; scoped base aliases cover shared components with direct brand-token references. Print inherits shared print CSS. CanvasStage supplies hidden/offscreen pause and reduced-motion still, DPR capped 1.5.
+- Preview running from this worktree at http://127.0.0.1:5181. An existing IPv6 localhost:5181 listener serves the old kit; use the IPv4 URL explicitly.
+- CUA browser host unavailable. No screenshots could be captured. Every-slide desktop/mobile fit, overview/study/workshop at both viewports, keyboard-only operation, rendered reduced motion, print preview, and console errors are NOT verified.
+- Independent finish reviewer verdict: RECAPTURE. Required desktop.png/mobile.png, every-slide captures and keyboard/reduced-motion/print evidence missing. No visual ship verdict claimed; integration needs that review before approval.

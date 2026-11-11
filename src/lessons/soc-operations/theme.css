@@ -1,5 +1,11 @@
 @media screen {
   :root[data-lesson='soc-operations'] {
+    --coded-ink: #edf5ef; --coded-navy-deep: #e2ede5; --coded-navy: #e2ede5;
+    --coded-navy-2: #d7e7dc; --coded-navy-3: #c9dfd0; --coded-panel: #f8fcf9;
+    --coded-white: #102e29; --coded-muted: #294e43; --coded-muted-2: #36594e;
+    --coded-blue: #76251c; --coded-blue-bright: #9b3024; --coded-blue-soft: #174f79;
+    --coded-gold: #654800; --coded-ok: #16563e; --coded-no: #922d23;
+    --coded-red: #922d23; --coded-indigo: #534077; --coded-mauve: #713f68;
     --bg: #edf5ef; --bg-raised: #f8fcf9;
     --surface: #e2ede5; --surface-2: #d7e7dc; --surface-3: #c9dfd0; --surface-panel: #f8fcf9;
     --text: #102e29; --text-muted: #294e43; --text-dim: #36594e;
@@ -55,7 +61,14 @@
   :root[data-lesson='soc-operations'] .present__slide .concept__points { font-size: 1.0625rem; }
   :root[data-lesson='soc-operations']::view-transition-new(slide) { animation: soc-select 360ms cubic-bezier(.16,1,.3,1) both; }
   @keyframes soc-select { from { clip-path: inset(0 0 100% 0); transform: translateY(12px); } to { clip-path: inset(0); transform: none; } }
+  :root[data-lesson='soc-operations'] .soc-opening { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: center; gap: 2rem; }
+  :root[data-lesson='soc-operations'] .soc-opening__flow { height: 320px; }
+  :root[data-lesson='soc-operations'] :is(.evidence__body, .compare__table, .brief__realism) { background: var(--bg-raised); }
+  :root[data-lesson='soc-operations'] .triage__summary { background: #e2ede5; }
+  :root[data-lesson='soc-operations'] .present__progress span { background: var(--accent); }
   @media (max-width: 48rem) {
+    :root[data-lesson='soc-operations'] .soc-opening { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    :root[data-lesson='soc-operations'] .soc-opening__flow { height: 180px; }
     :root[data-lesson='soc-operations'] .soc-hero { grid-template-columns: minmax(0,1fr); }
     :root[data-lesson='soc-operations'] .soc-hero__body { padding: 1.5rem 0; }
     :root[data-lesson='soc-operations'] .soc-hero__flow { border-left: 0; border-top: 1px solid var(--line); height: 190px; min-height: 0; margin: 0; }
