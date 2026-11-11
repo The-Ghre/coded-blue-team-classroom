@@ -192,6 +192,7 @@
   }
   @media (max-width: 800px) {
     :root[data-lesson='network-memory-forensics'] {
+      & .present__slide .evidence__note { max-height: none; overflow: visible; }
       & .present__slide .beacon__charts, & .present__slide .beacon__ports ul, & .present__slide .query__walk { grid-template-columns: 1fr; }
       & .nm-hero, & .nm-opening { grid-template-columns: 1fr; gap: 1.5rem; }
       & .nm-hero { padding-block: 1.5rem; }
