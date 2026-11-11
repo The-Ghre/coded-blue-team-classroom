@@ -16,3 +16,9 @@ FORM: File-tree reconstruction, chosen autonomously from the lesson's execution,
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 
 Documentation boundary: shared DESIGN.md remains integrator-owned. Lesson design tokens and rules are recorded here and in scoped theme.css. No raster assets.
+
+## Verification
+
+Final lesson checks: npx tsc -b and npm run build passed. Headless Chrome checked all 19 slides / 52 projection panes at 1440×900 and 390×844: zero horizontal stage overflow at both sizes and zero vertical stage overflow on desktop; 39 phone panes use vertical scrolling. Overview, study and workshop have no page-level horizontal overflow. Ten evidence annotations and all twelve quiz options passed keyboard activation; focus was visible. Reduced motion stops the branch pulse; normal motion runs it. Print media restores white paper and dark ink, with bounded outline SVGs; the generated 14-page study PDF has no empty pages. PDF page-break quality was not independently visually audited. No page errors. Final Impeccable detector returned []. Screenshots are local ignored review artifacts in .impeccable/review/hf-*.png. Shared documentation and cross-lesson comparison remain integrator-owned.
+
+Finish review: initial fix disposition; four fixes resolved, then code-surface contrast regression resolved in the second batch. Final disposition: ship at the scoped verdict level; no remaining material fixes in that review.

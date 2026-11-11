@@ -22,8 +22,10 @@ function divide(block: Block): Block[] {
     case 'brief': return [
       { ...block, requires: [], setup: [], realism: '' },
       { ...block, scenario: '', objectives: [], setup: [], realism: '' },
-      { ...block, scenario: '', objectives: [], requires: [] },
+      { ...block, scenario: '', objectives: [], requires: [], realism: '' },
+      { ...block, scenario: '', objectives: [], requires: [], setup: [] },
     ]
+    case 'deliverables': return [{ ...block, structure: undefined }, { ...block, items: [] }]
     case 'recap': return [{ ...block, furtherStudy: [] }, { ...block, takeaways: [] }]
     default: return [block]
   }
@@ -33,6 +35,7 @@ function PaneReader<B extends Block>({ block, mode, Default }: BlockOverrideProp
   if (mode !== 'slide') return <Default block={block} mode={mode} />
   const panes = divide(block) as B[]
   return <div className="hf-reader">
+    {block.kind === 'tasks' && <p className="hf-reader__budget">Suggested timing · {block.tasks.length} tasks · {block.tasks.reduce((total, task) => total + task.minutes, 0)} minutes total</p>}
     {panes.map((pane, i) => <div key={i} hidden={page !== i} className="hf-reader__pane"><Default block={pane} mode={mode} /></div>)}
     {panes.length > 1 && <nav className="hf-reader__nav" aria-label={`${block.title} reading panes`}>
       <button className="btn btn--sm" type="button" disabled={page === 0} onClick={() => setPage(page - 1)}>Previous pane</button>

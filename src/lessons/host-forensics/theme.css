@@ -121,3 +121,24 @@
   :root[data-lesson='host-forensics'] .present__slide .scenario__setting { margin-block: .75rem; }
   :root[data-lesson='host-forensics'] .present__slide .deliverables__list { margin-bottom: 1rem; }
 }
+@media screen {
+  :root[data-lesson='host-forensics'] .hf-reader .brief__scenario:has(p:empty),
+  :root[data-lesson='host-forensics'] .hf-reader .brief__panel:not(:has(li)),
+  :root[data-lesson='host-forensics'] .hf-reader .callout:has(.callout__body > p:empty),
+  :root[data-lesson='host-forensics'] .hf-reader .tasks__budget,
+  :root[data-lesson='host-forensics'] .hf-reader .deliverables__list:empty { display: none; }
+  :root[data-lesson='host-forensics'] .hf-reader .brief__grid { grid-template-columns: 1fr; margin-block: 1rem; }
+  :root[data-lesson='host-forensics'] .hf-reader .brief__grid:not(:has(li)) { display: none; }
+  :root[data-lesson='host-forensics'] .hf-reader__budget { color: var(--text-muted); margin-bottom: .75rem; font-variant-numeric: tabular-nums; }
+}
+@media screen {
+  :root[data-lesson='host-forensics'] .code { background: var(--surface-2); color: var(--text); border-color: var(--line); }
+  :root[data-lesson='host-forensics'] .code__head { background: var(--surface-3); color: var(--text); border-color: var(--line); }
+  :root[data-lesson='host-forensics'] .code__body,
+  :root[data-lesson='host-forensics'] .code__body code { background: transparent; color: var(--text); }
+}
+@media screen {
+  :root[data-lesson='host-forensics'] .present__stage { grid-template-columns: minmax(0, 1fr); }
+  :root[data-lesson='host-forensics'] :is(.present__slide,.hf-reader,.hf-reader__pane) { min-width: 0; }
+  :root[data-lesson='host-forensics'] .code__body { white-space: pre-wrap; overflow-wrap: anywhere; }
+}
