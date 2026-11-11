@@ -1,7 +1,1474 @@
-/* Lesson world: log-analysis.
-   Every rule lives inside @media screen and under :root[data-lesson='log-analysis'],
-   so this world never leaks into another lesson or into a printed handout. */
+/* =========================================================================
+   SESSION 02 — THE WORKING GRAPH
+   =========================================================================
+   A dispatcher's graphic timetable. Graph-pad green sheet, green ruling
+   ink, graphite for type and scheduled traffic, signal vermilion kept for
+   the one unscheduled run. Rectilinear, hairline-ruled, stub columns down
+   the left margin like station names.
+
+   Every rule lives inside @media screen and under
+   :root[data-lesson='log-analysis'], so this world never leaks into another
+   lesson or onto paper.
+   ========================================================================= */
+
 @media screen {
   :root[data-lesson='log-analysis'] {
+    /* ---- Inks ---------------------------------------------------------- */
+    --la-sheet: #e3eadc;
+    --la-sheet-hi: #edf2e8;
+    --la-slip: #f5f8f1;
+    --la-rule: #6f9a7b;
+    --la-rule-strong: #2c6646;
+    --la-graphite: #131b17;
+    --la-pencil: #4a5850;
+    --la-vermilion: #d23b1e;
+    --la-vermilion-ink: #b02f15;
+    --la-ultramarine: #2443b8;
+
+    --font-cond: 'IBM Plex Sans Condensed', 'IBM Plex Sans', 'Arial Narrow', sans-serif;
+
+    /* ---- Semantic tokens ---------------------------------------------- */
+    --bg: var(--la-sheet);
+    --bg-raised: var(--la-sheet-hi);
+    --surface: var(--la-slip);
+    --surface-2: #e9efe4;
+    --surface-3: #dbe4d4;
+    --surface-panel: var(--la-slip);
+
+    --text: var(--la-graphite);
+    --text-muted: #303d36;
+    --text-dim: #45534b;
+
+    --line: rgba(44, 102, 70, 0.24);
+    --line-strong: rgba(44, 102, 70, 0.48);
+    --card: rgba(245, 248, 241, 0.72);
+    --card-brd: rgba(44, 102, 70, 0.26);
+
+    --accent: #1d5a3e;
+    --accent-deep: #17472f;
+    --accent-soft: #1b5539;
+    --focus: var(--la-ultramarine);
+
+    --ev-observation: #34479a;
+    --ev-hypothesis: #7f5400;
+    --ev-confirmed: #1b6533;
+    --ev-uncertain: #7b376f;
+    --ev-response: #0b5b6b;
+    --ev-attack: var(--la-vermilion-ink);
+
+    --ev-observation-bg: rgba(52, 71, 154, 0.09);
+    --ev-hypothesis-bg: rgba(127, 84, 0, 0.1);
+    --ev-confirmed-bg: rgba(27, 101, 51, 0.09);
+    --ev-uncertain-bg: rgba(123, 55, 111, 0.09);
+    --ev-response-bg: rgba(11, 91, 107, 0.09);
+    --ev-attack-bg: rgba(210, 59, 30, 0.09);
+
+    --pillar-endpoint: var(--ev-observation);
+    --pillar-network: var(--ev-response);
+    --pillar-identity: var(--ev-hypothesis);
+    --pillar-cloud: var(--ev-confirmed);
+
+    /* Shared CSS reaches for a few brand inks directly; give them this
+       world's meaning so nothing reads as white-on-sheet. */
+    --coded-white: var(--la-slip);
+    --coded-ink: var(--la-graphite);
+    --coded-navy-deep: var(--la-slip);
+    --coded-gold: var(--ev-hypothesis);
+    --coded-blue-bright: #24694a;
+    --coded-blue-soft: var(--ev-observation);
+
+    /* Rectilinear: a timetable has no soft corners. */
+    --r-sm: 1px;
+    --r-md: 2px;
+    --r-lg: 2px;
+    --r-xl: 3px;
+    --r-pill: 2px;
+
+    --shadow-sm: 0 1px 1px rgba(19, 27, 23, 0.08);
+    --shadow-md: 0 6px 18px -10px rgba(19, 27, 23, 0.32);
+    --shadow-lg: 0 24px 48px -24px rgba(19, 27, 23, 0.4);
+
+    --ls-eyebrow: 0.16em;
+    --ls-mono-label: 0.14em;
+
+    color-scheme: light;
+    accent-color: var(--accent);
+    scrollbar-color: rgba(44, 102, 70, 0.4) transparent;
+  }
+
+  :root[data-lesson='log-analysis'] {
+    & body {
+      background: var(--bg);
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    & ::selection {
+      background: rgba(210, 59, 30, 0.22);
+      color: var(--la-graphite);
+    }
+
+    & a {
+      text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+      text-underline-offset: 0.2em;
+    }
+    & a:hover {
+      color: var(--la-graphite);
+      text-decoration-color: var(--la-vermilion);
+    }
+
+    & :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    & ::-webkit-scrollbar-thumb {
+      background: rgba(44, 102, 70, 0.35);
+    }
+
+    /* ---------------------------------------------------------------------
+       Type: condensed caps for station names and headings, mono for time
+       --------------------------------------------------------------------- */
+    & h1,
+    & h2,
+    & h3,
+    & .block__title,
+    & .block--title__h {
+      font-family: var(--font-cond);
+      font-weight: 600;
+      letter-spacing: -0.012em;
+    }
+
+    & .eyebrow,
+    & .mono-label {
+      color: var(--la-rule-strong);
+    }
+
+    & .mono-label {
+      font-family: var(--font-cond);
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: var(--ls-mono-label);
+    }
+
+    & code,
+    & kbd,
+    & pre {
+      font-variant-ligatures: none;
+    }
+
+    /* ---------------------------------------------------------------------
+       Buttons: printed form tabs — square, ruled, condensed
+       --------------------------------------------------------------------- */
+    & .btn {
+      font-family: var(--font-cond);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      background: var(--la-slip);
+      border: 1px solid var(--line-strong);
+      color: var(--la-graphite);
+      box-shadow: 0 1px 0 rgba(44, 102, 70, 0.18);
+    }
+    & .btn:hover:not(:disabled) {
+      background: #fff;
+      border-color: var(--la-rule-strong);
+      color: var(--la-graphite);
+    }
+    & .btn:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+    & .btn--primary {
+      background: var(--la-graphite);
+      border-color: var(--la-graphite);
+      color: var(--la-slip);
+    }
+    & .btn--primary:hover:not(:disabled) {
+      background: var(--accent-deep);
+      border-color: var(--accent-deep);
+      color: var(--la-slip);
+    }
+    & .btn--ghost {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      color: var(--text-muted);
+    }
+    & .btn--ghost:hover:not(:disabled) {
+      background: rgba(44, 102, 70, 0.08);
+      border-color: var(--line);
+    }
+    & .btn:disabled {
+      opacity: 0.5;
+    }
+
+    /* ---------------------------------------------------------------------
+       App shell recoloured: the header becomes the sheet's title strip
+       --------------------------------------------------------------------- */
+    & .shell__header,
+    & .shell__rail {
+      background: color-mix(in srgb, var(--la-sheet) 90%, transparent);
+      border-color: var(--line-strong);
+    }
+    & .shell__rail-item.active {
+      background: var(--la-graphite);
+      color: var(--la-slip);
+    }
+    & .shell__rail-item.active * {
+      color: inherit;
+    }
+
+    /* ---------------------------------------------------------------------
+       Evidence taxonomy and badges on the sheet
+       --------------------------------------------------------------------- */
+    & .ev {
+      font-family: var(--font-cond);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    & .synthetic-badge {
+      background: transparent;
+      border: 1px dashed color-mix(in srgb, var(--ev-uncertain) 55%, transparent);
+      color: var(--text-muted);
+    }
+
+    & .duration {
+      font-family: var(--font-mono);
+      color: var(--text-dim);
+    }
+
+    /* ---------------------------------------------------------------------
+       Block heads: the kind sits in a stub column beside the title, the
+       way a timetable sets a station's code beside its name — not as a
+       label stacked above it.
+       --------------------------------------------------------------------- */
+    & .block__head {
+      display: grid;
+      grid-template-columns: 9.5rem minmax(0, 1fr);
+      column-gap: 1.5rem;
+      align-items: baseline;
+      padding-bottom: var(--s-4);
+      margin-bottom: var(--s-5);
+      border-bottom: 1px solid var(--line-strong);
+    }
+    & .block__head > .eyebrow {
+      grid-column: 1;
+      grid-row: 1 / span 2;
+      align-self: start;
+      padding-top: 0.6em;
+      font-family: var(--font-cond);
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      color: var(--la-rule-strong);
+    }
+    & .block__head > .block__title {
+      grid-column: 2;
+      margin: 0;
+      text-wrap: balance;
+    }
+    & .block__head > .block__meta {
+      grid-column: 1;
+      grid-row: 2;
+      margin: 0.25rem 0 0;
+    }
+    & .la-head__stub {
+      grid-column: 1;
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      padding-top: 0.6em;
+    }
+    & .la-head__kind {
+      font-family: var(--font-cond);
+      font-weight: 600;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--la-rule-strong);
+    }
+
+    & .lead {
+      color: var(--text-muted);
+    }
+
+    /* ---------------------------------------------------------------------
+       Callouts and red/blue: timetable footnotes, ruled top and bottom,
+       the symbol in the stub column. No coloured side bars.
+       --------------------------------------------------------------------- */
+    & .callout {
+      display: grid;
+      grid-template-columns: 2.25rem minmax(0, 1fr);
+      gap: 1rem;
+      background: transparent;
+      border: 0;
+      border-top: 1px solid var(--line-strong);
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      padding: var(--s-4) 0;
+    }
+    & .callout__badge {
+      border-radius: 0;
+      width: 2rem;
+      height: 2rem;
+      border-width: 1.5px;
+      font-family: var(--font-cond);
+    }
+    & .callout--warn .callout__badge {
+      background: var(--la-vermilion);
+      border-color: var(--la-vermilion);
+      color: var(--la-slip);
+    }
+    & .callout--rule .callout__badge {
+      background: var(--la-graphite);
+      border-color: var(--la-graphite);
+      color: var(--la-slip);
+    }
+    & .callout__body p {
+      color: var(--text);
+    }
+
+    & .redblue {
+      gap: 0;
+      border-top: 1px solid var(--line-strong);
+    }
+    & .redblue__pane {
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      padding: var(--s-4) var(--s-4) var(--s-4) 0;
+    }
+    & .redblue__pane + .redblue__pane {
+      padding-left: var(--s-4);
+      border-left: 1px solid var(--line);
+    }
+    & .redblue__pane--red .redblue__head .mono-label {
+      color: var(--ev-attack);
+    }
+    & .redblue__pane--blue .redblue__head .mono-label {
+      color: var(--ev-response);
+    }
+
+    & .detail {
+      background: var(--la-slip);
+      border: 1px solid var(--line);
+      border-top: 2px solid var(--la-graphite);
+      border-radius: 0;
+    }
+
+    & .block__footer {
+      border-top-style: solid;
+    }
+
+    /* ---------------------------------------------------------------------
+       CONCEPT — the timetable: code in the stub, service note beside it
+       --------------------------------------------------------------------- */
+    & .la-table {
+      list-style: none;
+      margin: var(--s-5) 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: fit-content(15rem) minmax(0, 1fr);
+      column-gap: 2rem;
+      border-top: 2px solid var(--la-graphite);
+      border-bottom: 1px solid var(--line-strong);
+    }
+    & .la-table__row {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: subgrid;
+      padding: 0.6rem 0;
+      border-top: 1px solid var(--line);
+    }
+    & .la-table__row:first-child {
+      border-top: 0;
+    }
+    & .la-table__row--note .la-table__text {
+      grid-column: 2;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+    & .la-table__code {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 0.92em;
+      color: var(--la-graphite);
+      overflow-wrap: anywhere;
+    }
+    & .la-table__text {
+      color: var(--text);
+      line-height: 1.55;
+    }
+    & .present__slide .la-table__row {
+      font-size: clamp(1rem, 0.9rem + 0.42vw, 1.3rem);
+    }
+    & .la-table__row:hover {
+      background: linear-gradient(to right, rgba(44, 102, 70, 0.07), transparent 70%);
+    }
+
+    /* ---------------------------------------------------------------------
+       COMPARE — a two-column timetable
+       --------------------------------------------------------------------- */
+    & .compare__table {
+      border-collapse: collapse;
+      border-top: 2px solid var(--la-graphite);
+      border-bottom: 1px solid var(--line-strong);
+    }
+    & .compare__table thead th {
+      font-family: var(--font-cond);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.8rem;
+      color: var(--la-rule-strong);
+      background: transparent;
+      border-bottom: 1px solid var(--line-strong);
+    }
+    & .compare__table thead th:last-child {
+      color: var(--la-graphite);
+    }
+    & .compare__table tbody th {
+      font-family: var(--font-cond);
+      font-weight: 600;
+      color: var(--la-graphite);
+    }
+    & .compare__table td,
+    & .compare__table th {
+      border-color: var(--line);
+      background: transparent;
+    }
+    & .compare__table td:nth-child(2) {
+      color: var(--text-dim);
+    }
+    & .compare__table td:last-child {
+      color: var(--text);
+      border-left: 1px solid var(--line-strong);
+    }
+
+    /* ---------------------------------------------------------------------
+       ANNOTATED EVIDENCE — the route plot and its lines
+       --------------------------------------------------------------------- */
+    & .evidence {
+      background: var(--la-slip);
+      border: 1px solid var(--line-strong);
+      border-radius: 0;
+      box-shadow: var(--shadow-md);
+    }
+    & .evidence__head {
+      background: transparent;
+      border-bottom: 1px solid var(--line);
+    }
+    & .evidence__line,
+    & .evidence__line--interactive {
+      color: var(--text-muted);
+      border-radius: 0;
+    }
+    & .evidence__line--interactive:hover {
+      background: rgba(44, 102, 70, 0.07);
+      border-color: transparent;
+      color: var(--text);
+    }
+    & .evidence__line--interactive.is-open {
+      background: rgba(210, 59, 30, 0.07);
+      border-color: var(--la-vermilion);
+      color: var(--text);
+    }
+    & .evidence__line code {
+      font-size: 0.82rem;
+    }
+    & .evidence__line-wrap[data-read] .la-line__time {
+      color: var(--la-vermilion-ink);
+    }
+    & .la-line__time {
+      color: var(--la-rule-strong);
+    }
+    & .la-line__station {
+      font-weight: 600;
+      color: var(--la-graphite);
+    }
+    & .evidence__note {
+      border-left: 0;
+      border-top: 1px solid currentColor;
+      border-radius: 0;
+      margin-left: 2.7rem;
+    }
+
+    & .la-plot {
+      display: block !important;
+      border-bottom: 1px solid var(--line);
+      padding: 0.25rem 0 0.25rem;
+      overflow: hidden;
+    }
+    & .la-plot svg {
+      display: block;
+    }
+    & .la-plot__label {
+      font-family: var(--font-cond);
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      fill: var(--la-graphite);
+    }
+    & .la-plot__label--small {
+      font-size: 9.5px;
+      fill: var(--la-pencil);
+    }
+    & .la-plot__gap {
+      fill: var(--la-slip);
+    }
+    & .la-plot__break path {
+      stroke: var(--la-pencil);
+      stroke-width: 1.2;
+      fill: none;
+    }
+    & .la-plot__leg {
+      fill: none;
+      stroke: var(--la-vermilion);
+      stroke-width: 2.4;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      opacity: 0;
+    }
+    & .la-plot__leg.is-drawn {
+      opacity: 1;
+      stroke-dashoffset: 0;
+      transition:
+        stroke-dashoffset 640ms cubic-bezier(0.55, 0, 0.12, 1.08),
+        opacity 120ms linear;
+    }
+    & .la-plot__stop {
+      cursor: pointer;
+    }
+    & .la-plot__hit {
+      fill: transparent;
+    }
+    & .la-mark {
+      fill: var(--la-slip);
+      stroke: var(--la-pencil);
+      stroke-width: 1.4;
+      transition: transform 280ms cubic-bezier(0.3, 1.4, 0.5, 1);
+    }
+    & .la-mark rect,
+    & .la-mark path {
+      fill: inherit;
+      stroke: inherit;
+    }
+    & .la-mark--hypothesis,
+    & .la-mark--uncertain {
+      stroke-dasharray: 3 2;
+    }
+    & .la-plot__stop.is-read .la-mark {
+      fill: var(--la-vermilion);
+      stroke: var(--la-vermilion-ink);
+    }
+    & .la-plot__stop.is-read .la-mark--confirmed {
+      fill: var(--la-slip);
+      stroke: var(--la-vermilion-ink);
+      stroke-width: 2.4;
+    }
+    & .la-plot__stop.is-read .la-mark--uncertain {
+      fill: var(--la-slip);
+      stroke: var(--la-vermilion-ink);
+    }
+    & .la-plot__stop.is-derived .la-mark {
+      fill: var(--la-slip);
+    }
+    & .la-plot__stop.is-open .la-mark {
+      stroke: var(--la-graphite);
+      stroke-width: 2.4;
+    }
+    & .la-plot__stop:hover .la-mark {
+      stroke: var(--la-graphite);
+    }
+    & .la-plot__leader line {
+      stroke: var(--la-graphite);
+      stroke-width: 1;
+      stroke-dasharray: 2 2;
+      animation: la-leader 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+    & .la-plot__leader-text {
+      font-family: var(--font-cond);
+      font-weight: 600;
+      font-size: 13px;
+      fill: var(--la-graphite);
+      animation: la-fade 280ms 120ms ease-out both;
+    }
+
+    /* Shared graph ink, used by the plots, the hero and the title. */
+    & .la-graph__tick {
+      stroke: var(--la-rule);
+      stroke-width: 1;
+      opacity: 0.35;
+    }
+    & .la-graph__minute {
+      stroke: var(--la-rule-strong);
+      stroke-width: 1;
+      opacity: 0.45;
+    }
+    & .la-graph__station {
+      stroke: var(--la-rule-strong);
+      stroke-width: 1;
+      opacity: 0.5;
+    }
+    & .la-graph__station--derived {
+      stroke-dasharray: 2 4;
+    }
+    & .la-graph__time {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      fill: var(--la-rule-strong);
+    }
+
+    /* ---------------------------------------------------------------------
+       LOG INVESTIGATION — the window as a graph
+       --------------------------------------------------------------------- */
+    & .ix {
+      background: var(--la-slip);
+      border: 1px solid var(--line-strong);
+      border-radius: 0;
+      box-shadow: var(--shadow-md);
+    }
+    & .ix__bar {
+      background: transparent;
+      border-bottom: 1px solid var(--line);
+    }
+    & .ix__score {
+      font-family: var(--font-mono);
+      color: var(--la-graphite);
+    }
+    & .loghunt__lines {
+      background: transparent;
+      border: 0;
+      border-top: 1px solid var(--line);
+    }
+    & .loghunt__line {
+      border-radius: 0;
+      color: var(--text-muted);
+    }
+    & .loghunt__line:hover:not(:disabled),
+    & .loghunt__row.is-focus .loghunt__line {
+      background: rgba(44, 102, 70, 0.08);
+      color: var(--text);
+    }
+    & .loghunt__row .loghunt__line {
+      border: 1px solid transparent;
+    }
+    & .loghunt__row[data-state='flagged'] .loghunt__line {
+      background: rgba(19, 27, 23, 0.06);
+      border: 1px solid var(--la-graphite);
+      color: var(--text);
+    }
+    & .loghunt__row[data-state='flagged'] .loghunt__mark {
+      color: var(--la-graphite);
+    }
+    & .loghunt__row[data-state='hit'] .loghunt__line {
+      background: rgba(210, 59, 30, 0.07);
+      border: 1px solid var(--la-vermilion);
+      color: var(--text);
+    }
+    & .loghunt__row[data-state='missed'] .loghunt__line {
+      background: transparent;
+      border: 1px dashed var(--la-vermilion);
+      color: var(--text);
+    }
+    & .loghunt__row[data-state='hit'] .loghunt__mark,
+    & .loghunt__row[data-state='missed'] .loghunt__mark {
+      color: var(--la-vermilion-ink);
+    }
+    & .loghunt__row[data-state='false-positive'] .loghunt__line {
+      background: transparent;
+      border: 1px solid var(--la-graphite);
+    }
+    & .loghunt__row[data-state='false-positive'] .loghunt__line code {
+      text-decoration: line-through;
+      text-decoration-color: rgba(19, 27, 23, 0.5);
+    }
+    & .loghunt__row[data-state='false-positive'] .loghunt__mark {
+      color: var(--la-graphite);
+    }
+    & .loghunt__row[data-state='correct-reject'] .loghunt__line {
+      opacity: 0.62;
+    }
+    & .loghunt__why {
+      border-left: 0;
+      padding-left: 2.6rem;
+      color: var(--text-muted);
+    }
+    & .loghunt__line:disabled {
+      cursor: default;
+    }
+    & .la-line__parent {
+      color: var(--la-graphite);
+      font-weight: 600;
+    }
+    & .la-line__arrow {
+      color: var(--la-rule-strong);
+    }
+    & .la-line__child {
+      color: var(--la-graphite);
+      font-weight: 600;
+    }
+    & .loghunt__metric {
+      border-radius: 0;
+      background: transparent;
+      border: 0;
+      border-left: 1px solid var(--line);
+    }
+    & .loghunt__metric-value {
+      font-family: var(--font-cond);
+      font-weight: 600;
+    }
+    & .loghunt__debrief {
+      border-radius: 0;
+    }
+
+    & .la-plot--window {
+      border-bottom: 0;
+      padding: 0.5rem 0;
+    }
+    & .la-hop {
+      cursor: pointer;
+    }
+    & .la-hop__hit {
+      stroke: transparent;
+      stroke-width: 12;
+    }
+    & .la-hop__run {
+      stroke: var(--la-graphite);
+      stroke-width: 1.2;
+      opacity: 0.4;
+      stroke-linecap: square;
+      transition:
+        opacity 160ms ease-out,
+        stroke-width 160ms ease-out,
+        stroke 160ms ease-out;
+    }
+    & .la-hop__from,
+    & .la-hop__to {
+      fill: var(--la-graphite);
+      opacity: 0.45;
+    }
+    & .la-hop__to {
+      fill: var(--la-slip);
+      stroke: var(--la-graphite);
+      stroke-width: 1;
+    }
+    & .la-hop.is-focus .la-hop__run {
+      opacity: 1;
+      stroke-width: 2.4;
+    }
+    & .la-hop.is-focus .la-hop__from,
+    & .la-hop.is-focus .la-hop__to {
+      opacity: 1;
+    }
+    & .la-hop--flagged .la-hop__run {
+      opacity: 1;
+      stroke-width: 2.6;
+    }
+    & .la-hop--flagged .la-hop__from,
+    & .la-hop--flagged .la-hop__to {
+      opacity: 1;
+    }
+    & .la-hop--hit .la-hop__run,
+    & .la-hop--missed .la-hop__run {
+      stroke: var(--la-vermilion);
+      stroke-width: 3;
+      opacity: 1;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: la-draw 560ms cubic-bezier(0.55, 0, 0.12, 1.08) forwards;
+    }
+    & .la-hop--missed .la-hop__run {
+      stroke-dasharray: 0.12 0.08;
+      stroke-dashoffset: 0;
+      animation: la-fade 420ms ease-out both;
+    }
+    & .la-hop--hit .la-hop__from,
+    & .la-hop--hit .la-hop__to,
+    & .la-hop--missed .la-hop__from {
+      fill: var(--la-vermilion);
+      stroke: var(--la-vermilion-ink);
+      opacity: 1;
+    }
+    & .la-hop--missed .la-hop__to {
+      stroke: var(--la-vermilion-ink);
+      opacity: 1;
+    }
+    & .la-hop--false-positive .la-hop__run {
+      opacity: 0.9;
+      stroke-width: 1.6;
+    }
+    & .la-hop__cross {
+      stroke: var(--la-graphite);
+      stroke-width: 1.8;
+      fill: none;
+    }
+    & .la-hop--correct-reject .la-hop__run {
+      opacity: 0.22;
+    }
+    & .la-plot--window[data-submitted] .la-hop {
+      cursor: default;
+    }
+
+    /* ---------------------------------------------------------------------
+       QUERY — clause by clause
+       --------------------------------------------------------------------- */
+    & .code {
+      background: var(--la-slip);
+      border: 1px solid var(--line-strong);
+      border-radius: 0;
+    }
+    & .code__head {
+      background: transparent;
+      border-bottom: 1px solid var(--line);
+    }
+    & .code__body {
+      color: var(--la-graphite);
+    }
+    & .la-code__line {
+      transition:
+        opacity 220ms ease-out,
+        background-color 220ms ease-out;
+    }
+    & .code[data-stepping] .la-code__line {
+      opacity: 0.32;
+    }
+    & .code[data-stepping] .la-code__line.is-on {
+      opacity: 1;
+      background: rgba(210, 59, 30, 0.1);
+      box-shadow: -1rem 0 0 rgba(210, 59, 30, 0.1);
+    }
+    & .la-query__stepper {
+      margin-top: var(--s-3);
+    }
+    & .la-query__controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--s-2) var(--s-3);
+    }
+    & .la-query__count {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      min-width: 8.5rem;
+      text-align: center;
+    }
+    & .la-query__clause {
+      margin-top: var(--s-3);
+      padding: var(--s-3) 0;
+      border-top: 2px solid var(--la-graphite);
+      display: grid;
+      grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+      gap: 1.5rem;
+      animation: la-rise 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+    & .la-query__clause code {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--la-vermilion-ink);
+    }
+    & .query__assumes {
+      border-left: 0;
+      border-top: 1px solid var(--line-strong);
+      border-radius: 0;
+      background: transparent;
+      padding-left: 0;
+    }
+    & .query__walk-item {
+      border-radius: 0;
+      background: transparent;
+      border: 0;
+      border-top: 1px solid var(--line);
+      transition: background-color 220ms ease-out;
+    }
+    & .query__walk-item.is-current {
+      background: rgba(210, 59, 30, 0.07);
+    }
+    & .query__result-col,
+    & .proves__col {
+      background: transparent;
+      border: 0;
+      border-top: 2px solid var(--la-graphite);
+      border-radius: 0;
+    }
+
+    /* ---------------------------------------------------------------------
+       Everything else on the sheet
+       --------------------------------------------------------------------- */
+    & .check__option {
+      border-radius: 0;
+      background: var(--la-slip);
+      border-color: var(--line);
+    }
+    & .check__option:hover:not(:disabled) {
+      background: #fff;
+      border-color: var(--line-strong);
+    }
+    & .check__feedback {
+      border-radius: 0;
+    }
+    & .retrieval__list li,
+    & .objectives__list li,
+    & .debrief__list li {
+      border-color: var(--line);
+    }
+    & .objectives__verb {
+      font-family: var(--font-cond);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--la-graphite);
+    }
+    & .scenario__setting {
+      font-family: var(--font-mono);
+    }
+    & .scenario__driver,
+    & .debrief__landing,
+    & .interaction__teaches,
+    & .brief__scenario {
+      background: transparent;
+      border: 0;
+      border-top: 2px solid var(--la-graphite);
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      padding-left: 0;
+      padding-right: 0;
+    }
+    & .brief__panel,
+    & .tasks__task,
+    & .hints__group,
+    & .assess__item,
+    & .card {
+      background: var(--la-slip);
+      border: 1px solid var(--line);
+      border-radius: 0;
+    }
+    & .tasks__ref {
+      background: var(--la-graphite);
+      color: var(--la-slip);
+      border-radius: 0;
+      font-family: var(--font-cond);
+    }
+    & .recap__num,
+    & .hints__tier-num {
+      font-family: var(--font-mono);
+      color: var(--la-rule-strong);
+    }
+    & .assess__weight {
+      font-family: var(--font-cond);
+      font-weight: 700;
+      color: var(--la-graphite);
+    }
+    & .deliverables__box {
+      border-radius: 0;
+    }
+    & .pillar {
+      border-radius: 0;
+    }
+
+    /* ---------------------------------------------------------------------
+       STUDY and OVERVIEW pages
+       --------------------------------------------------------------------- */
+    & .study__rail {
+      background: color-mix(in srgb, var(--la-sheet) 86%, transparent);
+      border-color: var(--line-strong);
+    }
+    & .study__mode-btn {
+      border-radius: 0;
+      font-family: var(--font-cond);
+      font-weight: 600;
+    }
+    & .study__mode-btn[aria-current='true'] {
+      background: var(--la-graphite);
+      color: var(--la-slip);
+    }
+    & .study__toc-link {
+      border-radius: 0;
+    }
+    & .study__toc-link[aria-current='true'] {
+      background: rgba(44, 102, 70, 0.1);
+      color: var(--la-graphite);
+      box-shadow: none;
+    }
+    & .study__toc-link[aria-current='true'] .study__toc-num {
+      color: var(--la-vermilion-ink);
+      font-weight: 600;
+    }
+    & .study__toc-num {
+      font-family: var(--font-mono);
+    }
+    & .study__section {
+      border-color: var(--line-strong);
+    }
+    & .study__section-index {
+      font-family: var(--font-mono);
+      color: var(--la-rule-strong);
+    }
+    & .study__complete {
+      border-radius: 0;
+    }
+    & .study__content,
+    & .overview {
+      position: relative;
+    }
+
+    /* ---------------------------------------------------------------------
+       HERO — the head of the timetable sheet
+       --------------------------------------------------------------------- */
+    & .la-hero {
+      position: relative;
+      margin-bottom: var(--s-7);
+    }
+    & .la-hero__head {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--s-4);
+      flex-wrap: wrap;
+      padding: 0.55rem 0;
+      border-top: 3px solid var(--la-graphite);
+      border-bottom: 1px solid var(--line-strong);
+      font-family: var(--font-cond);
+      font-weight: 600;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--la-graphite);
+    }
+    & .la-hero__span {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--la-vermilion-ink);
+    }
+    & .la-hero--blank .la-hero__span {
+      color: var(--text-dim);
+    }
+    & .la-hero__title {
+      margin: var(--s-5) 0 var(--s-4);
+      font-family: var(--font-cond);
+      font-weight: 700;
+      font-size: clamp(2.4rem, 1.2rem + 4.6vw, 5.4rem);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      max-width: 16ch;
+      text-wrap: balance;
+    }
+    & .la-hero__graph {
+      display: block !important;
+      margin: 0 0 var(--s-5);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line-strong);
+      background: color-mix(in srgb, var(--la-slip) 55%, transparent);
+    }
+    & .la-hero__foot {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s-5);
+    }
+    & .la-hero__lead {
+      max-width: 68ch;
+      font-size: var(--fs-lead);
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    & .la-graph {
+      display: block !important;
+    }
+    & .la-graph svg {
+      display: block;
+      overflow: visible;
+    }
+    & .la-graph__lattice polyline {
+      fill: none;
+      stroke: var(--la-graphite);
+      stroke-width: 1;
+      opacity: 0.16;
+    }
+    & .la-graph__label-ground {
+      fill: var(--la-sheet);
+      opacity: 0.86;
+    }
+    & .la-graph__labels text {
+      font-family: var(--font-cond);
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      fill: var(--la-graphite);
+    }
+    & .la-graph--narrow .la-graph__labels text {
+      font-size: 9.5px;
+    }
+    & .la-graph__labels .la-graph__time {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      letter-spacing: 0;
+      fill: var(--la-rule-strong);
+    }
+    & .la-graph__run {
+      fill: none;
+      stroke: var(--la-vermilion);
+      stroke-width: 2.6;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      animation: la-draw 1500ms 280ms cubic-bezier(0.62, 0, 0.12, 1.04) both;
+    }
+    & .la-graph__stop {
+      fill: var(--la-vermilion);
+      stroke: var(--la-vermilion-ink);
+      stroke-width: 1;
+      animation: la-pop 260ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+      animation-delay: calc(560ms + var(--k, 0) * 130ms);
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+    & .la-graph__stop--derived {
+      fill: var(--la-slip);
+    }
+
+    /* ---------------------------------------------------------------------
+       BACKDROP and OVERLAY
+       --------------------------------------------------------------------- */
+    & .la-backdrop {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    & .lesson-layer--study .la-backdrop,
+    & .lesson-layer--overview .la-backdrop {
+      opacity: 0.9;
+    }
+
+    & .la-cursor {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      background: var(--la-graphite);
+      opacity: 0;
+      pointer-events: none;
+      will-change: transform;
+    }
+    & .la-cursor__reading {
+      position: absolute;
+      top: -1.6rem;
+      left: 0.35rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--la-graphite);
+      background: var(--la-sheet);
+      padding: 0.05rem 0.3rem;
+      white-space: nowrap;
+    }
+
+    /* ---------------------------------------------------------------------
+       PRESENTATION — the slide on the working graph
+       --------------------------------------------------------------------- */
+    & .present {
+      background: var(--la-sheet);
+    }
+    & .present::before {
+      background: none;
+    }
+    & .present__top,
+    & .present__bottom {
+      background: color-mix(in srgb, var(--la-sheet) 88%, transparent);
+      backdrop-filter: none;
+      border-color: var(--line-strong);
+    }
+    & .present__top kbd,
+    & .present__help kbd {
+      background: var(--la-slip);
+      border-radius: 1px;
+      border-color: var(--line-strong);
+      color: var(--la-graphite);
+    }
+    & .present__session-title {
+      font-family: var(--font-cond);
+      color: var(--la-graphite);
+    }
+    & .present__counter {
+      font-family: var(--font-mono);
+    }
+    /* Progress advances in discrete minute ticks, never a smooth bar. */
+    & .present__progress {
+      background: repeating-linear-gradient(
+        to right,
+        var(--line) 0 1px,
+        transparent 1px calc(100% / 22)
+      );
+      height: 6px;
+    }
+    & .present__progress span {
+      background: repeating-linear-gradient(
+        to right,
+        var(--la-graphite) 0 calc(100% - 3px),
+        transparent calc(100% - 3px) 100%
+      );
+      transition: width 420ms steps(1, end);
+    }
+    & .present__slide {
+      max-width: 74rem;
+    }
+    & .present__slide .block {
+      position: relative;
+    }
+    /* The slide sits on a slip pasted to the graph: opaque enough to read,
+       thin enough that the lattice shows at its edges. */
+    & .present__stage {
+      padding-left: clamp(1rem, 12vw, 12.5rem);
+    }
+    & .present__slide > .block:not(.block--title) {
+      background: color-mix(in srgb, var(--la-sheet) 84%, transparent);
+      box-shadow: 0 0 0 1.5rem color-mix(in srgb, var(--la-sheet) 84%, transparent);
+    }
+    & .present__overview,
+    & .present__help {
+      background: var(--la-slip);
+      border-radius: 0;
+      border: 1px solid var(--line-strong);
+    }
+    & .present__thumb {
+      border-radius: 0;
+      background: var(--la-sheet-hi);
+    }
+    & .present__thumb[data-current='true'] {
+      box-shadow: inset 0 3px 0 var(--la-vermilion);
+    }
+
+    /* Title slide: the session name set like a table's heading, huge, on
+       the graph itself — no slip under it. */
+    & .present__slide .block--title {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+    & .block--title .eyebrow {
+      display: inline-block;
+      font-family: var(--font-cond);
+      font-size: clamp(0.85rem, 0.7rem + 0.4vw, 1.1rem);
+      letter-spacing: 0.14em;
+      color: var(--la-graphite);
+      background: var(--la-sheet);
+      padding: 0.3rem 0.6rem 0.3rem 0;
+      border-top: 3px solid var(--la-graphite);
+    }
+    & .block--title__h {
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 0.86;
+      letter-spacing: -0.03em;
+      margin-top: 0.15em;
+    }
+    & .present__slide .block--title__h {
+      font-size: clamp(4rem, 1rem + 11vw, 11rem);
+      display: inline-block;
+      background: color-mix(in srgb, var(--la-sheet) 82%, transparent);
+      padding-right: 0.2em;
+    }
+    & .block--title__lead {
+      display: inline-block;
+      max-width: 34ch;
+      color: var(--la-graphite);
+      background: var(--la-sheet);
+      padding: 0.6rem 0.8rem 0.6rem 0;
+      border-bottom: 2px solid var(--la-vermilion);
+    }
+  }
+
+  /* -----------------------------------------------------------------------
+     Slide transitions: the clock line passes. A hard vertical edge sweeps
+     across the slide; behind it is the next slide, ahead of it the last.
+     The Overlay's cursor runs the same curve and duration on top.
+     ----------------------------------------------------------------------- */
+  :root[data-lesson='log-analysis']::view-transition-old(slide),
+  :root[data-lesson='log-analysis']::view-transition-new(slide) {
+    animation-duration: 560ms;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.2, 1);
+    animation-fill-mode: both;
+    mix-blend-mode: normal;
+  }
+  :root[data-lesson='log-analysis'][data-slide-dir='forward']::view-transition-new(slide) {
+    animation-name: la-wipe-in-fwd;
+  }
+  :root[data-lesson='log-analysis'][data-slide-dir='forward']::view-transition-old(slide) {
+    animation-name: la-wipe-out-fwd;
+  }
+  :root[data-lesson='log-analysis'][data-slide-dir='back']::view-transition-new(slide) {
+    animation-name: la-wipe-in-back;
+  }
+  :root[data-lesson='log-analysis'][data-slide-dir='back']::view-transition-old(slide) {
+    animation-name: la-wipe-out-back;
+  }
+
+  @keyframes la-wipe-in-fwd {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  @keyframes la-wipe-out-fwd {
+    from {
+      clip-path: inset(0 0 0 0);
+      opacity: 1;
+    }
+    to {
+      clip-path: inset(0 0 0 100%);
+      opacity: 0.4;
+    }
+  }
+  @keyframes la-wipe-in-back {
+    from {
+      clip-path: inset(0 0 0 100%);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  @keyframes la-wipe-out-back {
+    from {
+      clip-path: inset(0 0 0 0);
+      opacity: 1;
+    }
+    to {
+      clip-path: inset(0 100% 0 0);
+      opacity: 0.4;
+    }
+  }
+
+  @keyframes la-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes la-pop {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  @keyframes la-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes la-rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes la-leader {
+    from {
+      stroke-dashoffset: 40;
+      opacity: 0;
+    }
+    to {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+  }
+
+  /* ---------------------------------------------------------------------
+     Narrow screens: the stub column folds under the title
+     --------------------------------------------------------------------- */
+  @media (max-width: 40rem) {
+    :root[data-lesson='log-analysis'] {
+      & .block__head {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      & .block__head > .eyebrow,
+      & .block__head > .block__meta,
+      & .la-head__stub {
+        grid-column: 1;
+        grid-row: auto;
+        padding-top: 0;
+        order: 2;
+      }
+      & .la-head__stub {
+        flex-direction: row;
+        gap: 0.75rem;
+        margin-top: 0.4rem;
+      }
+      & .block__head > .block__title {
+        grid-column: 1;
+        order: 1;
+      }
+      & .block__head {
+        display: flex;
+        flex-direction: column;
+      }
+      & .la-table {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      & .la-table__row {
+        gap: 0.2rem;
+      }
+      & .la-table__row--note .la-table__text {
+        grid-column: 1;
+      }
+      & .la-query__clause {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.4rem;
+      }
+      & .present__stage {
+        padding-left: var(--s-4);
+      }
+      & .present__slide > .block:not(.block--title) {
+        box-shadow: 0 0 0 0.75rem color-mix(in srgb, var(--la-sheet) 84%, transparent);
+      }
+      & .redblue__pane + .redblue__pane {
+        padding-left: 0;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+    }
+  }
+
+  /* ---------------------------------------------------------------------
+     Reduced motion: everything lands in its final state at once.
+     --------------------------------------------------------------------- */
+  @media (prefers-reduced-motion: reduce) {
+    :root[data-lesson='log-analysis'] {
+      & .la-graph__run,
+      & .la-graph__stop,
+      & .la-hop__run,
+      & .la-plot__leader line,
+      & .la-plot__leader-text,
+      & .la-query__clause {
+        animation: none !important;
+      }
+      & .la-plot__leg,
+      & .la-code__line,
+      & .la-mark,
+      & .la-hop__run {
+        transition: none !important;
+      }
+      & .la-hop--hit .la-hop__run {
+        stroke-dashoffset: 0;
+      }
+    }
   }
 }
