@@ -137,7 +137,7 @@ function Album({ data }: { data: Data }) {
             {selected.note && <p className="th-slip__note">{selected.note}</p>}
           </div>
         ) : (
-          <p className="th-album__hint">Choose a space to read its annotation.</p>
+          <p className="th-album__hint" data-th-deco="" hidden>Choose a space to read its annotation.</p>
         )}
       </div>
 
