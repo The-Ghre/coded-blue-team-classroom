@@ -5,7 +5,7 @@ export function Trace({ compact = false }: { compact?: boolean }) {
   const [region, setRegion] = useState(10)
   const id = useId()
   const injected = region === 10
-  return <figure className={`nm-trace ${compact ? 'nm-trace--compact' : ''}`}>
+  return <figure className={`lesson-layer nm-trace ${compact ? 'nm-trace--compact' : ''}`}>
     <figcaption>Network timing / memory pages <span>Synthetic schematic</span></figcaption>
     <svg viewBox="0 0 600 282" role="img" aria-label="Evenly spaced connections above a process memory map. A plum page contains an MZ header. The matching disk row is empty.">
       <text x="18" y="29">PCAP · one destination</text>
@@ -28,7 +28,7 @@ export function Trace({ compact = false }: { compact?: boolean }) {
     </svg>
     {!compact && <div className="nm-trace__inspect">
       <label htmlFor={id}>Inspect memory page <output>{region.toString(16).toUpperCase().padStart(2, '0')}</output></label>
-      <input id={id} type="range" min="0" max="15" value={region} onChange={e => setRegion(Number(e.target.value))} />
+      <input id={id} type="range" min="0" max="15" value={region} aria-valuetext={`Page ${region.toString(16).toUpperCase().padStart(2, '0')}${injected ? ': MZ header, executable and writable' : ': mapped process memory'}`} onChange={e => setRegion(Number(e.target.value))} />
       <p aria-live="polite">{injected ? '4d 5a · MZ · executable + writable' : 'Mapped process memory · inspect the plum page for the MZ header.'}</p>
     </div>}
   </figure>

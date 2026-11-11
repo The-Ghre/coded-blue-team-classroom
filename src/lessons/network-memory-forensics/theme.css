@@ -48,12 +48,12 @@
     & h1, & h2, & .block__title { font-family: 'IBM Plex Sans Condensed', var(--font-sans); }
     & .brand__mark { background: #005b50; color: #fff; }
     & .nm-packet-backdrop { position: absolute; inset: 0; }
-    & .nm-hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(2rem, 4vw, 4rem); align-items: center; padding-block: 3rem; border-bottom: 1px solid var(--line-strong); }
+    & .nm-hero { max-width: none; width: 100%; display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(2rem, 4vw, 4rem); align-items: center; padding-block: 3rem; border-bottom: 1px solid var(--line-strong); }
     & .nm-hero h1 { font-size: clamp(2.5rem, 4.3vw, 4.5rem); line-height: 1; max-width: 13ch; letter-spacing: -.025em; }
     & .nm-hero__meta { color: var(--text-muted); margin-block: 1.2rem; font-size: .875rem; }
     & .nm-hero__lead { font-size: 1rem; line-height: 1.65; }
     & .nm-hero__actions { margin-top: 1.5rem; }
-    & .nm-trace { margin: 0; min-width: 0; border-top: 2px solid var(--accent); background: #fff; }
+    & .nm-trace { contain: none; overflow: visible; pointer-events: auto; margin: 0; min-width: 0; border-top: 2px solid var(--accent); background: #fff; }
     & .nm-trace figcaption { padding: 1rem; font-weight: 600; display: flex; justify-content: space-between; gap: 1rem; font-size: .875rem; }
     & .nm-trace figcaption span { font-size: .75rem; font-weight: 400; color: var(--text-muted); }
     & .nm-trace svg { width: 100%; height: auto; display: block; }
@@ -82,11 +82,64 @@
     & .beacon__series[data-tone='user'] .beacon__bar { background: #713868; }
     & .beacon__preset[aria-pressed='true'] { background: #005b50; color: #fff; }
     & .beacon__preset { min-height: 44px; }
+    & .present::before { background: none; }
+    & .ix, & .evidence { background: #fff; }
+    & .callout, & .query__assumes, & .brief__scenario, & .interaction__teaches { border-inline: 0; border-top: 1px solid var(--line-strong); }
+    & .interaction__teaches { background: var(--surface); }
+    & .nm-opening .block--title { display: flex; flex-direction: column; }
+    & .nm-opening .block--title .eyebrow { order: 2; margin-block: 1rem; letter-spacing: .12em; }
+    & .nm-opening .block--title__lead { order: 3; }
+    & .block__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem 1rem; }
+    & .block__head .block__title { order: 0; flex-basis: 100%; }
+    & .block__head .eyebrow { order: 1; letter-spacing: .12em; }
+    & .block__head .block__meta { order: 2; }
+    & .nm-paged__nav { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    & .nm-paged__nav button { padding: .5rem .8rem; border: 1px solid var(--line-strong); color: var(--text); background: #fff; font-size: .875rem; cursor: pointer; }
+    & .nm-paged__nav button[aria-pressed='true'] { background: var(--accent); color: #fff; }
+    & .nm-paged__nav button:hover { border-color: var(--focus); }
+    & .nm-paged--query .query__assumes, & .nm-paged--query .code, & .nm-paged--query .query__walk, & .nm-paged--query .query__result,
+    & .nm-paged--interaction .interaction__teaches, & .nm-paged--interaction .beacon__controls, & .nm-paged--interaction .beacon__charts, & .nm-paged--interaction .beacon__verdict, & .nm-paged--interaction .beacon__metrics, & .nm-paged--interaction .beacon__ports,
+    & .nm-paged--evidence .evidence, & .nm-paged--evidence .proves,
+    & .nm-paged--brief .brief__scenario, & .nm-paged--brief .brief__grid, & .nm-paged--brief .block--brief > .brief__panel, & .nm-paged--brief .callout,
+    & .nm-paged--deliverables .deliverables__list, & .nm-paged--deliverables .code,
+    & .nm-paged--tasks .tasks__task, & .nm-paged--check .check__list > li { display: none; }
+    & .nm-paged--query[data-nm-page='0'] :is(.query__assumes,.code),
+    & .nm-paged--interaction[data-nm-page='0'] :is(.beacon__controls,.beacon__verdict),
+    & .nm-paged--interaction[data-nm-page='1'] :is(.interaction__teaches,.beacon__metrics),
+    & .nm-paged--interaction[data-nm-page='2'] .beacon__ports,
+    & .nm-paged--evidence[data-nm-page='0'] .evidence,
+    & .nm-paged--brief[data-nm-page='0'] .brief__scenario,
+    & .nm-paged--brief[data-nm-page='2'] :is(.brief__panel,.callout),
+    & .nm-paged--deliverables[data-nm-page='1'] .code { display: block; }
+    & .nm-paged--query[data-nm-page='1'] .query__walk,
+    & .nm-paged--query[data-nm-page='2'] .query__result,
+    & .nm-paged--interaction[data-nm-page='0'] .beacon__charts,
+    & .nm-paged--evidence[data-nm-page='1'] .proves,
+    & .nm-paged--brief[data-nm-page='1'] .brief__grid,
+    & .nm-paged--deliverables[data-nm-page='0'] .deliverables__list { display: grid; }
+    & .nm-paged--brief[data-nm-page='2'] .brief__grid .brief__panel { display: none; }
+    & .nm-paged--tasks[data-nm-page='0'] .tasks__task:nth-child(1), & .nm-paged--check[data-nm-page='0'] .check__list > li:nth-child(1) { display: list-item; }
+    & .nm-paged--tasks[data-nm-page='1'] .tasks__task:nth-child(2), & .nm-paged--check[data-nm-page='1'] .check__list > li:nth-child(2) { display: list-item; }
+    & .nm-paged--tasks[data-nm-page='2'] .tasks__task:nth-child(3), & .nm-paged--check[data-nm-page='2'] .check__list > li:nth-child(3) { display: list-item; }
+    & .nm-paged--tasks[data-nm-page='3'] .tasks__task:nth-child(4), & .nm-paged--check[data-nm-page='3'] .check__list > li:nth-child(4) { display: list-item; }
+    & .nm-paged--tasks[data-nm-page='4'] .tasks__task:nth-child(5), & .nm-paged--check[data-nm-page='4'] .check__list > li:nth-child(5) { display: list-item; }
     & .present__stage { padding: 1.5rem 3rem 3rem; }
+    & .present { --s-5: 1rem; --s-6: 1.25rem; --s-7: 2rem; }
+    & .present__slide .block__head { margin-bottom: .75rem; }
     & .present__slide .block__title { font-size: clamp(1.7rem, 2.6vw, 2.5rem); margin-bottom: 1rem; }
     & .present__slide .concept__points { gap: .7rem; }
-    & .present__slide .concept__points li { font-size: 1.15rem; line-height: 1.45; }
-    & .present__slide .lead { font-size: 1.2rem; }
+    & .present__slide .concept__points li { font-size: 1.0625rem; line-height: 1.4; }
+    & .present__slide .lead { font-size: 1.125rem; }
+    & .present__slide .nm-paged--query .code__body { font-size: .85rem; line-height: 1.3; }
+    & .present__slide .query__walk { grid-template-columns: 1fr 1fr; }
+    & .present__slide .query__walk-item { grid-template-columns: 1fr; gap: .35rem; }
+    & .present__slide .beacon__charts { grid-template-columns: 1fr 1fr; }
+    & .present__slide .beacon__chart { height: 6rem; }
+    & .present__slide .beacon__series-head { display: block; }
+    & .present__slide .beacon__ports ul { grid-template-columns: 1fr 1fr; }
+    & .present__slide .evidence__note { max-height: 12rem; overflow: auto; }
+    & .present__slide .recap__links { margin-top: .75rem; }
+
     & .present__slide .nm-opening .block--title__h { font-size: 5rem; }
     & .present__slide .nm-opening .block--title__lead { font-size: 1.6rem; }
   }
@@ -100,11 +153,53 @@
   }
   @media (max-width: 800px) {
     :root[data-lesson='network-memory-forensics'] {
+      & .present__slide .beacon__charts, & .present__slide .beacon__ports ul, & .present__slide .query__walk { grid-template-columns: 1fr; }
       & .nm-hero, & .nm-opening { grid-template-columns: 1fr; gap: 1.5rem; }
       & .nm-hero { padding-block: 1.5rem; }
       & .nm-hero h1 { font-size: 3rem; max-width: 16ch; }
       & .nm-trace figcaption { flex-wrap: wrap; gap: .25rem; }
-      & .present__stage { padding: 1rem 1rem 2rem; place-items: start stretch; }
+      & .present::before { background: none; }
+    & .ix, & .evidence { background: #fff; }
+    & .callout, & .query__assumes, & .brief__scenario, & .interaction__teaches { border-inline: 0; border-top: 1px solid var(--line-strong); }
+    & .interaction__teaches { background: var(--surface); }
+    & .nm-opening .block--title { display: flex; flex-direction: column; }
+    & .nm-opening .block--title .eyebrow { order: 2; margin-block: 1rem; letter-spacing: .12em; }
+    & .nm-opening .block--title__lead { order: 3; }
+    & .block__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem 1rem; }
+    & .block__head .block__title { order: 0; flex-basis: 100%; }
+    & .block__head .eyebrow { order: 1; letter-spacing: .12em; }
+    & .block__head .block__meta { order: 2; }
+    & .nm-paged__nav { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    & .nm-paged__nav button { padding: .5rem .8rem; border: 1px solid var(--line-strong); color: var(--text); background: #fff; font-size: .875rem; cursor: pointer; }
+    & .nm-paged__nav button[aria-pressed='true'] { background: var(--accent); color: #fff; }
+    & .nm-paged__nav button:hover { border-color: var(--focus); }
+    & .nm-paged--query .query__assumes, & .nm-paged--query .code, & .nm-paged--query .query__walk, & .nm-paged--query .query__result,
+    & .nm-paged--interaction .interaction__teaches, & .nm-paged--interaction .beacon__controls, & .nm-paged--interaction .beacon__charts, & .nm-paged--interaction .beacon__verdict, & .nm-paged--interaction .beacon__metrics, & .nm-paged--interaction .beacon__ports,
+    & .nm-paged--evidence .evidence, & .nm-paged--evidence .proves,
+    & .nm-paged--brief .brief__scenario, & .nm-paged--brief .brief__grid, & .nm-paged--brief .block--brief > .brief__panel, & .nm-paged--brief .callout,
+    & .nm-paged--deliverables .deliverables__list, & .nm-paged--deliverables .code,
+    & .nm-paged--tasks .tasks__task, & .nm-paged--check .check__list > li { display: none; }
+    & .nm-paged--query[data-nm-page='0'] :is(.query__assumes,.code),
+    & .nm-paged--interaction[data-nm-page='0'] :is(.beacon__controls,.beacon__verdict),
+    & .nm-paged--interaction[data-nm-page='1'] :is(.interaction__teaches,.beacon__metrics),
+    & .nm-paged--interaction[data-nm-page='2'] .beacon__ports,
+    & .nm-paged--evidence[data-nm-page='0'] .evidence,
+    & .nm-paged--brief[data-nm-page='0'] .brief__scenario,
+    & .nm-paged--brief[data-nm-page='2'] :is(.brief__panel,.callout),
+    & .nm-paged--deliverables[data-nm-page='1'] .code { display: block; }
+    & .nm-paged--query[data-nm-page='1'] .query__walk,
+    & .nm-paged--query[data-nm-page='2'] .query__result,
+    & .nm-paged--interaction[data-nm-page='0'] .beacon__charts,
+    & .nm-paged--evidence[data-nm-page='1'] .proves,
+    & .nm-paged--brief[data-nm-page='1'] .brief__grid,
+    & .nm-paged--deliverables[data-nm-page='0'] .deliverables__list { display: grid; }
+    & .nm-paged--brief[data-nm-page='2'] .brief__grid .brief__panel { display: none; }
+    & .nm-paged--tasks[data-nm-page='0'] .tasks__task:nth-child(1), & .nm-paged--check[data-nm-page='0'] .check__list > li:nth-child(1) { display: list-item; }
+    & .nm-paged--tasks[data-nm-page='1'] .tasks__task:nth-child(2), & .nm-paged--check[data-nm-page='1'] .check__list > li:nth-child(2) { display: list-item; }
+    & .nm-paged--tasks[data-nm-page='2'] .tasks__task:nth-child(3), & .nm-paged--check[data-nm-page='2'] .check__list > li:nth-child(3) { display: list-item; }
+    & .nm-paged--tasks[data-nm-page='3'] .tasks__task:nth-child(4), & .nm-paged--check[data-nm-page='3'] .check__list > li:nth-child(4) { display: list-item; }
+    & .nm-paged--tasks[data-nm-page='4'] .tasks__task:nth-child(5), & .nm-paged--check[data-nm-page='4'] .check__list > li:nth-child(5) { display: list-item; }
+    & .present__stage { padding: 1rem 1rem 2rem; place-items: start stretch; }
       & .present__slide .nm-opening .block--title__h { font-size: 3rem; }
       & .present__slide .nm-opening .block--title__lead { font-size: 1.2rem; }
       & .structure__item a { grid-template-columns: 1.5rem minmax(0, 1fr) auto; gap: .5rem; }
