@@ -81,10 +81,10 @@ export default function Tasks({ block, mode }: BlockOverrideProps<TasksBlock>) {
                 <li key={i}>{s}</li>
               ))}
             </ol>
-            <p className="tasks__produces">
+            <div className="tasks__produces">
               <MonoLabel>Produces</MonoLabel>
               {task.produces}
-            </p>
+            </div>
           </li>
         ))}
       </ol>
