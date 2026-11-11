@@ -105,6 +105,24 @@
     :root[data-lesson='soc-operations'] .present__slide .diagram { margin: 0; }
     :root[data-lesson='soc-operations'] .present__slide .dg-pipeline { gap: .25rem; }
   }
+  /* Bound the reading pane to the stage, including expanded exercise feedback.
+     Keep the stage and navigation stationary; never clip or scale lesson copy. */
+  :root[data-lesson='soc-operations'] .present__stage {
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr);
+    overflow: hidden;
+  }
+  :root[data-lesson='soc-operations'] .present__slide {
+    min-height: 0;
+    max-height: 100%;
+    overflow: auto;
+    contain: layout paint;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    padding-inline: .5rem;
+    padding-bottom: 1rem;
+    scroll-padding-block: 1rem;
+  }
   @media (max-width: 48rem) {
     :root[data-lesson='soc-operations'] .soc-opening { grid-template-columns: minmax(0, 1fr); gap: 0; }
     :root[data-lesson='soc-operations'] .soc-opening__flow { height: 180px; }
