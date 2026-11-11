@@ -214,3 +214,31 @@
     & .present__slide .tasks__steps li+li {margin-top:.25rem}
   }
 }
+
+/* Stable, keyboard-owned reading surfaces keep expanded teaching content in view. */
+@media screen {
+  :root[data-lesson='detection-engineering'] {
+    & .de-reading, & .de-reading__body {min-width:0;max-width:100%}
+    & .de-reading__hint {display:none}
+    & .de-query__trace > *, & .de-code {min-width:0;max-width:100%}
+  }
+}
+@media screen and (min-width:1000px) {
+  :root[data-lesson='detection-engineering'] {
+    & .present__slide .de-reading__hint {display:block;font-size:.875rem;color:var(--text-muted);margin:0 0 .5rem}
+    & .present__slide .de-reading__body {max-height:calc(100dvh - 235px);overflow:auto;scrollbar-gutter:stable;padding:.25rem .75rem .75rem .25rem;overscroll-behavior:contain}
+    & .present__slide .ix--rule, & .present__slide .ix--coverage,
+    & .present__slide .de-walk, & .present__slide .query__result,
+    & .present__slide .check__feedback {max-height:none;overflow:visible}
+  }
+}
+@media print {
+  .de-reading__hint {display:none}
+  .de-reading__body {max-height:none;overflow:visible}
+}
+@media screen and (max-width:999px) {
+  :root[data-lesson='detection-engineering'] .present__slide .de-walk {
+    max-height:none;
+    overflow:visible;
+  }
+}

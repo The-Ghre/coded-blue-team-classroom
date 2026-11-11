@@ -37,3 +37,24 @@ Contrast checks: off-white/base 14.35:1; muted body/raised 10.55:1; active study
 Impeccable detector ran once for this revision using the preinstalled engine via IMPECCABLE_BIN (default launcher cache unavailable). Findings were advisory undocumented tone/type-ramp entries; no new mechanical blocker. Shared global design sidecar remains outside the authorized write boundary. No ten-lesson side-by-side comparison, exhaustive accessibility/device matrix, frame-time benchmark, native OS print dialog or page-by-page PDF review was performed.
 
 Fresh independent finish verdict: **ship**, scoped to the reviewer's three findings. Selected-tab contrast, metadata placement and documented button foreground were each scored resolved. No blockers remain from that finding list. The reviewer independently inspected changed CSS, the recorded token, fresh desktop study and mobile workshop evidence; build and exhaustive slide audit were supplied evidence rather than independently rerun by the reviewer.
+
+## Integration return correction — stable reading panes
+
+The integrator's supplied evidence in `/tmp/coded-integration-review` was inspected, including the clipped RuleBuilder desktop screenshot and full measurement report. Presentation overrides now wrap every block in one stable, labelled, focusable reading surface. Desktop height is capped above the footer; scrolling does not remount shared exercises. The wrapper owns arrow keys while focused. Mobile keeps natural vertical reading flow, and code keeps its labelled horizontal scroll container. No supplied content, feedback, controls, provenance or synthetic labels were removed. Palette and direction remain Rule Test Bench.
+
+The exhaustive expanded-state sweep found an additional mobile Sigma issue: the presentation walkthrough's 26rem cap overrode the mobile uncapped rule while overflow remained visible. A matching-specificity mobile override now removes that cap so later walkthrough controls and the result text remain in normal flow.
+
+This correction uses the dedicated Vite server at `127.0.0.1:5484`, launched through Vite's programmatic API with `cacheDir: /tmp/vite-detection-5484`. Shared Vite configuration and packages were unchanged. Playwright uses the explicitly approved runtime module and installed Google Chrome executable. Evidence is stored locally as `.impeccable/review/return-*`.
+
+`npx tsc -b` and the production build passed; the build was repeated after the mobile correction and passed. Impeccable detection ran once for this return: 36 advisory color/type metadata findings, no blocking mechanical findings. Global design metadata remains outside scope.
+
+Final fresh verification after correction:
+
+- 82 recorded layout measurements: all 19 slides in default and exercised expanded states at 1440×900 and 390×844, plus overview/study/workshop at both sizes. Desktop stage overflow is zero for all 38 slide-state measurements; horizontal document overflow is zero throughout. Mobile retains vertical scroll. Every Sigma walkthrough button is clickable after the fix.
+- Supplementary expanded-state checks show all four retrieval answers and all twelve hint tiers. Desktop stage overflow and mobile horizontal overflow remain zero. Rule selection survives pane End/Home scrolling; ArrowRight outside the pane advances the deck.
+- Native keyboard checks: boundary 38→39 with ArrowRight; Space changes Sigma, coverage and quiz state without changing slides; Tab reaches the next button. Pane End scrolls 204px without advancing the deck.
+- Reduced-motion still frame inspected. Print-media screenshot inspected, PDF generated, tokens verified white `#ffffff` and ink `#0a1526`; pane instructions are absent and content is uncapped. Native print dialog and every PDF page were not separately reviewed.
+- Console is **not clean in this pre-integration worktree**: shared `ScenarioView`, `CoverageMap` and `TasksView` render MonoLabel divs inside paragraphs. No other console errors or runtime page errors were recorded. The user explicitly identified shared DOM nesting as already fixed by the integrator and outside lesson scope; those shared files were left untouched.
+- Independent finish reviewer verdict: **SHIP for lesson-local corrections**, no material findings remaining. Reviewer independently inspected code, fresh screenshots (including the corrected mobile Sigma junction, dense/expanded desktop slides, mobile reading, overview, study and print) and final JSON measurements. The reviewer did not independently rerun the full browser matrix. The shared nesting warnings remain an integration caveat.
+
+Evidence: `return-results.json`, `return-progress.json`, `return-extra.json`, `return-keys.json`, all `return-slide-*` captures, expanded-state captures, `return-reduced.png`, `return-print.png` and `return-study.pdf` under `.impeccable/review/`. No merge, rebase or push was performed.

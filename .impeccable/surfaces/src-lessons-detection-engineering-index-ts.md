@@ -19,3 +19,5 @@ Signature motion: the boundary moves directly with input and event marks change 
 All shared interaction logic and teaching copy remain in the shared renderers. Kit-specific code changes only presentation. Screen-scoped semantic tokens preserve evidence encoding and print. Canvas uses CanvasStage visibility, reduced motion and DPR management; only a sparse horizontal event lane moves along the bottom edge.
 
 Verification target: every slide, overview, study and practical at 1440×900 and 390×844; keyboard, reduced motion, print, build and detector. Shared foundation and repository documentation stay untouched.
+
+Integrator return correction: desktop presentation content now lives in a stable, labelled, focusable reading pane capped to the stage height. Arrow keys scroll within the pane without advancing the deck, and all shared interactions remain mounted as the reader scrolls. Expanded feedback stays in the same pane. Phone layouts retain natural vertical flow; Sigma source remains inside its labelled horizontal scroll container. Print removes the pane cap and instruction. No teaching copy, labels, provenance or controls are removed.
