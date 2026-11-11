@@ -1,0 +1,24 @@
+node_modules/
+dist/
+*.local
+.DS_Store
+.vite/
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+*.tsbuildinfo
+
+# Instructor-only material must never be committed to the student bundle.
+# Answer keys, solution walkthroughs and sensitive source files belong in a
+# separate, access-controlled distribution — see README, "What is deliberately
+# excluded". Publishing them here would make them world-readable.
+/instructor/
+/answer-keys/
+*.solution.*
+*.answers.*

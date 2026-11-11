@@ -1,0 +1,291 @@
+/* =========================================================================
+   PRINT
+   =========================================================================
+   Study mode prints as a clean lesson handout: ink on paper, no interface,
+   nothing clipped, and every interactive disclosure expanded so the printed
+   copy is complete rather than a screenshot of a collapsed page.
+
+   Colour tokens are redefined for print in tokens.css; this file handles
+   layout and what to include.
+   ========================================================================= */
+
+@media print {
+  @page {
+    margin: 16mm 14mm;
+  }
+
+  body {
+    background: #fff;
+    color: #0a1526;
+    font-size: 10.5pt;
+    line-height: 1.5;
+  }
+
+  /* ---------- Remove the interface ---------- */
+  .shell__header,
+  .shell__footer,
+  .shell__rail,
+  .study__rail,
+  .study__section-tools,
+  .study__next,
+  .skip-link,
+  .present__top,
+  .present__bottom,
+  .present__overlay,
+  .diagram__head button,
+  .scard__actions,
+  .overview__actions,
+  .overview__reset,
+  .search__field,
+  .search__suggestions,
+  .hints__group .btn,
+  .loghunt__actions,
+  .tlr__actions,
+  .beacon__presets,
+  .ix__tabs,
+  .ix__bar,
+  .triage__check-run,
+  .btn {
+    display: none !important;
+  }
+
+  .shell__main {
+    max-width: none;
+    padding: 0;
+  }
+
+  .study {
+    display: block;
+  }
+
+  .study__content {
+    max-width: none;
+  }
+
+  /* ---------- Page structure ---------- */
+  .study__header {
+    border-bottom: 2pt solid #0a1526;
+    padding-bottom: 6mm;
+    margin-bottom: 8mm;
+  }
+
+  .study__section {
+    break-inside: auto;
+    page-break-inside: auto;
+    border-bottom: 0.5pt solid #c6cedb;
+    padding-bottom: 6mm;
+    margin-bottom: 6mm;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+    page-break-after: avoid;
+    color: #0a1526;
+  }
+
+  h1 {
+    font-size: 20pt;
+  }
+
+  h2,
+  .block__title {
+    font-size: 14pt;
+    margin-top: 0;
+  }
+
+  h3,
+  h4 {
+    font-size: 11.5pt;
+  }
+
+  .lead {
+    font-size: 11pt;
+    color: #35455f;
+  }
+
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  a {
+    color: #004aa3;
+    text-decoration: none;
+  }
+
+  /* Print the destination of external links — a handout is read away from
+     the screen, where a bare link text is useless. */
+  .recap__further a[href^='http']::after,
+  .prose a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 8pt;
+    color: #5a6b85;
+    word-break: break-all;
+  }
+
+  /* ---------- Expand everything that hides content ---------- */
+  details {
+    display: block !important;
+  }
+
+  details > summary {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 2mm;
+    list-style: none;
+  }
+
+  details:not([open]) > *:not(summary) {
+    display: revert !important;
+  }
+
+  .diagram__alt {
+    display: block !important;
+    border-top: 0.5pt dashed #c6cedb;
+  }
+
+  /* Study-mode depth is the point of a printed handout. */
+  .detail {
+    display: block !important;
+    background: #f4f6fa;
+    border-left: 2pt solid #004aa3;
+  }
+
+  .block__footer {
+    display: flex !important;
+    font-size: 8pt;
+  }
+
+  /* Evidence annotations print in full rather than requiring a click. */
+  .evidence__note {
+    display: block !important;
+    page-break-inside: avoid;
+  }
+
+  .retrieval__a {
+    display: block !important;
+  }
+
+  /* ---------- Surfaces ---------- */
+  .card,
+  .block > section,
+  .callout,
+  .diagram,
+  .tasks__task,
+  .assess__item,
+  .brief__panel,
+  .proves__col,
+  .query__result-col,
+  .hints__group,
+  .overview__panel {
+    background: #fff !important;
+    border: 0.5pt solid #c6cedb !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .code,
+  .code__body,
+  .evidence,
+  .triage__summary {
+    background: #f4f6fa !important;
+    border: 0.5pt solid #c6cedb !important;
+    color: #0a1526 !important;
+  }
+
+  .code__body,
+  .evidence__line code {
+    font-size: 8pt;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #0a1526 !important;
+  }
+
+  /* Tables must not be clipped — overflow containers become static. */
+  .compare__scroll,
+  .timing,
+  .beacon__metrics {
+    overflow: visible !important;
+  }
+
+  .compare__table,
+  .timing__table,
+  .beacon__table {
+    min-width: 0 !important;
+    width: 100%;
+    font-size: 9pt;
+    break-inside: auto;
+  }
+
+  .compare__table th,
+  .compare__table td {
+    border-bottom: 0.5pt solid #c6cedb;
+  }
+
+  .compare__table thead {
+    display: table-header-group;
+  }
+
+  /* ---------- Evidence taxonomy in monochrome ---------- */
+  .ev {
+    border-width: 0.75pt !important;
+    padding: 0.05em 0.4em;
+  }
+
+  .pillar {
+    border-width: 0.5pt !important;
+  }
+
+  /* ---------- Grids collapse to a single column ---------- */
+  .proves,
+  .redblue,
+  .brief__grid,
+  .hints__grid,
+  .query__result,
+  .overview__grid,
+  .structure,
+  .rule__layout,
+  .dg-pillars,
+  .beacon__charts {
+    grid-template-columns: 1fr !important;
+  }
+
+  .rule__output {
+    position: static !important;
+  }
+
+  /* ---------- Interactions ---------- */
+  /* Interactive exercises print as their framing text: the teaching point
+     and the debrief, which is what a reader on paper can actually use. */
+  .ix {
+    border: 0.5pt dashed #c6cedb;
+    padding: 4mm;
+  }
+
+  .ix::before {
+    content: 'Interactive exercise — open this session in a browser to work through it.';
+    display: block;
+    font-size: 8.5pt;
+    font-style: italic;
+    color: #5a6b85;
+    margin-bottom: 3mm;
+  }
+
+  .beacon__chart,
+  .loghunt__lines,
+  .tlr__pool-list,
+  .cov__grid,
+  .rule__condition-list,
+  .triage__check-list {
+    display: none !important;
+  }
+
+  .interaction__teaches {
+    background: #f4f6fa !important;
+    border-left: 2pt solid #004aa3 !important;
+  }
+}

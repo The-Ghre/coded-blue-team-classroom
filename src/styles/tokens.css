@@ -1,0 +1,225 @@
+/* =========================================================================
+   CODED BLUE TEAM CLASSROOM — DESIGN TOKENS
+   =========================================================================
+   Colour and typography values below were read directly from the rendered
+   CODED reference at https://coded-reels-playbook.vercel.app/ (computed
+   styles + the :root custom properties its stylesheet declares). Nothing
+   here is invented or sampled from another site. See DESIGN.md for the
+   full extraction record.
+
+   Everything else — spacing, radii, elevation, motion scale, the evidence
+   taxonomy and the layout system — is original to this classroom.
+   ========================================================================= */
+
+:root {
+  /* ---------------------------------------------------------------------
+     1. BRAND COLOUR — observed verbatim from the CODED reference
+     --------------------------------------------------------------------- */
+
+  /* Grounds. --coded-ink is the reference's computed body background
+     (rgb(0,8,28)); --coded-navy-deep is its declared --navy-deep. */
+  --coded-ink: #00081c;
+  --coded-navy-deep: #00112f;
+  --coded-navy: #14243f;
+  --coded-navy-2: #16294a;
+  --coded-navy-3: #1b3055;
+  --coded-panel: #12294f;
+
+  /* Brand blues. Blue is native to the CODED palette — it is not an
+     invented "blue team" cue. */
+  --coded-blue: #004aa3;
+  --coded-blue-bright: #2f74d6;
+  --coded-blue-soft: #6f9ce8;
+
+  /* Text */
+  --coded-white: #ffffff;
+  --coded-muted: #9fb2d4;
+  --coded-muted-2: #6f83a8;
+
+  /* Hairlines and card washes */
+  --coded-line: rgba(255, 255, 255, 0.12);
+  --coded-card: rgba(255, 255, 255, 0.045);
+  --coded-card-brd: rgba(255, 255, 255, 0.1);
+
+  /* Signal accents */
+  --coded-gold: #c89a45;
+  --coded-green: #37a06a;
+  --coded-ok: #5ad0a0;
+  --coded-red: #f84b4b;
+  --coded-red-deep: #c23030;
+  --coded-no: #ff6b6b;
+  --coded-indigo: #3e50dd;
+  --coded-mauve: #a85a66;
+
+  /* Motion curve, observed as --ease on the reference */
+  --coded-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* ---------------------------------------------------------------------
+     2. SEMANTIC SURFACES — original mapping of the observed palette
+     --------------------------------------------------------------------- */
+  --bg: var(--coded-ink);
+  --bg-raised: var(--coded-navy-deep);
+  --surface: var(--coded-navy);
+  --surface-2: var(--coded-navy-2);
+  --surface-3: var(--coded-navy-3);
+  --surface-panel: var(--coded-panel);
+
+  --text: var(--coded-white);
+  --text-muted: var(--coded-muted);
+  --text-dim: var(--coded-muted-2);
+
+  --line: var(--coded-line);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --card: var(--coded-card);
+  --card-brd: var(--coded-card-brd);
+
+  --accent: var(--coded-blue-bright);
+  --accent-deep: var(--coded-blue);
+  --accent-soft: var(--coded-blue-soft);
+
+  --focus: var(--coded-blue-soft);
+
+  /* ---------------------------------------------------------------------
+     3. EVIDENCE TAXONOMY
+     ---------------------------------------------------------------------
+     The spine of the whole teaching system. Every claim in this course is
+     one of six kinds. Each kind carries a COLOUR, a SHAPE, a GLYPH and a
+     WORD, so none of it depends on colour perception alone.
+
+       OBSERVATION  square      [=]  what a source literally recorded
+       HYPOTHESIS   diamond     <?>  what we think it might mean
+       CONFIRMED    circle      (/)  corroborated by 2+ independent sources
+       UNCERTAIN    dashed hex  [~]  known unknown, stated out loud
+       RESPONSE     chevron     >>   an action a human decided to take
+       ATTACK       triangle    /!\  adversary behaviour (the red side)
+     --------------------------------------------------------------------- */
+  --ev-observation: var(--coded-blue-soft);
+  --ev-hypothesis: var(--coded-gold);
+  --ev-confirmed: var(--coded-ok);
+  --ev-uncertain: var(--coded-mauve);
+  --ev-response: var(--coded-blue-bright);
+  --ev-attack: var(--coded-red);
+
+  --ev-observation-bg: rgba(111, 156, 232, 0.12);
+  --ev-hypothesis-bg: rgba(200, 154, 69, 0.13);
+  --ev-confirmed-bg: rgba(90, 208, 160, 0.12);
+  --ev-uncertain-bg: rgba(168, 90, 102, 0.15);
+  --ev-response-bg: rgba(47, 116, 214, 0.14);
+  --ev-attack-bg: rgba(248, 75, 75, 0.12);
+
+  /* Telemetry pillars — Endpoint / Network / Identity / Cloud.
+     Also paired with glyphs wherever they appear. */
+  --pillar-endpoint: var(--coded-blue-soft);
+  --pillar-network: var(--coded-indigo);
+  --pillar-identity: var(--coded-gold);
+  --pillar-cloud: var(--coded-ok);
+
+  /* ---------------------------------------------------------------------
+     4. TYPOGRAPHY — families and the specimen values read from the
+        reference (h1 61.44px / 700 / -0.025em; eyebrow 13px / 700 /
+        0.32em uppercase; mono label 10–11px / 600 / 0.24em uppercase)
+     --------------------------------------------------------------------- */
+  --font-sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* Fluid display scale. Clamps keep projector headlines large and phone
+     headlines readable without ever shrinking body text below 16px. */
+  --fs-display: clamp(2.6rem, 1.4rem + 5.2vw, 5.25rem);
+  --fs-h1: clamp(2rem, 1.2rem + 3.4vw, 3.84rem);
+  --fs-h2: clamp(1.5rem, 1.1rem + 1.9vw, 2.4rem);
+  --fs-h3: clamp(1.18rem, 1rem + 0.9vw, 1.6rem);
+  --fs-h4: clamp(1.05rem, 0.98rem + 0.4vw, 1.1875rem);
+  --fs-lead: clamp(1.0625rem, 1rem + 0.45vw, 1.235rem);
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-micro: 0.75rem;
+  --fs-mono-label: 0.6875rem;
+
+  --lh-tight: 1.04;
+  --lh-snug: 1.18;
+  --lh-normal: 1.35;
+  --lh-prose: 1.62;
+
+  --ls-display: -0.025em;
+  --ls-h2: -0.018em;
+  --ls-h3: -0.012em;
+  --ls-eyebrow: 0.32em;
+  --ls-mono-label: 0.24em;
+  --ls-button: 0.02em;
+
+  /* ---------------------------------------------------------------------
+     5. SPACE, SHAPE, DEPTH, MOTION — original to this product
+     --------------------------------------------------------------------- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4rem;
+  --s-9: 6rem;
+
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 4, 16, 0.5);
+  --shadow-md: 0 8px 28px -10px rgba(0, 4, 16, 0.8);
+  --shadow-lg: 0 28px 70px -24px rgba(0, 4, 16, 0.92);
+
+  --dur-fast: 120ms;
+  --dur-base: 220ms;
+  --dur-slow: 420ms;
+  --ease: var(--coded-ease);
+
+  /* Layout */
+  --measure: 68ch;
+  --gutter: clamp(1rem, 0.4rem + 2.6vw, 3.5rem);
+  --rail: 19rem;
+  --max-page: 90rem;
+}
+
+/* Reduced motion: collapse durations rather than disabling transitions, so
+   focus and state changes still read as deliberate but nothing animates. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 1ms;
+    --dur-base: 1ms;
+    --dur-slow: 1ms;
+  }
+}
+
+/* Print: the classroom inverts to ink-on-paper for clean lesson PDFs. */
+@media print {
+  :root {
+    --bg: #ffffff;
+    --bg-raised: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #f4f6fa;
+    --surface-3: #eef1f7;
+    --surface-panel: #f4f6fa;
+    --text: #0a1526;
+    --text-muted: #35455f;
+    --text-dim: #5a6b85;
+    --line: rgba(10, 21, 38, 0.22);
+    --line-strong: rgba(10, 21, 38, 0.4);
+    --card: rgba(10, 21, 38, 0.03);
+    --card-brd: rgba(10, 21, 38, 0.18);
+    --accent: #004aa3;
+    --accent-soft: #004aa3;
+    --ev-observation: #1f4f91;
+    --ev-hypothesis: #7a5a14;
+    --ev-confirmed: #1c6b47;
+    --ev-uncertain: #7d3540;
+    --ev-response: #004aa3;
+    --ev-attack: #a81f1f;
+  }
+}

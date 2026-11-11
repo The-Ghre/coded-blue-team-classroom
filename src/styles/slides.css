@@ -1,0 +1,470 @@
+/* =========================================================================
+   PRESENTATION MODE
+   =========================================================================
+   Built for a projector first. Type scales up, the chrome fades out, and
+   the slide owns the screen. Nothing is removed from the accessibility
+   tree when the chrome hides — it goes transparent, not absent, so a
+   keyboard user can always reach the controls.
+   ========================================================================= */
+
+.present {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* Subtle ground wash. Fixed, so it never moves between slides and never
+   competes with the content. */
+.present::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1100px 620px at 12% -10%, rgba(0, 74, 163, 0.2), transparent 62%),
+    radial-gradient(900px 520px at 100% 108%, rgba(47, 116, 214, 0.1), transparent 60%);
+  pointer-events: none;
+}
+
+/* ---------- Chrome visibility -------------------------------------------- */
+
+.present__top,
+.present__bottom {
+  position: relative;
+  z-index: 3;
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+}
+
+.present.chrome-off .present__top {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+}
+
+.present.chrome-off .present__bottom {
+  opacity: 0;
+  transform: translateY(0.5rem);
+}
+
+/* Focus always brings the chrome back, so keyboard users are never
+   navigating invisible controls. */
+.present.chrome-off .present__top:focus-within,
+.present.chrome-off .present__bottom:focus-within {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Top bar ------------------------------------------------------ */
+
+.present__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-3) var(--s-5);
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter: blur(10px);
+  flex-wrap: wrap;
+}
+
+.present__top-left,
+.present__top-right {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+
+.present__exit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--r-sm);
+}
+
+.present__exit:hover {
+  color: var(--text);
+  background: var(--card);
+}
+
+.present__session {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  padding-left: var(--s-3);
+  border-left: 1px solid var(--line);
+}
+
+.present__session-title {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-weight: var(--fw-semibold);
+}
+
+.present__top kbd,
+.present__help kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.35rem;
+  padding: 0.1rem 0.3rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--card-brd);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* ---------- Stage -------------------------------------------------------- */
+
+.present__stage {
+  position: relative;
+  z-index: 2;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: grid;
+  place-items: center;
+  padding: var(--s-6) var(--s-7);
+}
+
+.present__slide {
+  width: 100%;
+  max-width: 78rem;
+  animation: slide-in var(--dur-slow) var(--ease);
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .present__slide {
+    animation: none;
+  }
+}
+
+/* ---------- Slide typography ---------------------------------------------
+   Everything scales up for projection. Body text on a slide never drops
+   below 1.0625rem, because the brief is explicit that extended explanation
+   belongs in study mode rather than in smaller type. */
+
+.present__slide .block__title {
+  font-size: clamp(1.9rem, 1.1rem + 2.6vw, 3.1rem);
+}
+
+.present__slide .block--title__h {
+  font-size: clamp(2.8rem, 1.4rem + 5.6vw, 5.6rem);
+}
+
+.present__slide .lead,
+.present__slide .block--title__lead {
+  font-size: clamp(1.1rem, 0.98rem + 0.75vw, 1.6rem);
+  max-width: 62ch;
+}
+
+.present__slide .concept__points {
+  gap: var(--s-4);
+  max-width: 74ch;
+}
+
+.present__slide .concept__points li {
+  font-size: clamp(1.0625rem, 0.95rem + 0.55vw, 1.4rem);
+  line-height: 1.5;
+}
+
+.present__slide .objectives__text,
+.present__slide .retrieval__q,
+.present__slide .check__stem {
+  font-size: clamp(1.0625rem, 0.95rem + 0.5vw, 1.35rem);
+}
+
+.present__slide .scenario__narrative {
+  font-size: clamp(1.1rem, 0.98rem + 0.7vw, 1.55rem);
+  max-width: 58ch;
+}
+
+.present__slide .compare__table,
+.present__slide .proves__col ul,
+.present__slide .tasks__steps,
+.present__slide .debrief__list {
+  font-size: clamp(0.95rem, 0.88rem + 0.35vw, 1.15rem);
+}
+
+.present__slide .evidence__line code,
+.present__slide .code__body {
+  font-size: clamp(0.8rem, 0.72rem + 0.35vw, 1rem);
+}
+
+/* Study-only material never appears on a slide. */
+.present__slide .detail,
+.present__slide .block__footer {
+  display: none;
+}
+
+/* ---------- Bottom bar --------------------------------------------------- */
+
+.present__bottom {
+  border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.present__progress {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.present__progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+  transition: width var(--dur-base) var(--ease);
+}
+
+.present__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-4);
+  padding: var(--s-3);
+}
+
+.present__counter {
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  min-width: 4.5rem;
+  text-align: center;
+}
+
+.present__counter strong {
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.present__slide-title {
+  padding: 0 var(--s-5) var(--s-3);
+  text-align: center;
+  font-size: var(--fs-micro);
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Overlays ----------------------------------------------------- */
+
+.present__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  background: rgba(0, 4, 16, 0.86);
+  backdrop-filter: blur(6px);
+  animation: fade-in var(--dur-base) var(--ease);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .present__overlay {
+    animation: none;
+  }
+}
+
+.present__overview,
+.present__help {
+  width: 100%;
+  max-width: 68rem;
+  max-height: 85dvh;
+  overflow-y: auto;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.present__help {
+  max-width: 34rem;
+}
+
+.present__overview-head,
+.present__help-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--s-4);
+  padding: var(--s-5);
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--line);
+}
+
+.present__overview-head h2,
+.present__help-head h2 {
+  margin-top: var(--s-2);
+  font-size: var(--fs-h3);
+}
+
+.present__overview-grid {
+  list-style: none;
+  margin: 0;
+  padding: var(--s-4);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: var(--s-2);
+}
+
+.present__thumb {
+  display: grid;
+  gap: 0.3rem;
+  width: 100%;
+  text-align: left;
+  padding: var(--s-3);
+  background: var(--card);
+  border: 1px solid var(--card-brd);
+  border-left: 3px solid var(--accent-deep);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease);
+  min-height: 5.5rem;
+}
+
+.present__thumb[data-area='practical'] {
+  border-left-color: var(--coded-gold);
+}
+
+.present__thumb:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--line-strong);
+}
+
+.present__thumb[data-current='true'] {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  background: var(--ev-response-bg);
+}
+
+.present__thumb-num {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono-label);
+  letter-spacing: 0.12em;
+  color: var(--accent-soft);
+}
+
+.present__thumb-title {
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.present__thumb-kind {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.present__thumb-min {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-dim);
+}
+
+.present__help-list {
+  margin: 0;
+  padding: var(--s-5);
+  display: grid;
+  gap: var(--s-3);
+}
+
+.present__help-list > div {
+  display: grid;
+  grid-template-columns: minmax(9rem, auto) minmax(0, 1fr);
+  gap: var(--s-4);
+  align-items: baseline;
+  padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.present__help-list dt {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.present__help-list dd {
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+
+.present__help-note {
+  padding: 0 var(--s-5) var(--s-5);
+  font-size: var(--fs-small);
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* ---------- Narrow screens -----------------------------------------------
+   Presentation mode is designed for a projector, and it must still be
+   usable on a phone for a student reviewing slides on the way home. The
+   chrome stays visible there, because auto-hide on touch is hostile. */
+
+@media (max-width: 52rem) {
+  .present__stage {
+    padding: var(--s-5) var(--s-4);
+    place-items: start;
+  }
+
+  .present__session {
+    display: none;
+  }
+
+  .present__top-right .btn kbd {
+    display: none;
+  }
+
+  .present.chrome-off .present__top,
+  .present.chrome-off .present__bottom {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 34rem) {
+  .present__top {
+    padding: var(--s-2) var(--s-3);
+  }
+
+  .present__top-right {
+    gap: var(--s-2);
+  }
+}

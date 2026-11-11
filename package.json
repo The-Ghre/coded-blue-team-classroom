@@ -1,0 +1,28 @@
+{
+  "name": "coded-blue-team-classroom",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "CODED Blue Team Classroom — an interactive teaching and workshop platform for the CODED Defensive Security track.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit false --emitDeclarationOnly false || tsc -b",
+    "lint": "tsc -b",
+    "resources": "node scripts/generate-resources.mjs"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router-dom": "6.26.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "@vitejs/plugin-react": "4.3.3",
+    "typescript": "5.6.3",
+    "vite": "5.4.11"
+  }
+}
