@@ -38,7 +38,6 @@ export function Bubble({ id, size = 'md' }: { id: string; size?: 'md' | 'lg' }) 
 export function SheetHead({ block, kicker }: { block: Block; kicker: string }) {
   return (
     <header className="block__head adw-head">
-      <Bubble id={block.id} />
       <div className="adw-head__text">
         <h2 className="block__title">{block.title}</h2>
         <div className="adw-head__scale">
