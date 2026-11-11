@@ -25,6 +25,8 @@ export function Paged<B extends Block>({ block, mode, Default }: BlockOverridePr
     : block.kind === 'brief' ? ['Scenario', 'Objectives and requirements', 'Setup and realism']
     : block.kind === 'deliverables' ? ['Checklist', 'Folder structure']
     : block.kind === 'tasks' ? block.tasks.map(t => `${t.ref} · ${t.title}`)
+    : block.kind === 'retrieval' ? block.questions.map((_, i) => `Question ${i + 1}`)
+    : block.kind === 'hints' ? block.hints.map(h => `${h.forTask} hints`)
     : block.kind === 'check' ? block.questions.map((_, i) => `Question ${i + 1}`) : []
   if (!labels.length) return <Default block={block} mode={mode} />
   return <div ref={root} className={`nm-paged nm-paged--${block.kind}`} data-nm-page={page}>

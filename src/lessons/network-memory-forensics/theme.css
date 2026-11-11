@@ -134,6 +134,21 @@
     & .nm-paged--tasks[data-nm-page='2'] .tasks__task:nth-child(3), & .nm-paged--check[data-nm-page='2'] .check__list > li:nth-child(3) { display: list-item; }
     & .nm-paged--tasks[data-nm-page='3'] .tasks__task:nth-child(4), & .nm-paged--check[data-nm-page='3'] .check__list > li:nth-child(4) { display: list-item; }
     & .nm-paged--tasks[data-nm-page='4'] .tasks__task:nth-child(5), & .nm-paged--check[data-nm-page='4'] .check__list > li:nth-child(5) { display: list-item; }
+    & .nm-paged--retrieval .retrieval__list > li,
+    & .nm-paged--hints .hints__group { display: none; }
+    & .nm-paged--retrieval[data-nm-page='0'] .retrieval__list > li:nth-child(1) { display: list-item; }
+    & .nm-paged--hints[data-nm-page='0'] .hints__group:nth-child(1) { display: flex; }
+    & .nm-paged--retrieval[data-nm-page='1'] .retrieval__list > li:nth-child(2) { display: list-item; }
+    & .nm-paged--hints[data-nm-page='1'] .hints__group:nth-child(2) { display: flex; }
+    & .nm-paged--retrieval[data-nm-page='2'] .retrieval__list > li:nth-child(3) { display: list-item; }
+    & .nm-paged--hints[data-nm-page='2'] .hints__group:nth-child(3) { display: flex; }
+    & .nm-paged--retrieval[data-nm-page='3'] .retrieval__list > li:nth-child(4) { display: list-item; }
+    & .nm-paged--hints[data-nm-page='3'] .hints__group:nth-child(4) { display: flex; }
+    & .nm-paged--retrieval[data-nm-page='4'] .retrieval__list > li:nth-child(5) { display: list-item; }
+    & .nm-paged--hints[data-nm-page='4'] .hints__group:nth-child(5) { display: flex; }
+    & .present__slide .retrieval__a p, & .present__slide .hints__tiers li { font-size: 1rem; }
+    & .present__slide .retrieval__a { border-inline-width: 1px; }
+    & .nm-paged--hints .hints__grid { grid-template-columns: minmax(0, 1fr); }
     /* Grid items must shrink to the stage; preformatted commands scroll in
        their own labelled, focusable region instead of widening the slide. */
     & .present__slide, & .nm-paged, & .block, & .code { min-width: 0; max-width: 100%; }

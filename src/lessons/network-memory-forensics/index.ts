@@ -9,6 +9,6 @@ const kit: LessonKit = {
   slug: 'network-memory-forensics',
   Backdrop,
   Hero,
-  blocks: { title: Title, concept: Paged, recap: Paged, query: Paged, interaction: Paged, evidence: Paged, brief: Paged, tasks: Paged, check: Paged, deliverables: Paged },
+  blocks: { title: Title, retrieval: Paged, hints: Paged, concept: Paged, recap: Paged, query: Paged, interaction: Paged, evidence: Paged, brief: Paged, tasks: Paged, check: Paged, deliverables: Paged },
 }
 export default kit
