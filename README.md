@@ -192,12 +192,37 @@ What ships here is student-facing material only.
 
 The same build targets either a site root or a GitHub Pages project path.
 
-### GitHub Pages (automated)
+### GitHub Pages
 
-Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds with
-`BASE_PATH=/coded-blue-team-classroom/` and publishes to Pages.
+> **The repository must be public.** On the GitHub free plan, Pages is not
+> available for private repositories — the API returns
+> *"Your current plan does not support GitHub Pages for this repository."*
+> Making it public also grants unlimited free Actions minutes.
 
-One-time setup: **Settings → Pages → Source → GitHub Actions**.
+Two routes, depending on whether GitHub Actions is working on the account.
+
+**Route A — Actions (preferred).** Pushing to `main` triggers
+`.github/workflows/deploy.yml`, which builds with
+`BASE_PATH=/coded-blue-team-classroom/` and publishes.
+
+Setup: **Settings → Pages → Source → GitHub Actions**.
+
+**Route B — deploy from a branch (no Actions required).** Useful when Actions
+is unavailable, for example when a billing problem blocks the runners. The
+`gh-pages` branch holds a prebuilt site.
+
+Setup: **Settings → Pages → Source → Deploy from a branch → `gh-pages` / `root`**.
+
+To refresh it after a content change:
+
+```bash
+BASE_PATH=/coded-blue-team-classroom/ npm run build
+cd dist && git init -b gh-pages && git add -A && git commit -m "Build"
+git remote add origin <repo-url> && git push -f origin gh-pages
+```
+
+Both routes emit `.nojekyll`, which matters: without it Jekyll would try to
+render the Markdown workshop packs in `resources/` instead of serving them.
 
 ### Vercel, Netlify, Cloudflare Pages
 
