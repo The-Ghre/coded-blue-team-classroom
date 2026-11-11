@@ -97,14 +97,16 @@ function Longline({ sources }: { sources: string[] }) {
     <figure className="pi-longline" aria-hidden="true">
       <svg viewBox="0 0 400 250" focusable="false">
         <path className="pi-longline__main" d="M200 -40 V70" />
-        <path className="pi-longline__cross" d={`M${xs[0]} 112 Q200 128 ${xs[n - 1]} 112`} pathLength={1} />
+        <path className="pi-longline__cross" d={`M${xs[0]} 112 Q200 128 ${xs[n - 1]} 112`} />
         <path className="pi-longline__stem" d="M200 82 V118" />
         <g className="pi-longline__origin">
           <circle cx="200" cy="76" r="9" />
           <text x="200" y="50">one indicator</text>
         </g>
         {xs.map((x, i) => {
-          const y = 112 + 16 * (1 - Math.pow((x - 200) / 140, 2))
+          // On the crossline: a quadratic from (60,112) via (200,128) to (340,112).
+          const t = (x - 60) / 280
+          const y = 112 + 32 * t * (1 - t)
           return (
             <g key={i} className="pi-longline__drop" style={{ '--i': i } as React.CSSProperties}>
               <path d={`M${x} ${y} V${178}`} />

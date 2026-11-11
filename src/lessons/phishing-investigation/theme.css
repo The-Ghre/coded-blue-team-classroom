@@ -773,9 +773,11 @@
     stroke-width: 1.4;
     vector-effect: non-scaling-stroke;
   }
+  /* The crossline pays out from the indicator in both directions. */
   :root[data-lesson='phishing-investigation'] .pi-longline__cross {
-    stroke-dasharray: 1;
-    animation: pi-draw 900ms var(--pi-ease-out) 200ms both;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pi-payout 900ms var(--pi-ease-out) 200ms both;
   }
   :root[data-lesson='phishing-investigation'] .pi-longline__origin circle {
     fill: var(--pi-coral);
@@ -1693,6 +1695,11 @@
     opacity: 0;
     transform: translateY(-60px);
     filter: blur(12px);
+  }
+}
+@keyframes pi-payout {
+  from {
+    transform: scaleX(0);
   }
 }
 @keyframes pi-set {
