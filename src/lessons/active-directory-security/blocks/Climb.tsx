@@ -361,8 +361,13 @@ function SectionDrawing({ rows, reached }: { rows: Parsed[]; reached: number }) 
             <text className="adw-section__when" x={STAIR_R + 14} y={y - 24}>
               {r.time} · {r.event}
             </text>
-            <text className="adw-section__where" x={STAIR_R + 14} y={y - 9}>
-              {r.target.length > 22 ? `${r.target.slice(0, 21)}…` : r.target}
+            <text
+              className="adw-section__where"
+              x={STAIR_R + 14}
+              y={y - 9}
+              data-long={r.target.length > 18 || undefined}
+            >
+              {r.target}
             </text>
           </g>
         )
@@ -399,8 +404,12 @@ function SectionDrawing({ rows, reached }: { rows: Parsed[]; reached: number }) 
       })()}
 
       {/* Section bubble and the privilege axis. */}
-      <text className="adw-section__axis" transform={`translate(14 ${GROUND - 40}) rotate(-90)`}>
-        Privilege ↑
+      <g className="adw-section__axis-arrow">
+        <line x1={9} y1={GROUND - 30} x2={9} y2={GROUND - 150} />
+        <path d={`M5 ${GROUND - 142} L9 ${GROUND - 152} L13 ${GROUND - 142}`} />
+      </g>
+      <text className="adw-section__axis" transform={`translate(20 ${GROUND - 40}) rotate(-90)`}>
+        Privilege
       </text>
     </svg>
   )

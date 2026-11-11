@@ -48,16 +48,24 @@ export function TitleSheet({ block, mode }: BlockOverrideProps<TitleBlock>) {
         {session && (
           <>
             <div>
+              <dt>Sheet</dt>
+              <dd>S-{session.number} · Cover</dd>
+            </div>
+            <div>
+              <dt>Revision</dt>
+              <dd>0</dd>
+            </div>
+            <div>
+              <dt>Sheets</dt>
+              <dd>{slides}</dd>
+            </div>
+            <div>
               <dt>Theory</dt>
               <dd>{session.theory.minutes} min</dd>
             </div>
             <div>
               <dt>Workshop</dt>
               <dd>{session.practical.minutes} min</dd>
-            </div>
-            <div>
-              <dt>Sheets</dt>
-              <dd>{slides}</dd>
             </div>
           </>
         )}

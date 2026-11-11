@@ -455,25 +455,25 @@
       margin-top: 0;
       padding-bottom: 0.3em;
       border-bottom: 2.5px solid var(--adw-ink);
+      box-shadow: 0 5px 0 -4px var(--adw-ink);
       font-weight: 600;
       line-height: 1.08;
     }
     & .block__head > .eyebrow {
       order: 2;
       line-height: 1.4;
-      margin-top: 3px;
-      padding-top: 0.45em;
-      border-top: 1px solid var(--adw-ink);
+      margin-top: 9px;
       font-size: var(--fs-micro);
+    }
+    & .adw-wrap[data-echo] > .block > .block__head > .eyebrow {
+      display: none;
     }
     & .block__head > .block__meta {
       order: 3;
-      margin-top: 3px;
-      min-height: 100%;
+      grid-column: 2;
+      margin-top: 9px;
       padding-left: var(--s-4);
       line-height: 1.4;
-      padding-top: 0.45em;
-      border-top: 1px solid var(--adw-ink);
       text-align: right;
     }
     & .block__head > .block__meta:only-of-type,
@@ -494,15 +494,14 @@
       margin: 0;
       padding-bottom: 0.3em;
       border-bottom: 2.5px solid var(--adw-ink);
+      box-shadow: 0 5px 0 -4px var(--adw-ink);
       line-height: 1.08;
     }
     & .adw-head__scale {
       display: flex;
       justify-content: space-between;
       gap: var(--s-4);
-      margin-top: 3px;
-      padding-top: 0.45em;
-      border-top: 1px solid var(--adw-ink);
+      margin-top: 9px;
       font-family: var(--adw-cond);
       font-size: var(--fs-micro);
       font-weight: 600;
@@ -570,16 +569,17 @@
       box-decoration-break: clone;
       -webkit-box-decoration-break: clone;
       color: var(--adw-ink);
-      box-shadow: inset 0 -0.42em 0 var(--adw-yellow-wash);
+      text-decoration: underline 1.5px var(--adw-ink);
+      text-underline-offset: 0.22em;
     }
     & .adw-kn--attack {
       color: var(--adw-red);
-      box-shadow: inset 0 -1px 0 rgba(168, 14, 42, 0.6);
+      text-decoration: underline 1px dashed rgba(168, 14, 42, 0.7);
     }
     & .adw-kn--field {
       outline: 1px solid rgba(var(--adw-ink-rgb), 0.4);
       outline-offset: -1px;
-      box-shadow: none;
+      text-decoration: none;
       background: rgba(255, 255, 255, 0.6);
     }
 
@@ -620,8 +620,9 @@
       column-gap: var(--s-7);
       row-gap: var(--s-5);
       align-items: start;
-      padding: var(--s-6) 0 var(--s-7);
+      padding: var(--s-6) var(--s-5) var(--s-7);
       margin-bottom: var(--s-6);
+      background: rgba(242, 241, 246, 0.88);
       border-bottom: 2.5px solid var(--adw-ink);
       box-shadow: 0 4px 0 -3px var(--adw-ink);
     }
@@ -899,7 +900,13 @@
       padding-right: calc(var(--s-7) + 1.5rem);
     }
     & .present__slide .block__title {
-      font-size: clamp(1.9rem, 1rem + 2.7vw, 3.3rem);
+      font-size: clamp(1.8rem, 1rem + 1.9vw, 2.75rem);
+    }
+    & .present__slide .lead {
+      font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.35rem);
+    }
+    & .present__slide:not([data-kind='title']) {
+      padding-block: var(--s-4) var(--s-5) !important;
     }
     & .present__slide .adw-bubble {
       --b: clamp(3.3rem, 2.4rem + 1.4vw, 4.4rem);
@@ -1036,8 +1043,6 @@
       place-items: center;
       width: 17px;
       height: 17px;
-      border: 1px solid rgba(var(--adw-ink-rgb), 0.55);
-      border-radius: 50%;
     }
     & .adw-sheet__strip {
       position: absolute;
@@ -1130,6 +1135,11 @@
     }
     & .adw-title__lettering {
       grid-area: letters;
+      justify-self: start;
+      padding: var(--s-2) var(--s-4) var(--s-3) 0;
+      /* A drafting wipeout: plan linework stops where the lettering starts. */
+      background: rgba(229, 228, 236, 0.9);
+      box-shadow: 0 0 0 var(--s-3) rgba(229, 228, 236, 0.9);
     }
     & .adw-title__h {
       margin: 0;
@@ -1155,8 +1165,9 @@
     & .adw-title__note {
       grid-area: note;
       max-width: 46ch;
-      padding-left: var(--s-4);
+      padding: var(--s-2) var(--s-4);
       border-left: 1px solid var(--adw-ink);
+      background: rgba(229, 228, 236, 0.9);
     }
     & .adw-title__note-label {
       display: block;
@@ -1181,7 +1192,7 @@
       grid-template-columns: repeat(3, 1fr);
       margin: 0;
       border: 1.5px solid var(--adw-ink);
-      background: rgba(255, 255, 255, 0.55);
+      background: var(--adw-vellum);
     }
     & .adw-title__block > div {
       padding: var(--s-2) var(--s-3);
@@ -1466,6 +1477,35 @@
       font-size: 10px;
       font-weight: 700;
     }
+    & .adw-section__where[data-long] {
+      font-size: 11.5px;
+      letter-spacing: -0.01em;
+    }
+    & .adw-section__axis-arrow line,
+    & .adw-section__axis-arrow path {
+      fill: none;
+      stroke: var(--text-dim);
+      stroke-width: 1.2;
+    }
+    & .present__slide .adw-section {
+      max-height: 21rem;
+    }
+    & .present__slide .adw-climb__stage {
+      margin-top: var(--s-3);
+    }
+    & .present__slide .adw-climb .evidence__line {
+      padding-block: 0.2rem;
+    }
+    & .present__slide .adw-climb .synthetic-badge {
+      margin-block: var(--s-2);
+    }
+    & .present__slide .adw-climb__rule {
+      margin-top: var(--s-3);
+      padding-block: var(--s-2);
+    }
+    & .present__slide .adw-climb__controls {
+      margin-top: var(--s-3);
+    }
     & .adw-section__axis {
       font-family: var(--adw-cond);
       font-size: 11px;
@@ -1652,7 +1692,12 @@
       transition: background 400ms var(--adw-ease);
     }
     & .present__slide .adw-reset__steps li {
-      font-size: clamp(1rem, 0.92rem + 0.4vw, 1.25rem);
+      font-size: clamp(0.98rem, 0.9rem + 0.3vw, 1.15rem);
+      padding-block: var(--s-2);
+    }
+    & .present__slide .adw-reset__counter {
+      height: 3.4rem;
+      font-size: 1.8rem;
     }
     & .adw-reset__num {
       display: grid;
@@ -1690,7 +1735,7 @@
       background: rgba(255, 255, 255, 0.5);
       padding: var(--s-4);
       display: grid;
-      gap: var(--s-4);
+      gap: var(--s-3);
     }
     & .adw-reset__register-head {
       display: flex;
@@ -1802,6 +1847,17 @@
     }
     & .adw-reset__pending {
       color: var(--adw-red);
+    }
+    & .adw-reset__ack svg {
+      display: inline-block;
+      width: 0.9em;
+      height: 0.7em;
+      margin-right: 0.3em;
+      fill: none;
+      stroke: var(--adw-ink);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
     & .adw-reset__ack {
       padding: 0 0.35rem;

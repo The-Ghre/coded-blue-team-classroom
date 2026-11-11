@@ -192,9 +192,12 @@ export default function Backdrop(props: StageProps) {
 
     // Cover the viewport with the drawing, nudged by the pointer like a
     // tracing sheet lying loose on the plan.
-    const s = Math.max(width / VIEW.w, height / VIEW.h)
+    // Cover the viewport, but never past drawing scale: on a tall window the
+    // plan stays at its plotted size and sits at the top, rather than
+    // ballooning lettering and pencil weight behind the reading column.
+    const s = Math.min(Math.max(width / VIEW.w, height / VIEW.h), Math.max(width / VIEW.w, 7.2))
     const ox = (width - VIEW.w * s) / 2 - VIEW.x * s
-    const oy = (height - VIEW.h * s) / 2 - VIEW.y * s
+    const oy = Math.min(0, (height - VIEW.h * s) / 2) - VIEW.y * s
     const d = still ? { x: 0, y: 0 } : drift()
 
     // Plot progress: the drawing lays itself down once, then is cached.

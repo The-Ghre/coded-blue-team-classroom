@@ -135,7 +135,7 @@ export function DoubleReset({ block, mode }: { block: ConceptBlock; mode: Render
     setFeedback(null)
   }
 
-  const revLabel = (r: number) => (r < 0 ? 'earlier' : String(r))
+  const revLabel = (r: number) => (r < 0 ? '−1' : String(r))
 
   return (
     <section className="block block--concept adw-concept adw-reset" data-stage={stage}>
@@ -174,6 +174,7 @@ export function DoubleReset({ block, mode }: { block: ConceptBlock; mode: Render
             </div>
             <div className="adw-reset__slot" data-slot="previous">
               <span className="adw-reset__slot-label">Previous key, retained</span>
+              {previous < 0 && <span className="sr-only">The key before revision 0.</span>}
               <span className="adw-reset__counter">
                 <span className="sr-only">Revision </span>
                 <b key={previous}>{revLabel(previous)}</b>
@@ -189,6 +190,22 @@ export function DoubleReset({ block, mode }: { block: ConceptBlock; mode: Render
               <EvidenceChip kind="confirmed" label="Rejected" />
             )}
           </div>
+
+          <div className="adw-reset__actions">
+            <button type="button" className="btn btn--sm" onClick={verify} disabled={complete}>
+              Verify replication
+            </button>
+            <button type="button" className="btn btn--sm btn--primary" onClick={reset} disabled={complete}>
+              Reset the KRBTGT password
+            </button>
+            <button type="button" className="btn btn--sm btn--ghost" onClick={restart} disabled={stage === 0 && !feedback}>
+              Start again
+            </button>
+          </div>
+
+          <p className="adw-reset__feedback" data-tone={feedback?.tone} aria-live="polite">
+            {feedback ? feedback.text : `Start at step 1: ${block.points[0]}`}
+          </p>
 
           <table className="adw-reset__transmittal">
             <caption className="sr-only">Replication of the current revision to each domain controller</caption>
@@ -209,27 +226,22 @@ export function DoubleReset({ block, mode }: { block: ConceptBlock; mode: Render
                     </span>
                     {held[i] !== current && <span className="adw-reset__pending"> · replicating</span>}
                   </td>
-                  <td>{acked[i] ? <span className="adw-reset__ack">Checked</span> : <span className="adw-reset__unack">Not yet</span>}</td>
+                  <td>{acked[i] ? (
+                      <span className="adw-reset__ack">
+                        <svg viewBox="0 0 16 12" aria-hidden="true" focusable="false">
+                          <path d="M1.5 6.5 L6 10.5 L14.5 1.5" />
+                        </svg>
+                        Checked
+                      </span>
+                    ) : (
+                      <span className="adw-reset__unack">Not yet</span>
+                    )}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <div className="adw-reset__actions">
-            <button type="button" className="btn btn--sm" onClick={verify} disabled={complete}>
-              Verify replication
-            </button>
-            <button type="button" className="btn btn--sm btn--primary" onClick={reset} disabled={complete}>
-              Reset the KRBTGT password
-            </button>
-            <button type="button" className="btn btn--sm btn--ghost" onClick={restart} disabled={stage === 0 && !feedback}>
-              Start again
-            </button>
-          </div>
 
-          <p className="adw-reset__feedback" data-tone={feedback?.tone} aria-live="polite">
-            {feedback ? feedback.text : `Start at step 1: ${block.points[0]}`}
-          </p>
         </div>
       </div>
 
