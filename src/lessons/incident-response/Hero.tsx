@@ -87,19 +87,15 @@ export default function Hero({ session, surface, half, eyebrow, lead, actions }:
                         to={`/session/${session.slug}/${strip.route}#${b.id}`}
                         aria-label={`Frame ${n} of ${total}: ${b.title}${complete ? ', marked complete' : ''}${resume ? ', where you stopped' : ''}`}
                       >
-                        <span className="ir-hero__frame-num" aria-hidden="true">
-                          {n}
+                        <span className="ir-hero__exposure" aria-hidden="true">
+                          <span className="ir-hero__frame-num">{n}</span>
+                          {b.minutes ? <span className="ir-hero__frame-min">{b.minutes}′</span> : null}
+                          {resume && <MarkerRing className="ir-hero__resume" />}
                         </span>
                         <span className="ir-hero__frame-title" aria-hidden="true">
                           {b.title}
                         </span>
-                        {b.minutes ? (
-                          <span className="ir-hero__frame-min" aria-hidden="true">
-                            {b.minutes}′
-                          </span>
-                        ) : null}
                       </Link>
-                      {resume && <MarkerRing className="ir-hero__resume" />}
                     </li>
                   )
                 })}
