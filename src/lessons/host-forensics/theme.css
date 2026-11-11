@@ -1,7 +1,1636 @@
-/* Lesson world: host-forensics.
-   Every rule lives inside @media screen and under :root[data-lesson='host-forensics'],
-   so this world never leaks into another lesson or into a printed handout. */
+/* =========================================================================
+   LESSON WORLD — host-forensics: the pile remembers
+   =========================================================================
+   Office carpet tiles, quarter-turned. Windows is the plum carpet, Linux
+   the petrol carpet, and a brass threshold strip runs between them. Panels
+   are tiles: square, seamed, flat. Dividers are threshold strips with a
+   brass plaque. Display type is IBM Plex Sans Condensed; Plex Mono appears
+   only for artefact paths, commands and plaques.
+
+   Every rule lives inside @media screen and under
+   :root[data-lesson='host-forensics'], so this world never leaks into
+   another lesson or onto paper.
+   ========================================================================= */
+
 @media screen {
+  /* ---------------------------------------------------------------------
+     1. PALETTE
+     Measured against the darkest and brightest pile the shader can draw
+     (luminance ≤ 0.08): text 11:1, muted 7.2:1, dim 4.8:1.
+     --------------------------------------------------------------------- */
   :root[data-lesson='host-forensics'] {
+    --hf-plum-0: #150b19;
+    --hf-plum-1: #241530;
+    --hf-plum-2: #33203f;
+    --hf-plum-ink: #ebcdf5;
+    --hf-petrol-0: #061b1e;
+    --hf-petrol-1: #0e2c2e;
+    --hf-petrol-2: #173d3d;
+    --hf-petrol-ink: #a9e6dc;
+    --hf-brass: #dcb36b;
+    --hf-brass-hi: #f0d59b;
+    --hf-brass-lo: #7a5f33;
+    --hf-wool: #f7efe6;
+
+    --bg: #1b1020;
+    --bg-raised: #20132a;
+    --surface: #261830;
+    --surface-2: #2e1e3a;
+    --surface-3: #382645;
+    --surface-panel: #2a1b34;
+
+    --text: var(--hf-wool);
+    --text-muted: #e6dbe3;
+    --text-dim: #d0c3d1;
+
+    --line: rgba(247, 239, 230, 0.14);
+    --line-strong: rgba(247, 239, 230, 0.3);
+    --card: rgba(247, 239, 230, 0.05);
+    --card-brd: rgba(247, 239, 230, 0.15);
+
+    --accent: var(--hf-brass);
+    /* Shared components put white text on --accent-deep: dark bronze keeps 6.6:1. */
+    --accent-deep: #6e542b;
+    --accent-soft: var(--hf-brass-hi);
+    --focus: #ffd98a;
+
+    --ev-observation: #a7cdff;
+    --ev-hypothesis: #ffb45a;
+    --ev-confirmed: #82e3a8;
+    --ev-uncertain: #dbb0ff;
+    --ev-response: #5fd8ea;
+    --ev-attack: #ff8070;
+    --ev-observation-bg: rgba(167, 205, 255, 0.13);
+    --ev-hypothesis-bg: rgba(255, 180, 90, 0.14);
+    --ev-confirmed-bg: rgba(130, 227, 168, 0.13);
+    --ev-uncertain-bg: rgba(219, 176, 255, 0.14);
+    --ev-response-bg: rgba(95, 216, 234, 0.13);
+    --ev-attack-bg: rgba(255, 128, 112, 0.14);
+
+    --pillar-endpoint: var(--ev-observation);
+    --pillar-network: var(--ev-response);
+    --pillar-identity: var(--hf-brass);
+    --pillar-cloud: var(--ev-confirmed);
+
+    --font-display: 'IBM Plex Sans Condensed', 'IBM Plex Sans', 'Arial Narrow', sans-serif;
+
+    /* The world is tiled: square corners everywhere. */
+    --r-sm: 0;
+    --r-md: 0;
+    --r-lg: 0;
+    --r-xl: 0;
+    --r-pill: 0;
+
+    --shadow-sm: none;
+    --shadow-md: 0 10px 24px -14px rgba(5, 2, 8, 0.85);
+    --shadow-lg: 0 24px 50px -24px rgba(5, 2, 8, 0.9);
+
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --hf-press: cubic-bezier(0.2, 0.9, 0.25, 1);
+
+    color-scheme: dark;
+    accent-color: var(--hf-brass);
+    scrollbar-color: var(--hf-brass-lo) var(--bg);
+  }
+
+  :root[data-lesson='host-forensics'] body {
+    background: var(--bg);
+  }
+
+  :root[data-lesson='host-forensics'] ::selection {
+    background: rgba(220, 179, 107, 0.42);
+    color: var(--hf-wool);
+  }
+
+  :root[data-lesson='host-forensics'] :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  :root[data-lesson='host-forensics'] a {
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: 1px;
+  }
+
+  /* Separators that only paper needs: on screen the layout separates the
+     parts, so these are visually hidden (still read by screen readers). */
+  :root[data-lesson='host-forensics'] .hf-sep {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* ---------------------------------------------------------------------
+     2. THE PILE LAYER
+     --------------------------------------------------------------------- */
+  :root[data-lesson='host-forensics'] .hf-pile,
+  :root[data-lesson='host-forensics'] .hf-pile__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Without WebGL the floor is still two carpets and a strip. */
+  :root[data-lesson='host-forensics'] .hf-pile[data-failed] {
+    background:
+      linear-gradient(90deg, transparent calc(56% - 4px), var(--hf-brass-lo) calc(56% - 4px), var(--hf-brass-lo) calc(56% + 4px), transparent calc(56% + 4px)),
+      linear-gradient(90deg, var(--hf-plum-1) 56%, var(--hf-petrol-1) 56%);
+  }
+
+  :root[data-lesson='host-forensics'] .present::before {
+    display: none;
+  }
+
+  /* ---------------------------------------------------------------------
+     3. TYPE
+     --------------------------------------------------------------------- */
+  :root[data-lesson='host-forensics'] h1,
+  :root[data-lesson='host-forensics'] h2,
+  :root[data-lesson='host-forensics'] .block__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+  }
+
+  :root[data-lesson='host-forensics'] h3,
+  :root[data-lesson='host-forensics'] h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  /* Headings speak for themselves: no kicker above them in this world. */
+  :root[data-lesson='host-forensics'] .block__head .eyebrow {
+    display: none;
+  }
+
+  :root[data-lesson='host-forensics'] .lead {
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  :root[data-lesson='host-forensics'] p,
+  :root[data-lesson='host-forensics'] li {
+    text-wrap: pretty;
+  }
+
+  /* Prose inside tiles keeps a reading measure even on a wide column. */
+  :root[data-lesson='host-forensics'] .callout__body p,
+  :root[data-lesson='host-forensics'] .redblue__pane p,
+  :root[data-lesson='host-forensics'] .detail .prose p,
+  :root[data-lesson='host-forensics'] .hf-trace__note p {
+    max-width: 60ch;
+  }
+
+  :root[data-lesson='host-forensics'] .mono-label {
+    color: var(--text-dim);
+  }
+
+  :root[data-lesson='host-forensics'] .duration {
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    color: var(--text-dim);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-ink-windows {
+    color: var(--hf-plum-ink);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-ink-linux {
+    color: var(--hf-petrol-ink);
+  }
+
+  /* ---------------------------------------------------------------------
+     4. ATOMS — plaque, buttons, chips, tiles
+     --------------------------------------------------------------------- */
+  :root[data-lesson='host-forensics'] .hf-plaque {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    padding: 0.42em 0.9em 0.38em;
+    background: var(--hf-brass);
+    border-top: 1px solid var(--hf-brass-hi);
+    border-bottom: 1px solid var(--hf-brass-lo);
+    color: #1b1020;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    line-height: 1.3;
+  }
+
+  :root[data-lesson='host-forensics'] .btn {
+    border-radius: 0;
+    background: var(--surface-2);
+    border: 1px solid var(--card-brd);
+    border-bottom: 3px solid var(--hf-brass-lo);
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition:
+      border-color var(--dur-fast) var(--ease),
+      background var(--dur-fast) var(--ease),
+      transform var(--dur-fast) var(--ease);
+  }
+
+  :root[data-lesson='host-forensics'] .btn:hover:not(:disabled) {
+    background: var(--surface-3);
+    border-color: var(--line-strong);
+    border-bottom-color: var(--hf-brass);
+  }
+
+  /* Pressing a button presses the pile: it sinks into its brass edge. */
+  :root[data-lesson='host-forensics'] .btn:active:not(:disabled) {
+    transform: translateY(2px);
+    border-bottom-width: 1px;
+    margin-bottom: 2px;
+  }
+
+  :root[data-lesson='host-forensics'] .btn--primary {
+    background: var(--hf-brass);
+    border-color: var(--hf-brass-hi);
+    border-bottom-color: var(--hf-brass-lo);
+    color: #1b1020;
+  }
+
+  :root[data-lesson='host-forensics'] .btn--primary:hover:not(:disabled) {
+    background: var(--hf-brass-hi);
+    border-color: var(--hf-brass-hi);
+    border-bottom-color: var(--hf-brass-lo);
+    color: #1b1020;
+  }
+
+  :root[data-lesson='host-forensics'] .btn--ghost {
+    background: transparent;
+    border-color: transparent;
+    border-bottom-color: transparent;
+    color: var(--text-muted);
+  }
+
+  :root[data-lesson='host-forensics'] .btn--ghost:hover:not(:disabled) {
+    background: var(--card);
+    border-bottom-color: var(--hf-brass-lo);
+    color: var(--text);
+  }
+
+  :root[data-lesson='host-forensics'] .ev {
+    border-radius: 1px;
+  }
+
+  /* A tile: flat, square, seamed. The panel family of this world. */
+  :root[data-lesson='host-forensics'] .hf-carpet {
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.45);
+    box-shadow: inset 0 0 0 1px rgba(247, 239, 230, 0.06);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-carpet--windows {
+    background: color-mix(in srgb, var(--hf-plum-1) 98%, transparent);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-carpet--linux {
+    background: color-mix(in srgb, var(--hf-petrol-1) 98%, transparent);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-carpet__label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+    margin: 0 0 var(--s-3);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-carpet--windows .hf-carpet__label {
+    color: var(--hf-plum-ink);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-carpet--linux .hf-carpet__label {
+    color: var(--hf-petrol-ink);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-carpet__count {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    color: var(--text-dim);
+  }
+
+  /* Shared surfaces, retiled. */
+  :root[data-lesson='host-forensics'] .callout,
+  :root[data-lesson='host-forensics'] .redblue__pane,
+  :root[data-lesson='host-forensics'] .proves__col,
+  :root[data-lesson='host-forensics'] .brief__panel,
+  :root[data-lesson='host-forensics'] .tasks__task,
+  :root[data-lesson='host-forensics'] .assess__item,
+  :root[data-lesson='host-forensics'] .hints__group,
+  :root[data-lesson='host-forensics'] .code,
+  :root[data-lesson='host-forensics'] .detail,
+  :root[data-lesson='host-forensics'] .synthetic-badge,
+  :root[data-lesson='host-forensics'] .overview__panel,
+  :root[data-lesson='host-forensics'] .structure__half,
+  :root[data-lesson='host-forensics'] .scenario__driver,
+  :root[data-lesson='host-forensics'] .debrief__landing,
+  :root[data-lesson='host-forensics'] .check__option,
+  :root[data-lesson='host-forensics'] .retrieval__a,
+  :root[data-lesson='host-forensics'] .evidence {
+    border-radius: var(--r-md);
+    background: color-mix(in srgb, var(--surface) 98%, transparent);
+    border: 1px solid rgba(0, 0, 0, 0.42);
+    box-shadow: inset 0 0 0 1px rgba(247, 239, 230, 0.07);
+  }
+
+  :root[data-lesson='host-forensics'] .redblue__pane--red {
+    background: color-mix(in srgb, #2c1420 98%, transparent);
+  }
+
+  :root[data-lesson='host-forensics'] .redblue__pane--blue,
+  :root[data-lesson='host-forensics'] .proves__col--yes {
+    background: color-mix(in srgb, var(--hf-petrol-1) 98%, transparent);
+  }
+
+  /* Callouts sit on a brass threshold rather than a coloured side bar. */
+  :root[data-lesson='host-forensics'] .callout {
+    border-radius: 0;
+    border-top: 3px solid var(--hf-brass-lo);
+  }
+
+  :root[data-lesson='host-forensics'] .callout--warn {
+    border-top-color: var(--ev-hypothesis);
+  }
+
+  /* Shared side stripes restated as this world's top threshold. */
+  :root[data-lesson='host-forensics'] .brief__scenario {
+    border-radius: 0;
+    border: 1px solid rgba(0, 0, 0, 0.42);
+    border-top: 3px solid var(--hf-brass);
+    background: color-mix(in srgb, var(--surface) 98%, transparent);
+  }
+
+  :root[data-lesson='host-forensics'] .check__feedback {
+    border-left: 0;
+    padding: var(--s-2) var(--s-3) 0;
+    border-top: 2px solid var(--card-brd);
+  }
+
+  :root[data-lesson='host-forensics'] .check__feedback[data-correct='true'] {
+    border-top-color: var(--ev-confirmed);
+  }
+
+  :root[data-lesson='host-forensics'] .check__feedback[data-correct='false'] {
+    border-top-color: var(--ev-attack);
+  }
+
+  /* Downloads under "You will need": rows on the panel's own tile,
+     divided by a brass hairline, not boxes inside the box. */
+  :root[data-lesson='host-forensics'] .brief__requires .brief__download {
+    margin: 0;
+    padding: var(--s-3) 0;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--hf-brass-lo);
+    border-radius: 0;
+    /* No border transition: it would fade in from the shared blue. */
+    transition: background var(--dur-fast) var(--ease);
+  }
+
+  :root[data-lesson='host-forensics'] .brief__requires li {
+    border-bottom-color: var(--hf-brass-lo);
+  }
+
+  :root[data-lesson='host-forensics'] .brief__requires .brief__download:hover {
+    border-color: transparent;
+    border-bottom-color: var(--hf-brass);
+    background: rgba(247, 239, 230, 0.05);
+  }
+
+  :root[data-lesson='host-forensics'] .brief__download-glyph {
+    color: var(--hf-brass);
+  }
+
+  :root[data-lesson='host-forensics'] .callout__badge {
+    border-radius: 1px;
+  }
+
+  :root[data-lesson='host-forensics'] .scenario__driver p,
+  :root[data-lesson='host-forensics'] .debrief__landing p {
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 1rem + 0.7vw, 1.6rem);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  :root[data-lesson='host-forensics'] .recap__num,
+  :root[data-lesson='host-forensics'] .assess__weight {
+    color: var(--hf-brass);
+  }
+
+  :root[data-lesson='host-forensics'] .check__option[data-state='correct'],
+  :root[data-lesson='host-forensics'] .check__option[data-state='correct-unchosen'] {
+    border-color: var(--ev-confirmed);
+  }
+
+  :root[data-lesson='host-forensics'] .check__option[data-state='incorrect'] {
+    border-color: var(--ev-attack);
+  }
+
+  :root[data-lesson='host-forensics'] .deliverables__box {
+    border-radius: 1px;
+  }
+
+  /* ---------------------------------------------------------------------
+     5. CHROME — presentation bars, study rail, header
+     --------------------------------------------------------------------- */
+  :root[data-lesson='host-forensics'] .present {
+    background: var(--bg);
+  }
+
+  :root[data-lesson='host-forensics'] .present__top,
+  :root[data-lesson='host-forensics'] .present__bottom {
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+  }
+
+  :root[data-lesson='host-forensics'] .present__progress {
+    height: 3px;
+    background: rgba(247, 239, 230, 0.08);
+  }
+
+  :root[data-lesson='host-forensics'] .present__progress span {
+    background: var(--hf-brass);
+  }
+
+  :root[data-lesson='host-forensics'] .present__counter strong {
+    color: var(--hf-brass);
+    font-family: var(--font-mono);
+  }
+
+  :root[data-lesson='host-forensics'] .study__rail-inner {
+    background: color-mix(in srgb, var(--bg-raised) 98%, transparent);
+  }
+
+  :root[data-lesson='host-forensics'] .study__toc-link[aria-current='true'],
+  :root[data-lesson='host-forensics'] .study__toc-link[aria-current='location'] {
+    color: var(--text);
+    box-shadow: inset 2px 0 0 var(--hf-brass);
+  }
+
+  :root[data-lesson='host-forensics'] .study__mode-btn[aria-current='true'] {
+    background: var(--hf-brass);
+    color: #1b1020;
+  }
+
+  /* Reading pages: one runner laid down the reading column, so long prose
+     never sits on the pile, and sections are divided by threshold strips
+     rather than boxed (boxes inside boxes would nest every tile). */
+  :root[data-lesson='host-forensics'] .study__content > .study__section:first-of-type {
+    margin-top: var(--s-4);
+  }
+
+  :root[data-lesson='host-forensics'] .study__section {
+    position: relative;
+    padding: var(--s-6) var(--s-6) var(--s-7);
+    margin: 0;
+    border: 0;
+    border-bottom: 3px solid var(--hf-brass-lo);
+    background: color-mix(in srgb, var(--bg-raised) 98%, transparent);
+  }
+
+  :root[data-lesson='host-forensics'] .study__section:last-of-type {
+    border-bottom: 0;
+  }
+
+  :root[data-lesson='host-forensics'] .overview__grid,
+  :root[data-lesson='host-forensics'] .overview__structure {
+    position: relative;
+  }
+
+  :root[data-lesson='host-forensics'] .structure__half {
+    padding: var(--s-4) var(--s-5);
+  }
+
+  :root[data-lesson='host-forensics'] .overview__structure {
+    padding: var(--s-6);
+    background: color-mix(in srgb, var(--bg-raised) 98%, transparent);
+    border: 1px solid rgba(0, 0, 0, 0.45);
+  }
+
+  /* ---------------------------------------------------------------------
+     6. HERO — study, workshop, overview
+     --------------------------------------------------------------------- */
+  :root[data-lesson='host-forensics'] .hf-hero {
+    position: relative;
+    display: grid;
+    gap: var(--s-4);
+    padding: clamp(1.5rem, 1rem + 3vw, 4rem) 0 var(--s-7);
+    margin-bottom: var(--s-6);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-hero__title {
+    text-shadow: 0 1px 0 rgba(10, 4, 14, 0.6), 0 0 1px rgba(10, 4, 14, 0.6);
+    display: grid;
+    margin: 0;
+    font-family: var(--font-display);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-hero__head {
+    font-size: clamp(2.6rem, 1.2rem + 6vw, 6rem);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-hero__tail {
+    font-size: clamp(1.7rem, 1rem + 3vw, 3.4rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-top: 0.18em;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-hero__plaque {
+    justify-self: start;
+    margin-top: var(--s-2);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-hero__lead {
+    max-width: 64ch;
+    padding: var(--s-4) var(--s-5);
+    background: color-mix(in srgb, var(--bg-raised) 92%, transparent);
+    border-left: 1px solid var(--hf-brass);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-hero__lead p {
+    margin: 0;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-hero__actions > * {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin: 0;
+  }
+
+  /* ---------------------------------------------------------------------
+     7. TITLE SLIDE
+     --------------------------------------------------------------------- */
+  :root[data-lesson='host-forensics'] .hf-title {
+    display: grid;
+    gap: var(--s-4);
+    justify-items: start;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-title__h {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 1.4rem + 7vw, 6rem);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-title__subject {
+    display: grid;
+    margin: 0;
+    font-family: var(--font-display);
+    line-height: 1.02;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-title__subject-head {
+    font-size: clamp(1.5rem, 1rem + 2vw, 2.6rem);
+    font-weight: 600;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-title__subject-tail {
+    font-size: clamp(1.5rem, 1rem + 2vw, 2.6rem);
+    font-weight: 500;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-title__lead {
+    max-width: 34ch;
+    margin: var(--s-4) 0 0;
+    font-size: clamp(1.15rem, 0.95rem + 1vw, 1.75rem);
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-title__lead {
+    font-size: clamp(1.2rem, 0.95rem + 1.1vw, 1.9rem);
+    max-width: 30ch;
+  }
+
+  /* ---------------------------------------------------------------------
+     8. STRIDE — the five questions as five prints
+     --------------------------------------------------------------------- */
+  /* Left foot on the plum (Windows) carpet, right foot on the petrol
+     (Linux) carpet: the same five questions, walked across both. Each step
+     spans two half-rows so the feet stagger like a stride. */
+  :root[data-lesson='host-forensics'] .hf-stride__steps {
+    list-style: none;
+    margin: var(--s-5) 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-auto-rows: minmax(2.4rem, auto);
+    column-gap: 3rem;
+    row-gap: var(--s-2);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-stride__step {
+    display: grid;
+    grid-template-columns: 2.6rem minmax(0, 1fr);
+    align-items: center;
+    gap: var(--s-4);
+    grid-row: calc(var(--i) + 1) / span 2;
+    padding: var(--s-3) var(--s-4);
+    border: 1px solid rgba(0, 0, 0, 0.4);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-stride__step[data-foot='left'] {
+    grid-column: 1;
+    background: color-mix(in srgb, var(--hf-plum-1) 98%, transparent);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-stride__step[data-foot='right'] {
+    grid-column: 2;
+    background: color-mix(in srgb, var(--hf-petrol-1) 98%, transparent);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-print {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    color: var(--hf-brass);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-print svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-stride__print {
+    width: 2.2rem;
+    height: 3.6rem;
+    transform: rotate(-8deg);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-stride__step[data-foot='right'] .hf-stride__print {
+    transform: rotate(8deg);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-stride__num {
+    position: absolute;
+    top: 22%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #1b1020;
+    background: var(--hf-brass);
+    padding: 0 0.3em;
+    line-height: 1.3;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-stride__text {
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-stride__q {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.12em;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-stride__gloss {
+    color: var(--text-muted);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-stride__text {
+    font-size: clamp(1.0625rem, 0.9rem + 0.3vw, 1.2rem);
+    line-height: 1.38;
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .redblue {
+    margin-top: var(--s-3);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .redblue__pane,
+  :root[data-lesson='host-forensics'] .present__slide .callout {
+    padding: var(--s-3) var(--s-4);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .callout {
+    margin: var(--s-3) 0;
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .callout__body p {
+    max-width: 110ch;
+  }
+
+  /* The demo's ledger starts right under the floor, so its heads ghost into
+     the "more below" fade on the first view. */
+  :root[data-lesson='host-forensics'] .present__slide .hf-evfloor__pivot-note {
+    min-height: 0;
+    margin: var(--s-1) 0 0;
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-evfloor__pivot-note:empty {
+    display: none;
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-ledger {
+    margin-top: var(--s-3);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .redblue__pane p {
+    max-width: none;
+  }
+
+  /* ---------------------------------------------------------------------
+     9. SPLIT — platform points on their carpets
+     --------------------------------------------------------------------- */
+  :root[data-lesson='host-forensics'] .hf-split__floor {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'win lin'
+      'strip strip';
+    gap: 0;
+    margin: var(--s-5) 0;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-split__carpet {
+    padding: var(--s-5);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-split__carpet.hf-carpet--windows {
+    grid-area: win;
+    border-right: 6px solid var(--hf-brass-lo);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-split__carpet.hf-carpet--linux {
+    grid-area: lin;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-split__strip {
+    grid-area: strip;
+    padding: var(--s-4) var(--s-5);
+    background: color-mix(in srgb, #3a2c18 98%, transparent);
+    border-top: 3px solid var(--hf-brass);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-carpet__label--strip {
+    color: var(--hf-brass-hi);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-split ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-3);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-split__point {
+    line-height: 1.5;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-split__prefix {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-split__point {
+    font-size: clamp(1.0625rem, 0.95rem + 0.4vw, 1.3rem);
+  }
+
+  /* ---------------------------------------------------------------------
+     10. COMPARE — two carpets, one threshold
+     --------------------------------------------------------------------- */
+  :root[data-lesson='host-forensics'] .hf-floor {
+    display: grid;
+    margin: var(--s-5) 0;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-floor__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(8.5rem, 11rem) minmax(0, 1fr);
+    grid-template-areas: 'a strip b';
+  }
+
+  :root[data-lesson='host-forensics'] .hf-floor__cell {
+    min-width: 0;
+    padding: var(--s-3) var(--s-4);
+    line-height: 1.5;
+    border-top: none;
+    overflow-wrap: anywhere;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-floor__cell--a,
+  :root[data-lesson='host-forensics'] .hf-floor__row--head .hf-floor__cell:nth-child(2) {
+    grid-area: a;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-floor__cell--b,
+  :root[data-lesson='host-forensics'] .hf-floor__row--head .hf-floor__cell:nth-child(3) {
+    grid-area: b;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-floor__colhead {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-block: var(--s-3);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-floor__colhead.hf-carpet--windows {
+    color: var(--hf-plum-ink);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-floor__colhead.hf-carpet--linux {
+    color: var(--hf-petrol-ink);
+  }
+
+  /* The strip: a brass rail down the middle, each row's question a plaque
+     screwed onto it. */
+  :root[data-lesson='host-forensics'] .hf-floor__strip {
+    grid-area: strip;
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding: var(--s-2) 0.4rem;
+    background: linear-gradient(90deg, transparent calc(50% - 4px), var(--hf-brass-lo) calc(50% - 4px), var(--hf-brass-lo) calc(50% + 4px), transparent calc(50% + 4px));
+  }
+
+  :root[data-lesson='host-forensics'] .hf-floor__plaque {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0.5em 0.6em;
+    background: var(--hf-brass);
+    border-top: 1px solid var(--hf-brass-hi);
+    border-bottom: 1px solid var(--hf-brass-lo);
+    color: #1b1020;
+    font-family: var(--font-display);
+    font-size: 0.86rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-floor__mobile-label {
+    display: none;
+  }
+
+  /* The lamp: the row under the pointer or the keyboard catches the light. */
+  :root[data-lesson='host-forensics'] .hf-floor__row:not(.hf-floor__row--head):hover .hf-floor__cell {
+    background-color: color-mix(in srgb, var(--surface-3) 98%, transparent);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-floor__row:not(.hf-floor__row--head):hover .hf-floor__plaque {
+    background: var(--hf-brass-hi);
+  }
+
+  /* ---------------------------------------------------------------------
+     11. EVIDENCE — traces on two carpets
+     --------------------------------------------------------------------- */
+  :root[data-lesson='host-forensics'] .hf-evidence__caption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-3);
+    margin: var(--s-5) 0 var(--s-3);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evidence__hint {
+    font-size: var(--fs-small);
+    color: var(--text-dim);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr);
+    align-items: start;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor__carpet {
+    padding: var(--s-4);
+    min-height: 100%;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor__carpet.hf-carpet--windows {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor__carpet.hf-carpet--linux {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor__strip {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    align-self: stretch;
+    background: linear-gradient(90deg, transparent calc(50% - 4px), var(--hf-brass-lo) calc(50% - 4px), var(--hf-brass-lo) calc(50% + 4px), transparent calc(50% + 4px));
+    transition: filter var(--dur-slow) var(--ease);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor[data-pivot-open] .hf-evfloor__strip {
+    background: linear-gradient(90deg, transparent calc(50% - 5px), var(--hf-brass) calc(50% - 5px), var(--hf-brass) calc(50% + 5px), transparent calc(50% + 5px));
+  }
+
+  /* Two prints wait on the strip; opening the pivot walks them across. */
+  :root[data-lesson='host-forensics'] .hf-evfloor__step {
+    position: absolute;
+    left: 50%;
+    width: 1.4rem;
+    height: 3.2rem;
+    color: var(--hf-brass-hi);
+    opacity: 0;
+    transform: translate(-50%, 0) rotate(-90deg);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor__step--1 {
+    top: 30%;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor__step--2 {
+    top: 42%;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor[data-pivot-open] .hf-evfloor__step {
+    opacity: 1;
+    animation: hf-cross 900ms var(--hf-press) both;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor[data-pivot-open] .hf-evfloor__step--2 {
+    animation-delay: 220ms;
+  }
+
+  @keyframes hf-cross {
+    0% {
+      opacity: 0;
+      transform: translate(80%, 0) rotate(-90deg);
+    }
+    35% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-180%, 0) rotate(-90deg);
+    }
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor__pivot-note {
+    min-height: 1.5em;
+    margin: var(--s-2) 0 0;
+    font-size: var(--fs-small);
+    color: var(--hf-brass-hi);
+    text-align: center;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor__traces {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-evfloor__traces--loose {
+    margin-top: var(--s-4);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace {
+    background: rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(247, 239, 230, 0.1);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.45);
+    transition:
+      background var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace__btn {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: start;
+    gap: var(--s-3);
+    min-height: 44px;
+    padding: var(--s-3);
+    text-align: left;
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace__btn--plain {
+    cursor: default;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace:has(button:hover) {
+    background: rgba(247, 239, 230, 0.07);
+    border-color: rgba(247, 239, 230, 0.24);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace[data-open] {
+    background: rgba(247, 239, 230, 0.1);
+    border-color: var(--ev-color, var(--hf-brass));
+    border-bottom-color: var(--ev-color, var(--hf-brass));
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace[data-kind='observation'],
+  :root[data-lesson='host-forensics'] .hf-trace__btn[data-kind='observation'],
+  :root[data-lesson='host-forensics'] .hf-trace__note[data-kind='observation'],
+  :root[data-lesson='host-forensics'] .hf-trace__marker[data-kind='observation'] {
+    --ev-color: var(--ev-observation);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace[data-kind='hypothesis'],
+  :root[data-lesson='host-forensics'] .hf-trace__btn[data-kind='hypothesis'],
+  :root[data-lesson='host-forensics'] .hf-trace__note[data-kind='hypothesis'],
+  :root[data-lesson='host-forensics'] .hf-trace__marker[data-kind='hypothesis'] {
+    --ev-color: var(--ev-hypothesis);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace[data-kind='confirmed'],
+  :root[data-lesson='host-forensics'] .hf-trace__btn[data-kind='confirmed'],
+  :root[data-lesson='host-forensics'] .hf-trace__note[data-kind='confirmed'],
+  :root[data-lesson='host-forensics'] .hf-trace__marker[data-kind='confirmed'] {
+    --ev-color: var(--ev-confirmed);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace[data-kind='uncertain'],
+  :root[data-lesson='host-forensics'] .hf-trace__btn[data-kind='uncertain'],
+  :root[data-lesson='host-forensics'] .hf-trace__note[data-kind='uncertain'],
+  :root[data-lesson='host-forensics'] .hf-trace__marker[data-kind='uncertain'] {
+    --ev-color: var(--ev-uncertain);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace[data-kind='response'],
+  :root[data-lesson='host-forensics'] .hf-trace__btn[data-kind='response'],
+  :root[data-lesson='host-forensics'] .hf-trace__note[data-kind='response'],
+  :root[data-lesson='host-forensics'] .hf-trace__marker[data-kind='response'] {
+    --ev-color: var(--ev-response);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace[data-kind='attack'],
+  :root[data-lesson='host-forensics'] .hf-trace__btn[data-kind='attack'],
+  :root[data-lesson='host-forensics'] .hf-trace__note[data-kind='attack'],
+  :root[data-lesson='host-forensics'] .hf-trace__marker[data-kind='attack'] {
+    --ev-color: var(--ev-attack);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace__num {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--hf-brass);
+    padding-top: 0.15em;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace__marker {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--ev-color, var(--text-dim));
+    padding-top: 0.15em;
+    white-space: nowrap;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace__read {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace__cmd,
+  :root[data-lesson='host-forensics'] .hf-trace__out {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.45;
+    background: none;
+    padding: 0;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace__cmd {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace__out {
+    color: var(--text-muted);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace__note:not([hidden]) {
+    display: grid;
+    gap: var(--s-2);
+    margin: 0;
+    padding: var(--s-4);
+    background: color-mix(in srgb, var(--bg) 98%, transparent);
+    border: 1px solid rgba(0, 0, 0, 0.45);
+    border-top: 2px solid var(--ev-color, var(--hf-brass));
+    animation: hf-develop 420ms var(--hf-press) both;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace__note-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3);
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace__note-head strong {
+    font-family: var(--font-display);
+    font-size: 1.08rem;
+    font-weight: 600;
+  }
+
+  :root[data-lesson='host-forensics'] .hf-trace__note p {
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  /* A selected note develops like a print under the lamp. */
+  @keyframes hf-develop {
+    from {
+      opacity: 0.2;
+      filter: blur(3px);
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      filter: none;
+      transform: none;
+    }
+  }
+
+  :root[data-lesson='host-forensics'] .hf-ledger {
+    margin-top: var(--s-5);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-trace__note p {
+    font-size: clamp(1.0625rem, 0.95rem + 0.35vw, 1.3rem);
+  }
+
+  /* ---------------------------------------------------------------------
+     11b. PROJECTOR RHYTHM
+     A slide fits a 900px-tall projector: tighter heads and leads, compact
+     traces and cells. Headings and leads sit on a runner tile laid across
+     the threshold, so no glyph ever rests on the bare brass strip. Prose
+     slides lay their whole block on that runner; the floor stays visible
+     around it.
+     --------------------------------------------------------------------- */
+  /* The runner is laid over both carpets in their own tile colours, split
+     exactly where the strip runs (the slide is centred on it), so it covers
+     the brass under text without hiding which carpet is which. */
+  :root[data-lesson='host-forensics'] {
+    --hf-runner: linear-gradient(90deg, var(--hf-plum-1) 50%, var(--hf-petrol-1) 50%);
+  }
+
+  :root[data-lesson='host-forensics'] .present__stage {
+    padding-block: var(--s-4);
+  }
+
+  /* When a slide runs longer than the room's screen, its last visible line
+     fades into the carpet instead of being sliced: the cue that there is
+     more below. It lifts once the presenter scrolls to the end, and never
+     appears on a slide that fits (an inactive scroll timeline applies
+     nothing). */
+  @supports (animation-timeline: scroll()) {
+    :root[data-lesson='host-forensics'] .present__stage {
+      animation: hf-more-below linear both;
+      animation-timeline: scroll(self);
+    }
+  }
+
+  @keyframes hf-more-below {
+    0%,
+    96% {
+      mask-image: linear-gradient(180deg, #000 calc(100% - 4.5rem), transparent);
+    }
+    100% {
+      mask-image: none;
+    }
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .block__title {
+    font-size: clamp(1.8rem, 1.1rem + 2vw, 2.6rem);
+    line-height: 1.08;
+    margin-top: 0;
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .block > .block__head {
+    margin: 0;
+    padding: var(--s-3) var(--s-5) var(--s-2);
+    background: var(--hf-runner);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .block > .lead {
+    margin: 0;
+    max-width: none;
+    padding: var(--s-2) var(--s-5) var(--s-3);
+    background: var(--hf-runner);
+    font-size: clamp(1.0625rem, 0.92rem + 0.42vw, 1.32rem);
+    line-height: 1.45;
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .block > .lead > *,
+  :root[data-lesson='host-forensics'] .present__slide .block > .lead {
+    text-wrap: pretty;
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .block:not(.hf-title):not(.hf-compare):not(.hf-evidence):not(.hf-split):not(.hf-stride) {
+    padding: 0 var(--s-5) var(--s-4);
+    background: var(--hf-runner);
+    box-shadow: inset 0 0 0 1px rgba(247, 239, 230, 0.06);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .block:not(.hf-title):not(.hf-compare):not(.hf-evidence):not(.hf-split):not(.hf-stride) > .block__head,
+  :root[data-lesson='host-forensics'] .present__slide .block:not(.hf-title):not(.hf-compare):not(.hf-evidence):not(.hf-split):not(.hf-stride) > .lead {
+    padding-inline: 0;
+    background: none;
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-floor,
+  :root[data-lesson='host-forensics'] .present__slide .hf-split__floor,
+  :root[data-lesson='host-forensics'] .present__slide .hf-stride__steps {
+    margin-top: var(--s-4);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-floor__cell {
+    padding: var(--s-2) var(--s-4);
+    line-height: 1.4;
+    font-size: clamp(1.0625rem, 0.86rem + 0.3vw, 1.2rem);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-floor__colhead {
+    padding-block: var(--s-2);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-stride__step {
+    padding: var(--s-2) var(--s-4);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-split__carpet {
+    padding: var(--s-4) var(--s-5);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-split__strip {
+    padding: var(--s-3) var(--s-5);
+  }
+
+  /* The demo: the badge and caption share one line; traces are compact so
+     all ten, and the known_hosts pivot, sit in the first view. */
+  :root[data-lesson='host-forensics'] .present__slide .hf-evidence > .synthetic-badge {
+    margin: var(--s-3) 0 0;
+    padding: var(--s-2) var(--s-4);
+    font-size: var(--fs-small);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-evidence__caption {
+    margin: 0;
+    padding: var(--s-2) var(--s-5);
+    background: var(--hf-runner);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-evfloor__carpet {
+    padding: var(--s-3);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-carpet__label {
+    margin-bottom: var(--s-2);
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-evfloor__traces {
+    gap: 4px;
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-trace__btn {
+    padding: 0.4rem var(--s-3);
+    gap: var(--s-2);
+    min-height: 44px;
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-trace__read {
+    gap: 0;
+  }
+
+  :root[data-lesson='host-forensics'] .present__slide .hf-trace__cmd,
+  :root[data-lesson='host-forensics'] .present__slide .hf-trace__out {
+    font-size: clamp(0.84rem, 0.72rem + 0.22vw, 0.98rem);
+    line-height: 1.35;
+  }
+
+  /* ---------------------------------------------------------------------
+     12. NARROW SCREENS — the threshold turns horizontal
+     --------------------------------------------------------------------- */
+  @media (max-width: 760px) {
+    :root[data-lesson='host-forensics'] .hf-floor__row {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        'strip'
+        'a'
+        'b';
+      margin-bottom: var(--s-4);
+    }
+
+    :root[data-lesson='host-forensics'] .hf-floor__row--head {
+      display: none;
+    }
+
+    :root[data-lesson='host-forensics'] .hf-floor__strip {
+      background: none;
+      padding: 0;
+    }
+
+    :root[data-lesson='host-forensics'] .hf-floor__plaque {
+      text-align: left;
+    }
+
+    :root[data-lesson='host-forensics'] .hf-floor__mobile-label {
+      display: block;
+      margin-bottom: 0.2rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    :root[data-lesson='host-forensics'] .hf-carpet--windows .hf-floor__mobile-label {
+      color: var(--hf-plum-ink);
+    }
+
+    :root[data-lesson='host-forensics'] .hf-carpet--linux .hf-floor__mobile-label {
+      color: var(--hf-petrol-ink);
+    }
+
+    :root[data-lesson='host-forensics'] .hf-split__floor {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: 'win' 'lin' 'strip';
+    }
+
+    :root[data-lesson='host-forensics'] .hf-split__carpet.hf-carpet--windows {
+      border-right: 1px solid rgba(0, 0, 0, 0.45);
+      border-bottom: 6px solid var(--hf-brass-lo);
+    }
+
+    :root[data-lesson='host-forensics'] .hf-evfloor {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    :root[data-lesson='host-forensics'] .hf-evfloor__carpet.hf-carpet--windows,
+    :root[data-lesson='host-forensics'] .hf-evfloor__carpet.hf-carpet--linux,
+    :root[data-lesson='host-forensics'] .hf-evfloor__strip {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    /* Linux first on a phone: the order the intrusion happened in. */
+    :root[data-lesson='host-forensics'] .hf-evfloor__carpet.hf-carpet--linux {
+      order: 1;
+    }
+
+    :root[data-lesson='host-forensics'] .hf-evfloor__strip {
+      order: 2;
+      height: 3rem;
+      background: linear-gradient(180deg, transparent calc(50% - 4px), var(--hf-brass-lo) calc(50% - 4px), var(--hf-brass-lo) calc(50% + 4px), transparent calc(50% + 4px));
+    }
+
+    :root[data-lesson='host-forensics'] .hf-evfloor[data-pivot-open] .hf-evfloor__strip {
+      background: linear-gradient(180deg, transparent calc(50% - 5px), var(--hf-brass) calc(50% - 5px), var(--hf-brass) calc(50% + 5px), transparent calc(50% + 5px));
+    }
+
+    :root[data-lesson='host-forensics'] .hf-evfloor__step {
+      top: 0;
+      transform: translate(-50%, 0);
+    }
+
+    :root[data-lesson='host-forensics'] .hf-evfloor__step--1 {
+      left: 42%;
+      top: 0;
+    }
+
+    :root[data-lesson='host-forensics'] .hf-evfloor__step--2 {
+      left: 58%;
+      top: 0;
+    }
+
+    :root[data-lesson='host-forensics'] .hf-evfloor[data-pivot-open] .hf-evfloor__step {
+      animation: none;
+      opacity: 1;
+    }
+
+    :root[data-lesson='host-forensics'] .hf-evfloor__carpet.hf-carpet--windows {
+      order: 3;
+    }
+
+    :root[data-lesson='host-forensics'] .hf-stride__steps {
+      grid-template-columns: minmax(0, 1fr);
+      grid-auto-rows: auto;
+    }
+
+    :root[data-lesson='host-forensics'] .hf-stride__step[data-foot] {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    :root[data-lesson='host-forensics'] .hf-stride__step[data-foot='right'] {
+      margin-left: var(--s-5);
+    }
+
+    :root[data-lesson='host-forensics'] .study__section {
+      padding: var(--s-5) var(--s-4);
+    }
+  }
+
+  /* ---------------------------------------------------------------------
+     13. SLIDE ENTRANCES — one authored moment per form
+     Everything is visible by default; these only play inside the slide
+     player, each element hidden for at most ~550ms.
+     --------------------------------------------------------------------- */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Title: each word is pressed into the pile. */
+    :root[data-lesson='host-forensics'] .present__slide .hf-title__lead .split-word {
+      animation: hf-press-in 520ms var(--hf-press) both;
+      animation-delay: calc(var(--i) * 28ms + 120ms);
+    }
+
+    :root[data-lesson='host-forensics'] .present__slide .hf-title__h {
+      animation: hf-lay 560ms var(--hf-press) both;
+    }
+
+    /* Stride: one footstep after another. */
+    :root[data-lesson='host-forensics'] .present__slide .hf-stride__step {
+      animation: hf-step 420ms var(--hf-press) both;
+      animation-delay: calc(var(--i) * 70ms + 80ms);
+    }
+
+    /* Compare: each row arrives from its own side of the threshold. */
+    :root[data-lesson='host-forensics'] .present__slide .hf-floor__row:not(.hf-floor__row--head) .hf-floor__cell--a {
+      animation: hf-from-left 420ms var(--hf-press) both;
+      animation-delay: calc(var(--r) * 45ms + 60ms);
+    }
+
+    :root[data-lesson='host-forensics'] .present__slide .hf-floor__row:not(.hf-floor__row--head) .hf-floor__cell--b {
+      animation: hf-from-right 420ms var(--hf-press) both;
+      animation-delay: calc(var(--r) * 45ms + 60ms);
+    }
+
+    :root[data-lesson='host-forensics'] .present__slide .hf-floor__row:not(.hf-floor__row--head) .hf-floor__plaque {
+      animation: hf-lay 360ms var(--hf-press) both;
+      animation-delay: calc(var(--r) * 45ms);
+    }
+
+    /* Split: points land on their carpets in reading order. */
+    :root[data-lesson='host-forensics'] .present__slide .hf-split__point {
+      animation: hf-press-in 420ms var(--hf-press) both;
+      animation-delay: calc(var(--i) * 55ms + 60ms);
+    }
+
+    /* Evidence: traces develop in the order they are read. */
+    :root[data-lesson='host-forensics'] .present__slide .hf-trace {
+      animation: hf-press-in 420ms var(--hf-press) both;
+      animation-delay: calc(var(--o) * 40ms + 60ms);
+    }
+  }
+
+  @keyframes hf-press-in {
+    from {
+      opacity: 0;
+      filter: blur(2px);
+      transform: scale(1.025);
+    }
+    to {
+      opacity: 1;
+      filter: none;
+      transform: none;
+    }
+  }
+
+  @keyframes hf-lay {
+    from {
+      opacity: 0;
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      opacity: 1;
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes hf-step {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(1.02);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes hf-from-left {
+    from {
+      opacity: 0;
+      transform: translateX(-14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes hf-from-right {
+    from {
+      opacity: 0;
+      transform: translateX(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* ---------------------------------------------------------------------
+     14. SLIDE TRANSITIONS — a brush stroke lays the next slide's pile
+     The outgoing slide is pressed down and fades; the incoming one is
+     revealed by a soft-edged sweep in the direction of travel, the way a
+     hand brushed across velvet changes its sheen.
+     --------------------------------------------------------------------- */
+  :root[data-lesson='host-forensics']::view-transition-old(slide) {
+    animation: hf-vt-press 300ms var(--hf-press) both;
+  }
+
+  :root[data-lesson='host-forensics'][data-slide-dir='forward']::view-transition-new(slide) {
+    animation: hf-vt-brush-forward 560ms var(--hf-press) both;
+    mask-image: linear-gradient(90deg, #000 40%, transparent 60%);
+    mask-size: 260% 100%;
+    mask-repeat: no-repeat;
+  }
+
+  :root[data-lesson='host-forensics'][data-slide-dir='back']::view-transition-new(slide) {
+    animation: hf-vt-brush-back 560ms var(--hf-press) both;
+    mask-image: linear-gradient(270deg, #000 40%, transparent 60%);
+    mask-size: 260% 100%;
+    mask-repeat: no-repeat;
+  }
+
+  @keyframes hf-vt-press {
+    to {
+      opacity: 0;
+      transform: scale(0.985) translateY(4px);
+      filter: brightness(0.6) blur(1px);
+    }
+  }
+
+  @keyframes hf-vt-brush-forward {
+    from {
+      mask-position: 100% 0;
+    }
+    to {
+      mask-position: 0% 0;
+    }
+  }
+
+  @keyframes hf-vt-brush-back {
+    from {
+      mask-position: 0% 0;
+    }
+    to {
+      mask-position: 100% 0;
+    }
   }
 }
