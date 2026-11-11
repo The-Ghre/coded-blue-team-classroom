@@ -45,7 +45,7 @@ function Tail({
 }
 
 /* =========================================================================
-   The hypothesis — an album page with four printed spaces
+   The hypothesis — four testable fields
    ========================================================================= */
 
 interface Parsed {
@@ -309,7 +309,7 @@ function StackCount({ block, mode }: { block: ConceptBlock; mode: RenderMode }) 
 }
 
 /* =========================================================================
-   The pipeline — a se-tenant strip, then the three outcome marks
+   The pipeline — ordered operations and three useful outcomes
    ========================================================================= */
 
 function splitSteps(text: string): string[] {
