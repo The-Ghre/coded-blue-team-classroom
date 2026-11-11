@@ -4,7 +4,7 @@
     --bg: #f2f4f7; --bg-raised: #ffffff;
     --surface: #e6ebf2; --surface-2: #dde4ee; --surface-3: #d2dce9; --surface-panel: #ffffff;
     --text: #172c4b; --text-muted: #304766; --text-dim: #3b506e;
-    --line: #b9c5d6; --line-strong: #8498b3; --card: #ffffff; --card-brd: #b9c5d6;
+    --line: #b9c5d6; --line-strong: #6d829e; --card: #ffffff; --card-brd: #b9c5d6;
     --accent: #9b1458; --accent-deep: #790d43; --accent-soft: #90114f; --focus: #9b1458;
     --coded-navy-deep: #e6ebf2; --coded-ink: #f2f4f7; --coded-white: #ffffff;
     --coded-gold: #754800; --coded-blue-bright: #9b1458;
@@ -79,6 +79,19 @@
   :root[data-lesson='log-analysis'] .study__section { border-color: var(--line-strong); }
   :root[data-lesson='log-analysis'] .btn--primary { background: var(--accent); color: #fff; }
   :root[data-lesson='log-analysis'] .btn--primary:hover { background: var(--accent-deep); }
+  /* Filled links must retain their light foreground through the global link hover. */
+  :root[data-lesson='log-analysis'] .btn--primary:hover,
+  :root[data-lesson='log-analysis'] .study__mode-btn[aria-current='true']:hover { color: #fff; }
+  :root[data-lesson='log-analysis'] .btn:disabled {
+    opacity: 1; color: var(--text-muted); background: var(--surface); border-color: var(--line-strong);
+  }
+  :root[data-lesson='log-analysis'] .btn:not(.btn--primary):not(.btn--ghost),
+  :root[data-lesson='log-analysis'] .check__option[data-state='idle'] { border-color: var(--line-strong); }
+  :root[data-lesson='log-analysis'] .diagram { background: var(--surface); }
+  :root[data-lesson='log-analysis'] .present__top kbd,
+  :root[data-lesson='log-analysis'] .present__help kbd { background: var(--surface); }
+  :root[data-lesson='log-analysis'] * { scrollbar-color: var(--line-strong) var(--surface); }
+  :root[data-lesson='log-analysis'] *::-webkit-scrollbar-thumb { background: var(--line-strong); }
   :root[data-lesson='log-analysis'] .present { background: var(--bg); }
   :root[data-lesson='log-analysis'] .present::before { background: none; }
   :root[data-lesson='log-analysis'] .present__top,
