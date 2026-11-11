@@ -95,3 +95,72 @@ print/PDF and restored home palette pass. Sampled rendered text has a minimum
 returns `[]`. Review is based on screenshots/source and headless Chrome evidence,
 with no independent live replay or physical projector assessment. No palette
 findings remain open. Existing accepted composition was not reopened.
+
+
+## Integration return correction
+
+The integration capture disproved the earlier mobile fit claim: slide 8 widened
+by 197px. The stage now has a zero-minimum grid column and shrinkable slide,
+pane, block and code boxes. The native preformatted code region has a descriptive
+accessible name, tab stop and ownership of arrow keys. Chrome verifies the full
+197px excess scrolls within that region while the route stays on slide 8;
+vertical scrolling exposes the final command above the fixed footer.
+
+Expanded recall also exposed a clipped Hide answers control on desktop. Recall
+now has one question per reading pane; progressive hints have one task per pane.
+These use the same mounted shared renderer. All teaching copy and controls stay;
+answers and all three revealed hints survive switching panes at both sizes.
+Expanded answer/hint body is 16px; screen-only styles preserve print. The palette,
+Packet / Page schematic, canvas motion and signature page inspector are retained.
+
+Fresh verification uses port 5487 and /tmp/coded-vite-5487, with no shared config
+or package edits. The final source diff is confined to this kit and its canonical
+surface brief. The branch still emits the shared ScenarioView/MonoLabel DOM
+nesting warning already assigned to the integrator; shared code is intentionally
+outside this correction scope. There are no lesson-local runtime errors in the
+checks. Current evidence is in .impeccable/review/return-*.json and expanded-*.png.
+
+
+### Final return verification
+
+All 19 slides and 46 reading-pane/default states per viewport were checked at
+1440×900 and 390×844. The final expanded sweep contains 267 records; an additional
+267-record cross-check measures the fixed stage's own horizontal scroll extent,
+so stage clipping cannot be concealed by a zero document overflow measurement.
+Both checks have zero horizontal failures and zero desktop vertical overflow.
+Mobile vertical scrolling is intentional. Long mobile annotations now expand
+into that same stage flow rather than a nested note scroller.
+
+Recall answers, all three hint tiers, quiz answers and the selected beacon preset
+survive pane changes at both sizes. The six memory annotations, all four beacon
+presets and all twelve quiz answer/feedback states were exercised. Overview,
+study and workshop were checked at both sizes, including expanded reading
+content on mobile. Keyboard operation, visible focus, reduced motion, white
+print/PDF and home-palette restoration pass. TypeScript and production build
+pass after the final CSS correction. Detector's single pass returned [].
+
+Evidence: `.impeccable/review/return-stage-measurements.json`,
+`return-expanded.json`, `return-pane-state.json`, `return-code-keyboard.json`,
+`return-hints-bottom.json`, viewport/expanded PNGs and `study-print.pdf`.
+Console limit: the inherited shared ScenarioView/MonoLabel nesting warning is
+still emitted in this branch. The user explicitly assigned that existing shared
+fix to the integrator; no shared files were edited. No lesson-local runtime
+errors were found.
+
+
+### Independent finish verdict — integration return
+
+**Ship.** Fresh independent reviewer found no material lesson-local fit, content
+or accessibility findings. The 197px command overflow, expanded recall/hint fit,
+and long mobile annotation clipping are resolved. Twelve final annotations have
+zero internal clipping and zero horizontal overflow. The reviewer inspected
+source, complete contact sheets, revised panes, quiz feedback, all annotations,
+267-record stage measurements and keyboard/state proofs. No shipping corrections
+remain.
+
+Scope/limits: independent source/screenshot review of supplied Chrome evidence,
+not an independent browser replay or physical projection assessment. A low,
+nonblocking list-marker inconsistency remains: later retrieval/quiz panes show
+native marker “1.” while the selected pane label identifies the actual question.
+The inherited shared ScenarioView/MonoLabel warning remains integrator-owned.
+No shared files, packages or configs changed; no merge, rebase or push performed.

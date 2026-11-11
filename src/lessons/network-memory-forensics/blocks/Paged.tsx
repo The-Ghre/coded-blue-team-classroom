@@ -1,11 +1,22 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Block } from '@/types/content'
 import type { BlockOverrideProps } from '../../types'
 
 /** Reading panes retain the shared renderer and its mounted interaction state. */
 export function Paged<B extends Block>({ block, mode, Default }: BlockOverrideProps<B>) {
   const [page, setPage] = useState(0)
-  if (mode !== 'slide') return <Default block={block} mode={mode} />
+  const root = useRef<HTMLDivElement>(null)
+  // Keep the original renderer mounted, including copy and answer state. Give
+  // its native code scrollers a name and keyboard access on every surface.
+  useEffect(() => {
+    root.current?.querySelectorAll<HTMLElement>('.code__body').forEach(region => {
+      region.tabIndex = 0
+      region.setAttribute('role', 'region')
+      region.setAttribute('aria-label', `${block.title} — scrollable code`)
+      region.setAttribute('data-keys-own', '')
+    })
+  }, [block.id, block.title])
+  if (mode !== 'slide') return <div ref={root}><Default block={block} mode={mode} /></div>
   const labels = block.kind === 'query' ? ['Commands', 'Interpretation', 'Result and limits', 'Image prerequisites']
     : block.kind === 'concept' ? (block.redView || block.blueView ? ['Evidence', 'Context and perspectives'] : [])
     : block.kind === 'recap' ? ['Takeaways', 'Further study']
@@ -14,9 +25,11 @@ export function Paged<B extends Block>({ block, mode, Default }: BlockOverridePr
     : block.kind === 'brief' ? ['Scenario', 'Objectives and requirements', 'Setup and realism']
     : block.kind === 'deliverables' ? ['Checklist', 'Folder structure']
     : block.kind === 'tasks' ? block.tasks.map(t => `${t.ref} · ${t.title}`)
+    : block.kind === 'retrieval' ? block.questions.map((_, i) => `Question ${i + 1}`)
+    : block.kind === 'hints' ? block.hints.map(h => `${h.forTask} hints`)
     : block.kind === 'check' ? block.questions.map((_, i) => `Question ${i + 1}`) : []
   if (!labels.length) return <Default block={block} mode={mode} />
-  return <div className={`nm-paged nm-paged--${block.kind}`} data-nm-page={page}>
+  return <div ref={root} className={`nm-paged nm-paged--${block.kind}`} data-nm-page={page}>
     <div className="nm-paged__nav" role="group" aria-label="Slide reading pane" data-keys-own>
       {labels.map((label, i) => <button key={label} type="button" aria-pressed={page === i} onClick={() => setPage(i)}>{label}</button>)}
     </div>
