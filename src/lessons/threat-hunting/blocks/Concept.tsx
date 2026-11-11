@@ -111,13 +111,13 @@ function HypothesisSheet({ block, mode, parsed }: { block: ConceptBlock; mode: R
                 data-lit={lit === part.slot}
                 style={{ '--k': part.slot - 1 } as CSSProperties}
               >
-                <span className="th-hyp__slot-num" aria-hidden="true">
+                <span className="th-hyp__slot-num" aria-hidden="true" data-th-deco="" hidden>
                   {part.slot}
                 </span>
                 <span className="th-hyp__slot-text">
-                  <span className="sr-only">[</span>
+                  <span className="th-print-only">[</span>
                   {part.text}
-                  <span className="sr-only">]</span>
+                  <span className="th-print-only">]</span>
                 </span>
               </span>
             ) : (
@@ -139,7 +139,7 @@ function HypothesisSheet({ block, mode, parsed }: { block: ConceptBlock; mode: R
             onPointerEnter={() => setLit(n.slot)}
             onPointerLeave={() => setLit(null)}
           >
-            <span className="th-hyp__note-num" aria-hidden="true">
+            <span className="th-hyp__note-num" aria-hidden="true" data-th-deco="" hidden>
               {n.slot}
             </span>
             <p>{n.text}</p>
@@ -263,7 +263,7 @@ function StackCount({ block, mode }: { block: ConceptBlock; mode: RenderMode }) 
                   <span className="th-stack__pair">
                     <span>{r.parent}</span>
                     <span className="th-stack__arrow" aria-hidden="true">
-                      →
+                      {' → '}
                     </span>
                     <span className="sr-only"> spawned </span>
                     <span>{r.child}</span>
@@ -271,6 +271,7 @@ function StackCount({ block, mode }: { block: ConceptBlock; mode: RenderMode }) 
                   <span className="th-stack__strip" aria-hidden="true" data-th-deco="" hidden>
                     <span className="th-stack__fill" style={{ '--share': share } as CSSProperties} />
                   </span>
+                  <span className="th-print-only">: </span>
                   <span className="th-stack__count">{r.count.toLocaleString('en-GB')}</span>
                 </li>
               )
@@ -331,7 +332,7 @@ function Pipeline({ block, mode, steps }: { block: ConceptBlock; mode: RenderMod
       <ol className="th-pipe__strip" aria-label="The pipeline, in order">
         {steps.map((s, i) => (
           <li key={i} className="th-pipe__stamp" style={{ '--k': i } as CSSProperties}>
-            <span className="th-pipe__band" aria-hidden="true">
+            <span className="th-pipe__band" aria-hidden="true" data-th-deco="" hidden>
               <span className="th-pipe__num">{i + 1}</span>
             </span>
             <span className="th-pipe__text">{s}</span>

@@ -1758,67 +1758,77 @@
     color: var(--ir-ink-dim);
   }
 
+  /* Each section is a frame on the sheet with its title printed beneath
+     it in ink, in full: frame and caption are one link. The frame keeps
+     its 3:2 and its rebate; the caption takes the words. */
   :root[data-lesson='incident-response'] .ir-hero__frames {
-    --cols: 6;
+    --cols: 4;
     list-style: none;
     margin: 0;
-    padding: 0.7rem 0;
+    padding: 0.3rem 0 0;
     display: grid;
     grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
-    row-gap: 1.4rem;
-    background-color: transparent;
+    gap: 1rem 0;
   }
 
   :root[data-lesson='incident-response'] .ir-hero__frame {
     position: relative;
-    padding: 0.62rem 0.22rem;
-    background-color: var(--ir-film-rebate);
-    background-image:
-      radial-gradient(ellipse 0.2rem 0.16rem at 50% 0.3rem, rgba(235, 229, 220, 0.5) 92%, transparent 100%),
-      radial-gradient(ellipse 0.2rem 0.16rem at 50% calc(100% - 0.3rem), rgba(235, 229, 220, 0.5) 92%, transparent 100%);
-    background-size: 0.8rem 100%;
+    min-width: 0;
   }
 
   :root[data-lesson='incident-response'] .ir-hero__frame a {
-    position: relative;
     display: grid;
-    grid-template-rows: auto 1fr auto;
-    aspect-ratio: 3 / 2;
-    padding: 0.4rem 0.5rem;
+    grid-template-rows: auto auto;
+    align-content: start;
+    gap: 0.45rem;
+    height: 100%;
     min-height: 44px;
+    padding: 0 0.2rem 0.35rem;
     text-decoration: none;
-    color: rgba(246, 237, 227, 0.72);
+    color: var(--ir-ink);
+    border-radius: 1px;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__exposure {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 2;
+    margin: 0 -0.2rem;
+    border-block: 0.62rem solid var(--ir-film-rebate);
+    border-inline: 0.18rem solid var(--ir-film-rebate);
     background: #2b2019;
-    overflow: hidden;
-    transition: background 700ms var(--ir-develop), color 700ms var(--ir-develop), filter 700ms var(--ir-develop);
+    transition: background 600ms var(--ir-develop);
   }
 
-  :root[data-lesson='incident-response'] .ir-hero__frame[data-state='fixed'] a {
+  /* Sprocket holes punched in the rebates. */
+  :root[data-lesson='incident-response'] .ir-hero__exposure::before,
+  :root[data-lesson='incident-response'] .ir-hero__exposure::after {
+    content: '';
+    position: absolute;
+    left: -0.18rem;
+    right: -0.18rem;
+    height: 0.62rem;
+    background: radial-gradient(ellipse 0.2rem 0.16rem at 50% 50%, rgba(235, 229, 220, 0.5) 92%, transparent 100%) 0 0 / 0.8rem 100% repeat-x;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__exposure::before {
+    top: -0.62rem;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__exposure::after {
+    bottom: -0.62rem;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__frame[data-state='fixed'] .ir-hero__exposure {
     background: linear-gradient(160deg, #f4efe7, #cdc2b3);
-    color: var(--ir-ink);
-  }
-
-  :root[data-lesson='incident-response'] .ir-hero__frame a:hover,
-  :root[data-lesson='incident-response'] .ir-hero__frame a:focus-visible {
-    background: #4a3628;
-    color: #fffaf4;
-  }
-
-  :root[data-lesson='incident-response'] .ir-hero__frame[data-state='fixed'] a:hover,
-  :root[data-lesson='incident-response'] .ir-hero__frame[data-state='fixed'] a:focus-visible {
-    background: #fffaf4;
-    color: var(--ir-ink);
-  }
-
-  :root[data-lesson='incident-response'] .ir-hero__frame a:focus-visible {
-    outline: 3px solid #b8510f;
-    outline-offset: 2px;
-    z-index: 2;
   }
 
   :root[data-lesson='incident-response'] .ir-hero__frame-num {
+    position: absolute;
+    left: 0.45rem;
+    top: 0.3rem;
     font-family: var(--font-mono);
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--ir-edge);
   }
@@ -1827,33 +1837,55 @@
     color: #8f3a10;
   }
 
-  :root[data-lesson='incident-response'] .ir-hero__frame-title {
-    align-self: end;
-    font-family: var(--ir-cond);
-    font-weight: 500;
-    font-size: clamp(0.72rem, 0.6rem + 0.3vw, 0.9rem);
-    line-height: 1.15;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
   :root[data-lesson='incident-response'] .ir-hero__frame-min {
     position: absolute;
-    top: 0.4rem;
-    right: 0.5rem;
+    right: 0.45rem;
+    bottom: 0.3rem;
     font-family: var(--ir-cond);
-    font-size: 0.6875rem;
-    opacity: 0.8;
+    font-size: 0.75rem;
+    color: rgba(246, 237, 227, 0.75);
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__frame[data-state='fixed'] .ir-hero__frame-min {
+    color: var(--ir-ink-muted);
+  }
+
+  /* The caption: the whole title, never clipped. */
+  :root[data-lesson='incident-response'] .ir-hero__frame-title {
+    font-family: var(--ir-cond);
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.25;
+    color: var(--ir-ink);
+    overflow-wrap: break-word;
+    padding-right: 0.4rem;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__frame a:hover .ir-hero__exposure {
+    background: #4a3628;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__frame[data-state='fixed'] a:hover .ir-hero__exposure {
+    background: #fffaf4;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__frame a:hover .ir-hero__frame-title {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  :root[data-lesson='incident-response'] .ir-hero__frame a:focus-visible {
+    outline: 3px solid #b8510f;
+    outline-offset: 3px;
+    z-index: 2;
   }
 
   :root[data-lesson='incident-response'] .ir-hero__resume {
     position: absolute;
-    left: -8%;
-    top: -12%;
-    width: 116%;
-    height: 124%;
+    left: -10%;
+    top: -16%;
+    width: 120%;
+    height: 132%;
     z-index: 1;
   }
 
@@ -1914,16 +1946,12 @@
     opacity: 1;
   }
 
-  :root[data-lesson='incident-response'] .ir-hero--study .ir-hero__frames {
-    --cols: 4;
-  }
-
   :root[data-lesson='incident-response'] .ir-hero__actions .overview__actions {
     margin-top: var(--s-2);
   }
 
   /* Frames develop in, one after another, the first time the sheet shows. */
-  :root[data-lesson='incident-response'] .ir-hero__frame a {
+  :root[data-lesson='incident-response'] .ir-hero__exposure {
     animation: ir-develop-in 900ms var(--ir-develop) both;
     animation-delay: calc(var(--f) * 45ms + 120ms);
   }
@@ -2287,19 +2315,6 @@
     color: #8f3a10;
   }
 
-  /* Contact sheet: overview strips are cut seven frames long. */
-  :root[data-lesson='incident-response'] .ir-hero--overview .ir-hero__frames {
-    --cols: 7;
-  }
-
-  :root[data-lesson='incident-response'] .ir-hero--overview .ir-hero__frame-title {
-    -webkit-line-clamp: 2;
-  }
-
-  :root[data-lesson='incident-response'] .ir-hero__frame a {
-    row-gap: 0.15rem;
-  }
-
   :root[data-lesson='incident-response'] .ir-hero__edge {
     border-top: 1px dashed rgba(26, 18, 13, 0.3);
     padding-top: var(--s-2);
@@ -2553,7 +2568,7 @@
     }
 
     :root[data-lesson='incident-response'] .ir-hero .ir-hero__frames {
-      --cols: 3;
+      --cols: 2;
     }
 
     :root[data-lesson='incident-response'] .ir-hero__sheet {
@@ -2585,7 +2600,7 @@
     :root[data-lesson='incident-response'] .ir-title[data-mode='slide'] .ir-title__h,
     :root[data-lesson='incident-response'] .ir-title[data-mode='slide'] .ir-title__session,
     :root[data-lesson='incident-response'] .ir-title[data-mode='slide'] .ir-title__lead,
-    :root[data-lesson='incident-response'] .ir-hero__frame a,
+    :root[data-lesson='incident-response'] .ir-hero__exposure,
     :root[data-lesson='incident-response'] .tlr__fragment,
     :root[data-lesson='incident-response'] .tlr__slot,
     :root[data-lesson='incident-response'] .ir-band[data-status='fixed'] .ir-band__density {

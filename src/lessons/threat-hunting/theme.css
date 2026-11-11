@@ -1998,4 +1998,80 @@
   :root[data-lesson="threat-hunting"] .present__slide .th-pipe .th-pipe__plain li {
     font-size: clamp(1rem, 0.9rem + 0.35vw, 1.2rem);
   }
+
+  /* Pipeline slide: fit a 1440x900 projector frame without dropping content */
+  :root[data-lesson="threat-hunting"] .present__slide .th-pipe .block__head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-4);
+    flex-wrap: wrap;
+    margin-bottom: var(--s-3);
+  }
+  :root[data-lesson="threat-hunting"] .present__slide .th-pipe .block__head .block__meta {
+    margin-top: 0;
+  }
+  :root[data-lesson="threat-hunting"] .present__slide .th-pipe > .lead,
+  :root[data-lesson="threat-hunting"] .present__slide .th-pipe .th-pipe__plain {
+    max-width: none;
+  }
+  :root[data-lesson="threat-hunting"] .present__slide .th-pipe .th-pipe__plain li {
+    max-width: none;
+  }
+  :root[data-lesson="threat-hunting"] .present__slide .th-pipe .th-marks {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  :root[data-lesson="threat-hunting"] .present__slide .th-pipe .th-mark {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 0.9rem;
+  }
+  :root[data-lesson="threat-hunting"] .present__slide .th-pipe .th-mark__stamp {
+    font-size: 0.95rem;
+    padding: 0.3rem 0.6rem 0.32rem;
+    letter-spacing: 0.14em;
+  }
+  :root[data-lesson="threat-hunting"] .present__slide .th-pipe .callout {
+    padding: var(--s-3) var(--s-4);
+  }
+
+  /* Screen-only parts of the overrides: hidden by attribute (so paper never
+     shows them), revealed here */
+  :root[data-lesson="threat-hunting"] .th-hyp__slot-num[hidden],
+  :root[data-lesson="threat-hunting"] .th-hyp__note-num[hidden],
+  :root[data-lesson="threat-hunting"] .th-query__num[hidden] {
+    display: grid;
+  }
+  :root[data-lesson="threat-hunting"] .th-pipe__band[hidden] {
+    display: flex;
+  }
+  :root[data-lesson="threat-hunting"] .th-album__hint[hidden] {
+    display: block;
+  }
+  /* Walkthrough items carry an inline transparent ground for print; the
+     screen states paint with a background layer and a box outline instead */
+  :root[data-lesson="threat-hunting"] .th-query__item {
+    box-shadow: inset 0 1px 0 var(--line);
+  }
+  :root[data-lesson="threat-hunting"] .th-query__item:hover,
+  :root[data-lesson="threat-hunting"] .th-query__item[data-active="true"] {
+    background-image: linear-gradient(rgba(216, 240, 122, 0.06), rgba(216, 240, 122, 0.06));
+    box-shadow: inset 0 0 0 1px rgba(216, 240, 122, 0.4);
+  }
+  :root[data-lesson="threat-hunting"] .th-query__item[aria-pressed="true"] {
+    box-shadow: inset 0 0 0 1px var(--th-phosphor);
+  }
+
+  /* Text that only paper needs (slot brackets, separators): on screen it is
+     kept for assistive technology but visually removed */
+  :root[data-lesson="threat-hunting"] .th-print-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 }

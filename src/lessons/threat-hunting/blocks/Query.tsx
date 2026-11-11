@@ -113,17 +113,19 @@ export function QueryOverride({ block, mode }: BlockOverrideProps<QueryBlock>) {
               <button
                 type="button"
                 className="th-query__item"
+                style={{ backgroundColor: 'transparent', color: 'inherit', border: 0, textAlign: 'left' }}
                 aria-pressed={chosen === i}
                 data-active={active === i}
                 onClick={() => setChosen(chosen === i ? null : i)}
                 onPointerEnter={() => setHover(i)}
                 onPointerLeave={() => setHover(null)}
               >
-                <span className="th-query__num" aria-hidden="true">
+                <span className="th-query__num" aria-hidden="true" data-th-deco="" hidden>
                   {i + 1}
                 </span>
                 <span className="th-query__item-body">
                   <code>{w.part}</code>
+                  <span className="th-print-only"> — </span>
                   <span>{w.explains}</span>
                 </span>
               </button>
