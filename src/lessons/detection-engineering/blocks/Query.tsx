@@ -69,7 +69,7 @@ export function Query({ block, mode }: BlockOverrideProps<QueryBlock>) {
   }
 
   return (
-    <section className="block block--query de-query" data-mode={mode}>
+    <section data-keys-own className="block block--query de-query" data-mode={mode}>
       <Head block={block} />
       {block.lead && <p className="lead de-lead">{block.lead}</p>}
 

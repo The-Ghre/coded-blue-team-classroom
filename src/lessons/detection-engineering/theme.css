@@ -1,7 +1,7 @@
 @media screen {
   :root[data-lesson='detection-engineering'] {
     --bg:#edf5ee;--bg-raised:#f8fcf8;--surface:#e1ece3;--surface-2:#d7e5da;--surface-3:#cadccf;--surface-panel:#f8fcf8;
-    --text:#132e24;--text-muted:#355446;--text-dim:#436151;--line:#b4c9bc;--line-strong:#6c8978;--card:#f8fcf8;--card-brd:#b4c9bc;
+    --text:#132e24;--text-muted:#294b3b;--text-dim:#355446;--line:#b4c9bc;--line-strong:#6c8978;--card:#f8fcf8;--card-brd:#b4c9bc;
     --accent:#205e44;--accent-deep:#164631;--accent-soft:#205e44;--focus:#9d3020;
     --ev-observation:#245877;--ev-hypothesis:#715110;--ev-confirmed:#20603c;--ev-uncertain:#704366;--ev-response:#3155a0;--ev-attack:#9d3020;
     --ev-observation-bg:#dceaf1;--ev-hypothesis-bg:#f0e7cb;--ev-confirmed-bg:#d7e9dc;--ev-uncertain-bg:#eadfea;--ev-response-bg:#dde6f7;--ev-attack-bg:#f3dfd8;
@@ -11,6 +11,12 @@
     & ::selection {background:#205e44;color:#fff}
     & :focus-visible {outline:3px solid var(--focus);outline-offset:4px}
     & h1,& h2,& h3 {font-family:'IBM Plex Sans Condensed','IBM Plex Sans',sans-serif}
+    & .code,& .ix,& .rule__output,& .detail,& .diagram,& .interaction,& .evidence {background:var(--bg-raised)}
+    & .detail,& .rule__verdict,& .cov__detail {border-left-width:1px}
+    & .rule__not {color:#fff}
+    & .rule__bar {background:#b4c9bc}
+    & .rule__bar-fill {transition:none}
+    & .present::before {background:none}
     & .btn--primary {color:#fff;background:#205e44}
     & .de-hero {display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(2rem,5vw,5rem);align-items:center;padding:3rem 0;border-bottom:1px solid var(--line-strong)}
     & .de-hero h1 {font-size:clamp(3rem,5.4vw,5.5rem);line-height:1;max-width:10ch;margin:0 0 1.5rem}
@@ -37,7 +43,6 @@
     & .rule__condition-desc {color:var(--text-muted)}
     & .rule__bar-fill[data-metric='precision'] {background:#205e44}
     & .rule__bar-fill[data-metric='recall'] {background:#9d3020}
-    & .rule__bar-fill {transition:width 420ms cubic-bezier(.16,1,.3,1)}
     & .cov__cell {border-radius:0;min-height:70px}
     & .cov__cell[data-covered='false'] {background:repeating-linear-gradient(135deg,#f5e9e3 0 8px,#efdfd7 8px 9px);color:#733322}
     & .cov__cell[data-covered='true'] {background:#d7e9dc;color:#174b31}
@@ -55,7 +60,9 @@
     & .de-walk__lines {font-size:.75rem;color:var(--text-muted)}
     & .de-walk dd {margin:.5rem 0 1rem;font-size:1rem;line-height:1.5}
     & .de-query__assumes {margin-bottom:1rem}
-    & .present__slide {padding:1.5rem 2rem}
+    & .present__slide {padding:1.5rem 2rem;min-width:0;max-width:100%}
+    & .present__slide .block {min-width:0;max-width:100%}
+    & .present__slide .code {min-width:0;max-width:100%}
     & .present__slide .block__title {font-size:2.1rem}
     & .present__slide .lead {font-size:1.15rem}
     & .present__slide .concept__points {font-size:1.15rem;gap:.7rem}
@@ -83,5 +90,107 @@
   }
   @media (prefers-reduced-motion:reduce) {
     :root[data-lesson='detection-engineering'] *, :root[data-lesson='detection-engineering']::view-transition-new(slide), :root[data-lesson='detection-engineering']::view-transition-old(slide) {animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+}
+@media screen and (min-width:1000px) {
+  :root[data-lesson='detection-engineering'] {
+    & .present {--s-5:1rem;--s-6:1.25rem;--s-7:1.5rem}
+    & .present__stage {padding:1rem 2rem}
+    & .present__slide {max-width:86rem;padding:0}
+    & .present__slide .block__head {display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:baseline;margin-bottom:.75rem}
+    & .present__slide .block__title {order:-1;width:100%;margin:0}
+    & .present__slide .block__meta {margin:0}
+    & .present__slide .eyebrow {font-size:.7rem;letter-spacing:.12em}
+    & .present__slide .lead {max-width:95ch;line-height:1.4;margin-bottom:.75rem}
+    & .present__slide .concept__points {grid-template-columns:1fr 1fr;gap:.8rem 2rem;margin-top:1rem}
+    & .present__slide .concept__points li {font-size:1.0625rem;line-height:1.45}
+    & .present__slide .redblue {margin-top:1rem;gap:1rem}
+    & .present__slide .redblue__pane {padding:.75rem;border-left-width:1px}
+    & .present__slide .redblue__pane p {font-size:1rem;line-height:1.4}
+    & .present__slide .callout {padding:.75rem;margin-top:1rem;border-left-width:1px}
+    & .present__slide .callout__body p {font-size:1rem;line-height:1.4}
+    & .present__slide .scenario__narrative {font-size:1.15rem;line-height:1.5;max-width:95ch}
+    & .present__slide .scenario__narrative p+p {margin-top:.75rem}
+    & .present__slide .scenario__driver {margin-top:1rem;padding:1rem}
+    & .present__slide .compare__table {font-size:1rem}
+    & .present__slide .compare__table td,& .present__slide .compare__table th {padding:.5rem .75rem;line-height:1.4}
+    & .present__slide .interaction__teaches {padding:.5rem .75rem;margin:.5rem 0;border-left-width:1px}
+    & .present__slide .interaction__teaches p {font-size:1rem;line-height:1.4;max-width:none}
+    & .present__slide .synthetic {padding:.5rem .75rem;margin:.5rem 0;font-size:.875rem}
+    & .present__slide .ix--rule {max-height:450px;overflow:auto}
+    & .present__slide .rule__output {position:static;padding:.75rem}
+    & .present__slide .rule__notes {margin-top:.75rem}
+    & .present__slide .rule__notes ul {font-size:.875rem;line-height:1.4}
+    & .present__slide .rule__condition-list {gap:.25rem}
+    & .present__slide .rule__condition-desc {font-size:.875rem;line-height:1.35}
+    & .present__slide .ix--coverage {max-height:450px;overflow:auto}
+    & .present__slide .cov__grid {grid-template-columns:repeat(8,minmax(0,1fr));padding:1rem;gap:.5rem}
+    & .present__slide .cov__cell {padding:.5rem;min-height:75px}
+    & .present__slide .cov__cell-name {font-size:.8rem}
+    & .present__slide .cov__summary {padding:.75rem}
+    & .present__slide .de-query__assumes {padding:.5rem .75rem;margin:.5rem 0;border-left-width:1px}
+    & .present__slide .de-query__assumes p {font-size:.875rem;line-height:1.4}
+    & .present__slide .de-code__scroll {max-height:235px}
+    & .present__slide .de-walk {max-height:290px}
+    & .present__slide .de-walk__item {display:block;padding:.25rem 0}
+    & .present__slide .de-walk dd {font-size:1rem;line-height:1.4;margin:.25rem 0 .5rem}
+    & .present__slide .query__result {margin-top:1rem;max-height:150px;overflow:auto}
+    & .present__slide .query__result-col p,& .present__slide .query__result-col li {font-size:.875rem;line-height:1.4}
+    & .present__slide .check__list {grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem}
+    & .present__slide .check__stem {font-size:1.0625rem;line-height:1.4}
+    & .present__slide .check__option {font-size:1rem;padding:.5rem;min-height:44px;line-height:1.4}
+    & .present__slide .check__feedback {font-size:1rem;max-height:150px;overflow:auto}
+    & .present__slide .recap__takeaways {display:grid;grid-template-columns:1fr 1fr;gap:.75rem 2rem}
+    & .present__slide .recap__takeaways li {font-size:1.0625rem;line-height:1.45}
+    & .present__slide .recap__further ul {display:grid;grid-template-columns:1fr 1fr;gap:.75rem 2rem}
+    & .present__slide .brief__grid {grid-template-columns:1fr 1fr;gap:1rem}
+    & .present__slide .brief__panel {padding:.65rem}
+    & .present__slide .brief__panel li {font-size:1rem;line-height:1.35}
+    & .present__slide .brief__panel li+li {margin-top:.35rem}
+    & .present__slide .brief__scenario {padding:.5rem .75rem;margin-bottom:.75rem}
+    & .present__slide .brief__download {padding:.35rem;min-height:44px}
+    & .present__slide .brief__download-file {font-size:.75rem}
+    & .present__slide .brief__requires li {padding:.35rem 0}
+    & .present__slide .brief__setup {columns:2;column-gap:2rem}
+    & .present__slide .brief__setup li {break-inside:avoid}
+    & .present__slide .tasks__list {grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
+    & .present__slide .tasks__task {padding:.75rem}
+    & .present__slide .tasks__head {flex-wrap:wrap;gap:.5rem}
+    & .present__slide .tasks__head h4 {font-size:1.1rem}
+    & .present__slide .tasks__steps {font-size:1rem;line-height:1.4;margin-top:.75rem}
+    & .present__slide .tasks__steps li+li {margin-top:.5rem}
+    & .present__slide .tasks__produces {font-size:.875rem;line-height:1.4}
+    & .present__slide .assess__list {grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+    & .present__slide .debrief__list {columns:2;column-gap:3rem;font-size:1.0625rem;line-height:1.45}
+    & .present__slide .debrief__list li {break-inside:avoid;margin-bottom:1rem}
+    & .present__slide .debrief__landing {padding:.75rem}
+  }
+}
+@media screen and (min-width:1000px) {
+  :root[data-lesson='detection-engineering'] {
+    & .present__slide .block--brief {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem 1rem}
+    & .present__slide .block--brief>.block__head,& .present__slide .brief__scenario,& .present__slide .block--brief>.callout {grid-column:1/-1;margin:0}
+    & .present__slide .brief__grid {display:contents}
+    & .present__slide .brief__setup {columns:auto}
+    & .present__slide .tasks__steps {line-height:1.35}
+    & .present__slide .tasks__steps li+li {margin-top:.3rem}
+    & .present__slide .tasks__produces {margin-top:.5rem;padding:.5rem}
+    & .present__slide .block--deliverables {display:grid;grid-template-columns:1fr 1fr;gap:1rem 2rem}
+    & .present__slide .block--deliverables>.block__head {grid-column:1/-1;margin:0}
+    & .present__slide .block--deliverables .code {margin:0}
+    & .present__slide .deliver__list {margin:0}
+  }
+}
+@media screen and (min-width:1000px) {
+  :root[data-lesson='detection-engineering'] {
+    & .present__slide .brief__panel ul,& .present__slide .brief__panel ol {margin-top:.5rem;line-height:1.3}
+    & .present__slide .brief__panel {padding:.35rem}
+    & .present__slide .brief__scenario .lead {font-size:1rem;margin:0;line-height:1.35}
+    & .present__slide .brief__requires span {font-size:.875rem;line-height:1.3}
+    & .present__slide .brief__requires li {padding:.2rem 0}
+    & .present__slide .block--brief>.callout p {font-size:.875rem;line-height:1.35}
+    & .present__slide .tasks__task {padding:.5rem}
+    & .present__slide .tasks__steps {margin-top:.5rem;line-height:1.3}
+    & .present__slide .tasks__steps li+li {margin-top:.25rem}
   }
 }
