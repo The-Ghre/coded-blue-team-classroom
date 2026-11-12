@@ -70,3 +70,4 @@
 @keyframes projector-return { from { translate:-40px 0; opacity:.2; } to { translate:0 0; opacity:1; } }
 :root[data-lesson][data-presentation-motion=off]::view-transition-old(slide), :root[data-lesson][data-presentation-motion=off]::view-transition-new(slide) { animation:none!important; }
 @media(prefers-reduced-motion:reduce) { .projector-node { transition-duration:0s; } }
+:root[data-presentation-motion=off] .projector-node { transition-duration:0s; }
