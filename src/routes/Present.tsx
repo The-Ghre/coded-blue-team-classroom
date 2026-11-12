@@ -98,6 +98,8 @@ export function Present() {
         startViewTransition?: (cb: () => void) => {
           skipTransition: () => void
           updateCallbackDone: Promise<void>
+          ready?: Promise<void>
+          finished?: Promise<void>
         }
       }
 
@@ -127,6 +129,10 @@ export function Present() {
         flushSync(() => navigate(to))
       }
       const vt = doc.startViewTransition(commit)
+      // Skipping an interrupted snapshot rejects ready; that is expected,
+      // and must not surface as an unhandled error during rapid navigation.
+      void vt.ready?.catch(() => undefined)
+      void vt.finished?.catch(() => undefined)
       // Skipping must commit this navigation synchronously, before the next
       // one, or an older target could land after a newer one.
       const handle = {
@@ -142,12 +148,10 @@ export function Present() {
           vt.skipTransition()
         }
       }, 120)
-      vt.updateCallbackDone
-        .catch(() => undefined)
-        .finally(() => {
-          window.clearTimeout(safety)
-          if (pendingTransition.current === handle) pendingTransition.current = null
-        })
+      void vt.updateCallbackDone.catch(() => undefined).finally(() => window.clearTimeout(safety))
+      void (vt.finished ?? vt.updateCallbackDone).catch(() => undefined).finally(() => {
+        if (pendingTransition.current === handle) pendingTransition.current = null
+      })
     },
     [session, slides.length, navigate, reducedMotion],
   )
