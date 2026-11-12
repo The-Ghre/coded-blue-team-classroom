@@ -62,7 +62,7 @@ export const presentation05: PresentationPlan = {
     },
     {
       "id": "response",
-      "title": "A response has a structure",
+      "title": "Six phases guide this course",
       "half": "theory",
       "outline": [
         "Prepare and identify",
@@ -133,7 +133,7 @@ export const presentation05: PresentationPlan = {
               ]
             }
           ],
-          "takeaway": "Reassess severity whenever scope or activity changes."
+          "takeaway": "Course targets: reassess severity whenever scope or activity changes."
         },
         {
           "id": "severity-low",
@@ -248,7 +248,7 @@ export const presentation05: PresentationPlan = {
           "id": "capture-sequence",
           "sourceId": "volatility",
           "kind": "flow",
-          "title": "Rehearse the course collection sequence",
+          "title": "When safe, preserve before changing state",
           "steps": [
             {
               "label": "Capture memory",
@@ -263,7 +263,7 @@ export const presentation05: PresentationPlan = {
               "note": "Apply the planned containment"
             }
           ],
-          "takeaway": "Record times and the reason for each action."
+          "takeaway": "Do not delay urgent containment just to complete collection."
         },
         {
           "id": "containment-options",
@@ -275,7 +275,7 @@ export const presentation05: PresentationPlan = {
               "label": "Host and identity",
               "points": [
                 "EDR isolation preserves management access",
-                "Disable compromised accounts"
+                "Disable accounts and revoke active sessions"
               ]
             },
             {
@@ -286,7 +286,7 @@ export const presentation05: PresentationPlan = {
               ]
             }
           ],
-          "takeaway": "Containment freezes the incident; eradication removes the cause."
+          "takeaway": "Containment limits spread; eradication removes persistence and entry points."
         },
         {
           "id": "avoid-loss",
@@ -469,10 +469,10 @@ export const presentation05: PresentationPlan = {
               ]
             },
             {
-              "label": "Identity",
+              "label": "Identity and response",
               "points": [
-                "Account activity",
-                "Escalation and response decisions"
+                "Account and directory changes",
+                "Analyst decisions and action logs"
               ]
             }
           ],

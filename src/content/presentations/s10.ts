@@ -54,7 +54,7 @@ export const presentation10: PresentationPlan = {
           "steps": [
             {
               "label": "Logon",
-              "note": "The KDC issues a TGT"
+              "note": "The key distribution centre issues a ticket-granting ticket"
             },
             {
               "label": "Service request",
@@ -327,7 +327,7 @@ export const presentation10: PresentationPlan = {
           "kind": "bullets",
           "title": "Review rare changes with administrative context",
           "points": [
-            "4794: DSRM password change.",
+            "4794: Directory Services Restore Mode password change.",
             "4765: SID History added.",
             "5136: directory object modification."
           ]
@@ -350,7 +350,8 @@ export const presentation10: PresentationPlan = {
               "label": "Second reset",
               "note": "The compromised key leaves retained history"
             }
-          ]
+          ],
+          "takeaway": "The AD team must coordinate the interval and verify replication between resets."
         },
         {
           "id": "verified-reset",
@@ -361,7 +362,7 @@ export const presentation10: PresentationPlan = {
             "Check domain controller health and replication.",
             "Use the current Microsoft procedure with the AD team.",
             "Verify replication between resets and after completion.",
-            "Coordinate timing and authentication impact."
+            "Allow the configured ticket-lifetime interval; coordinate authentication impact."
           ]
         },
         {
@@ -403,7 +404,7 @@ export const presentation10: PresentationPlan = {
           "kind": "activity",
           "title": "T1 · Confirm the replication finding and scope",
           "points": [
-            "Verify auditing and replication permission events.",
+            "Verify auditing, relevant object audit settings and replication events.",
             "Validate the source host’s role and account.",
             "State the credential scope and supporting evidence."
           ]
@@ -415,7 +416,7 @@ export const presentation10: PresentationPlan = {
           "title": "T2 · Trace the escalation chain backwards",
           "points": [
             "Follow the account’s authentication events.",
-            "Record privilege changes and ticket requests.",
+            "Record privilege changes; treat RC4 tickets as leads, not proof.",
             "Investigate the earlier source workstation for credential access."
           ]
         },

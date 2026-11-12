@@ -38,7 +38,13 @@ export function Present() {
   const [helpOpen, setHelpOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const idleTimer = useRef<number | null>(null)
-  const reducedMotion = useReducedMotion()
+  const prefersReducedMotion = useReducedMotion()
+  const [motionPaused, setMotionPaused] = useState(false)
+  const reducedMotion = prefersReducedMotion || motionPaused
+  useEffect(() => {
+    document.documentElement.dataset.presentationMotion = reducedMotion ? 'off' : 'full'
+    return () => { delete document.documentElement.dataset.presentationMotion }
+  }, [reducedMotion])
   const pendingTransition = useRef<{ skipTransition: () => void } | null>(null)
   /* The slide most recently asked for. Relative steps read this rather than
      the rendered index, so two presses inside one frame move two slides. */
@@ -228,6 +234,7 @@ export function Present() {
     PageUp: () => step(-1),
     Home: () => go(0),
     End: () => go(slides.length - 1),
+    m: () => setMotionPaused(value => !value),
     a: () => { buildRef.current = { index: current, count: builds }; setBuildState(buildRef.current) },
     f: () => void toggleFullscreen(),
     o: () => setOverviewOpen((v) => !v),
@@ -291,6 +298,11 @@ export function Present() {
           >
             Overview <kbd>O</kbd>
           </button>
+          <button type="button" className="btn btn--ghost btn--sm" aria-pressed={!reducedMotion}
+            onClick={() => setMotionPaused(value => !value)} disabled={prefersReducedMotion}
+            title={prefersReducedMotion ? 'Reduced motion follows your device setting' : 'Toggle presentation motion'}>
+            Motion {reducedMotion ? 'off' : 'on'} <kbd>M</kbd>
+          </button>
           {fullscreenSupported && (
             <button type="button" className="btn btn--ghost btn--sm" onClick={() => void toggleFullscreen()}>
               {isFullscreen ? 'Exit full screen' : 'Full screen'} <kbd>F</kbd>
@@ -309,7 +321,7 @@ export function Present() {
       </header>
 
       {/* ---------------- Slide ---------------- */}
-      <ProjectionSlide frame={slide} build={build} number={current + 1} total={slides.length} sessionNumber={session.number} />
+      <ProjectionSlide frame={slide} build={build} number={current + 1} total={slides.length} sessionNumber={session.number} motionEnabled={!reducedMotion} />
 
       {/* ---------------- Bottom bar ---------------- */}
       <footer className="present__bottom">
@@ -450,6 +462,7 @@ export function Present() {
                 </dt>
                 <dd>First or last slide</dd>
               </div>
+              <div><dt><kbd>M</kbd></dt><dd>Toggle motion (respects device reduced motion)</dd></div>
               <div><dt><kbd>A</kbd></dt><dd>Reveal all points on this slide</dd></div>
               <div>
                 <dt>

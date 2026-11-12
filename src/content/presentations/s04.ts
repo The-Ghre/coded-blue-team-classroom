@@ -557,7 +557,7 @@ export const presentation04: PresentationPlan = {
               "label": "Noise test",
               "points": [
                 "Name normal production data",
-                "Measure the false positive rate"
+                "Measure legitimate matches and analyst workload"
               ]
             }
           ],
@@ -570,7 +570,7 @@ export const presentation04: PresentationPlan = {
           "title": "Hand over the whole decision",
           "points": [
             "Coverage map and justified backlog",
-            "Three rules with documented exclusions",
+            "Three rules; at least one narrow exclusion",
             "Validation plans for each rule",
             "Three-sentence executive summary"
           ]

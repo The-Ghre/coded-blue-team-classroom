@@ -167,7 +167,7 @@ export function DoubleReset({ block, mode }: { block: ConceptBlock; mode: Render
         <div className="adw-reset__register" aria-label="KRBTGT key register, a simulation" role="group">
           <div className="adw-reset__register-head">
             <MonoLabel>KRBTGT key register</MonoLabel>
-            <span className="adw-reset__sim">Simulation · three DCs, illustrative</span>
+            <span className="adw-reset__sim">Simulation · three DCs; ticket-lifetime wait is compressed</span>
           </div>
 
           <div className="adw-reset__keys">

@@ -15,10 +15,13 @@
 ```
 HOUR    NXDOMAIN COUNT    NOTE
 -----   ---------------   --------------------------------
+15:00               200   <-- anomalous
+16:00                 1   baseline
+17:00                 0   baseline
 18:00                 2   baseline
 19:00                 1   baseline
 20:00                 3   baseline
-21:00               200   <-- anomalous
+21:00                 1   baseline
 22:00                 1   baseline
 23:00                 0   baseline
 00:00                 2   baseline
@@ -26,51 +29,51 @@ HOUR    NXDOMAIN COUNT    NOTE
 02:00                 0   baseline
 ```
 
-### 1b. The 21:00 window (abridged — 40 of 200 shown)
+### 1b. The 15:00 window (abridged — 40 of 200 shown)
 
 ```
-21:00:00  10.0.3.22  QUERY  8hq9s51rbt[.]org  ->  NXDOMAIN
-21:00:00  10.0.3.22  QUERY  gab03h62b2[.]org  ->  NXDOMAIN
-21:00:03  10.0.3.22  QUERY  fv7tudsb6c[.]info  ->  NXDOMAIN
-21:00:04  10.0.3.22  QUERY  66k63yldj8[.]org  ->  NXDOMAIN
-21:00:04  10.0.3.22  QUERY  9q6c5jhhjb[.]org  ->  NXDOMAIN
-21:00:05  10.0.3.22  QUERY  e2soqpyxi8[.]net  ->  NXDOMAIN
-21:00:06  10.0.3.22  QUERY  95l3f0pnl0[.]com  ->  NXDOMAIN
-21:00:08  10.0.3.22  QUERY  03be12ttug[.]net  ->  NXDOMAIN
-21:00:10  10.0.3.22  QUERY  fb1e1x7woa[.]com  ->  NXDOMAIN
-21:00:10  10.0.3.22  QUERY  ok5n622zma[.]net  ->  NXDOMAIN
-21:00:11  10.0.3.22  QUERY  kjhou7aw6w[.]com  ->  NXDOMAIN
-21:00:11  10.0.3.22  QUERY  r6ixk04qtt[.]com  ->  NXDOMAIN
-21:00:12  10.0.3.22  QUERY  4injq4utps[.]net  ->  NXDOMAIN
-21:00:13  10.0.3.22  QUERY  a74ei8r6bl[.]com  ->  NXDOMAIN
-21:00:13  10.0.3.22  QUERY  dxnnjl10kx[.]com  ->  NXDOMAIN
-21:00:13  10.0.3.22  QUERY  m6211k203p[.]info  ->  NXDOMAIN
-21:00:14  10.0.3.22  QUERY  3gac09czuh[.]info  ->  NXDOMAIN
-21:00:16  10.0.3.22  QUERY  np82fzqr4g[.]info  ->  NXDOMAIN
-21:00:16  10.0.3.22  QUERY  qvaq57cgfe[.]info  ->  NXDOMAIN
-21:00:17  10.0.3.22  QUERY  caits9vxfi[.]info  ->  NXDOMAIN
-21:00:21  10.0.3.22  QUERY  n1bsjos9ta[.]org  ->  NXDOMAIN
-21:00:24  10.0.3.22  QUERY  wdpjazlsyx[.]com  ->  NXDOMAIN
-21:00:25  10.0.3.22  QUERY  2lwasi5aw8[.]org  ->  NXDOMAIN
-21:00:26  10.0.3.22  QUERY  soaqxlg2s9[.]net  ->  NXDOMAIN
-21:00:28  10.0.3.22  QUERY  2j4dsofoza[.]net  ->  NXDOMAIN
-21:00:28  10.0.3.22  QUERY  c4gjayxqmv[.]org  ->  NXDOMAIN
-21:00:28  10.0.3.22  QUERY  jfyscwd2x8[.]org  ->  NXDOMAIN
-21:00:28  10.0.3.22  QUERY  simcravvpa[.]net  ->  NXDOMAIN
-21:00:28  10.0.3.22  QUERY  sqdr8uywqv[.]com  ->  NXDOMAIN
-21:00:30  10.0.3.22  QUERY  etom1kxvgc[.]com  ->  NXDOMAIN
-21:00:32  10.0.3.22  QUERY  pjv39cynk3[.]net  ->  NXDOMAIN
-21:00:35  10.0.3.22  QUERY  5b7poasdnc[.]info  ->  NXDOMAIN
-21:00:35  10.0.3.22  QUERY  sytgjvvrlj[.]info  ->  NXDOMAIN
-21:00:37  10.0.3.22  QUERY  8vtn2cygax[.]net  ->  NXDOMAIN
-21:00:37  10.0.3.22  QUERY  fqqkydylvo[.]net  ->  NXDOMAIN
-21:00:37  10.0.3.22  QUERY  kzle0vqin7[.]org  ->  NXDOMAIN
-21:00:37  10.0.3.22  QUERY  y9chq867rw[.]com  ->  NXDOMAIN
-21:00:38  10.0.3.22  QUERY  hsytc5mxc5[.]info  ->  NXDOMAIN
-21:00:39  10.0.3.22  QUERY  da2599zgjq[.]net  ->  NXDOMAIN
-21:00:42  10.0.3.22  QUERY  6ip7nua4ah[.]info  ->  NXDOMAIN
+15:00:00  10.0.3.22  QUERY  8hq9s51rbt[.]org  ->  NXDOMAIN
+15:00:00  10.0.3.22  QUERY  gab03h62b2[.]org  ->  NXDOMAIN
+15:00:03  10.0.3.22  QUERY  fv7tudsb6c[.]info  ->  NXDOMAIN
+15:00:04  10.0.3.22  QUERY  66k63yldj8[.]org  ->  NXDOMAIN
+15:00:04  10.0.3.22  QUERY  9q6c5jhhjb[.]org  ->  NXDOMAIN
+15:00:05  10.0.3.22  QUERY  e2soqpyxi8[.]net  ->  NXDOMAIN
+15:00:06  10.0.3.22  QUERY  95l3f0pnl0[.]com  ->  NXDOMAIN
+15:00:08  10.0.3.22  QUERY  03be12ttug[.]net  ->  NXDOMAIN
+15:00:10  10.0.3.22  QUERY  fb1e1x7woa[.]com  ->  NXDOMAIN
+15:00:10  10.0.3.22  QUERY  ok5n622zma[.]net  ->  NXDOMAIN
+15:00:11  10.0.3.22  QUERY  kjhou7aw6w[.]com  ->  NXDOMAIN
+15:00:11  10.0.3.22  QUERY  r6ixk04qtt[.]com  ->  NXDOMAIN
+15:00:12  10.0.3.22  QUERY  4injq4utps[.]net  ->  NXDOMAIN
+15:00:13  10.0.3.22  QUERY  a74ei8r6bl[.]com  ->  NXDOMAIN
+15:00:13  10.0.3.22  QUERY  dxnnjl10kx[.]com  ->  NXDOMAIN
+15:00:13  10.0.3.22  QUERY  m6211k203p[.]info  ->  NXDOMAIN
+15:00:14  10.0.3.22  QUERY  3gac09czuh[.]info  ->  NXDOMAIN
+15:00:16  10.0.3.22  QUERY  np82fzqr4g[.]info  ->  NXDOMAIN
+15:00:16  10.0.3.22  QUERY  qvaq57cgfe[.]info  ->  NXDOMAIN
+15:00:17  10.0.3.22  QUERY  caits9vxfi[.]info  ->  NXDOMAIN
+15:00:21  10.0.3.22  QUERY  n1bsjos9ta[.]org  ->  NXDOMAIN
+15:00:24  10.0.3.22  QUERY  wdpjazlsyx[.]com  ->  NXDOMAIN
+15:00:25  10.0.3.22  QUERY  2lwasi5aw8[.]org  ->  NXDOMAIN
+15:00:26  10.0.3.22  QUERY  soaqxlg2s9[.]net  ->  NXDOMAIN
+15:00:28  10.0.3.22  QUERY  2j4dsofoza[.]net  ->  NXDOMAIN
+15:00:28  10.0.3.22  QUERY  c4gjayxqmv[.]org  ->  NXDOMAIN
+15:00:28  10.0.3.22  QUERY  jfyscwd2x8[.]org  ->  NXDOMAIN
+15:00:28  10.0.3.22  QUERY  simcravvpa[.]net  ->  NXDOMAIN
+15:00:28  10.0.3.22  QUERY  sqdr8uywqv[.]com  ->  NXDOMAIN
+15:00:30  10.0.3.22  QUERY  etom1kxvgc[.]com  ->  NXDOMAIN
+15:00:32  10.0.3.22  QUERY  pjv39cynk3[.]net  ->  NXDOMAIN
+15:00:35  10.0.3.22  QUERY  5b7poasdnc[.]info  ->  NXDOMAIN
+15:00:35  10.0.3.22  QUERY  sytgjvvrlj[.]info  ->  NXDOMAIN
+15:00:37  10.0.3.22  QUERY  8vtn2cygax[.]net  ->  NXDOMAIN
+15:00:37  10.0.3.22  QUERY  fqqkydylvo[.]net  ->  NXDOMAIN
+15:00:37  10.0.3.22  QUERY  kzle0vqin7[.]org  ->  NXDOMAIN
+15:00:37  10.0.3.22  QUERY  y9chq867rw[.]com  ->  NXDOMAIN
+15:00:38  10.0.3.22  QUERY  hsytc5mxc5[.]info  ->  NXDOMAIN
+15:00:39  10.0.3.22  QUERY  da2599zgjq[.]net  ->  NXDOMAIN
+15:00:42  10.0.3.22  QUERY  6ip7nua4ah[.]info  ->  NXDOMAIN
 ... 160 further NXDOMAIN responses in this window ...
-21:03:18  10.0.3.22  QUERY  update-cdn-srv[.]com  ->  A  91[.]92[.]251[.]103
+15:03:18  10.0.3.22  QUERY  update-cdn-srv[.]com  ->  A  91[.]92[.]251[.]103
 ```
 
 > One query in this window resolved. Note the time, and note what time the
@@ -85,7 +88,7 @@ These are exports of what Wireshark's **Statistics -> Conversations** and
 **IO Graph** views would show you. Opening a raw capture is a tooling
 exercise; the inference is the same either way.
 
-### 2a. Conversations, sorted by packet count
+### 2a. Selected conversation summaries (not sorted)
 
 ```
 ADDRESS A      ADDRESS B                PACKETS   BYTES A->B   BYTES B->A   DURATION
@@ -203,6 +206,8 @@ Image date (UTC)  : 2026-03-12 03:12:44
 ```
 
 ### 3c. malfind (abridged)
+
+Additional supplied validation: PID2344 has a private, unbacked region with a valid PE structure. The chrome and OUTLOOK regions below have been attributed to their legitimate runtimes. Real investigations require these checks; MZ or writable executable memory alone does not prove injection.
 ```
 Process: explorer.exe   Pid: 2344   Address: 0x7ff000200000
 Vad Tag: VadS   Protection: PAGE_EXECUTE_READWRITE

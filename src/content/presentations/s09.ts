@@ -33,7 +33,8 @@ export const presentation09: PresentationPlan = {
           "points": [
             "Sector intelligence names VPN credentials, WMI and DCSync.",
             "The report supplies no hashes or addresses.",
-            "Your current rules do not cover those behaviours."
+            "Your current rules do not cover those behaviours.",
+            "DCSync abuses directory replication rights."
           ]
         },
         {
@@ -77,7 +78,7 @@ export const presentation09: PresentationPlan = {
           "title": "Make both possible answers interpretable",
           "points": [
             "Define what confirmation would look like.",
-            "Define what would refute the hypothesis in this window.",
+            "Define what no matching evidence would mean within the tested scope.",
             "Missing telemetry makes the result inconclusive."
           ]
         }
@@ -230,7 +231,7 @@ export const presentation09: PresentationPlan = {
           "kind": "bullets",
           "title": "Look for unusual children of WmiPrvSE.exe",
           "points": [
-            "Use process creation telemetry.",
+            "Use process creation telemetry; WMI means Windows Management Instrumentation.",
             "Compare child processes with known administration.",
             "Read host, account, time and full command line."
           ]
@@ -250,8 +251,8 @@ export const presentation09: PresentationPlan = {
               "note": "Replication permission identifiers"
             },
             {
-              "text": "Source: non-domain-controller",
-              "note": "Validate source role and account context"
+              "text": "Join logon ID with Event ID 4624",
+              "note": "Validate source host and authorised replication"
             }
           ]
         },
@@ -261,7 +262,7 @@ export const presentation09: PresentationPlan = {
           "kind": "question",
           "title": "The DCSync query returns zero. What do you know?",
           "points": [
-            "Was the required auditing enabled?",
+            "Were auditing, relevant object permissions and collection configured?",
             "Did the query cover the intended time window?"
           ]
         },
@@ -449,7 +450,7 @@ export const presentation09: PresentationPlan = {
           "kind": "activity",
           "title": "T4 · Test the replication hypothesis",
           "points": [
-            "Record auditing status before interpreting results.",
+            "Verify auditing, relevant object audit settings and collection first.",
             "Filter the replication permission events.",
             "Validate source hosts and accounts."
           ]

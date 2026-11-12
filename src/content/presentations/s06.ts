@@ -47,7 +47,7 @@ export const presentation06: PresentationPlan = {
             },
             {
               "label": "Persistence",
-              "note": "What stayed active?"
+              "note": "What could restore access?"
             },
             {
               "label": "Access",
@@ -62,7 +62,7 @@ export const presentation06: PresentationPlan = {
               "note": "What was hidden or deleted?"
             }
           ],
-          "takeaway": "Only the evidence locations change."
+          "takeaway": "Use shared questions; look in platform-specific locations."
         },
         {
           "id": "corroboration",

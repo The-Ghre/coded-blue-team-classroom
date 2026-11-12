@@ -7,13 +7,13 @@ export const session07: Session = {
   slug: 'network-memory-forensics',
   title: 'Network and Memory Forensics',
   summary:
-    'The one layer an attacker cannot clean from inside the host, and the one that holds what never touched disk.',
+    'Off-host communication records and volatile memory reveal evidence that disk analysis can miss.',
   abstract:
-    'Disk forensics tells you the history. Network evidence tells you what the machine communicated with, and it is preserved outside the attacker\'s reach. Memory tells you what was actually running at the moment of capture, including code that never wrote a file. This session covers PCAP triage, beaconing detection through timing statistics, DNS anomalies, exfiltration patterns, and the Volatility workflow for finding injected code. The practical reconstructs a compromise across all three layers.',
+    'Disk forensics tells you the history. Network evidence tells you what the machine communicated with, when independently collected and protected. Memory tells you what was actually running at the moment of capture, including code that never wrote a file. This session covers PCAP triage, beaconing detection through timing statistics, DNS anomalies, exfiltration patterns, and the Volatility workflow for finding injected code. The practical reconstructs a compromise across all three layers.',
   track: 'core',
   themes: ['Beaconing', 'DNS', 'Injection'],
   prerequisites: [
-    'Session 5 — why memory is captured before isolation',
+    'Session 5 — balancing volatile evidence collection with urgent containment',
     'Session 6 — host artefacts, so you can see what network and memory add to them',
     'Basic networking: what a port is, what DNS resolution does, what TCP and UDP are',
   ],
@@ -23,7 +23,7 @@ export const session07: Session = {
     'Detect domain generation algorithms and DNS tunnelling from query patterns alone',
     'Distinguish exfiltration from legitimate transfer using volume baselines and destination context',
     'Run the core Volatility workflow and interpret its output',
-    'Explain why PAGE_EXECUTE_READWRITE memory containing an MZ header is a near-certain injection indicator',
+    'Assess writable executable memory, executable headers and process context as possible injection evidence',
   ],
   sourceFiles: [FILE],
 
@@ -36,7 +36,7 @@ export const session07: Session = {
         title: 'Session 7',
         overline: 'Defensive Track · Session 07 of 10',
         lead:
-          'An attacker can erase malware from a disk. They cannot reach into your firewall and remove the connection records.',
+          'An attacker can erase malware from a disk. Independently protected network logs may preserve communication records that remain after host cleanup.',
         provenance: 'source',
         sources: [{ file: FILE, section: '2. Introduction' }],
       },
@@ -48,15 +48,15 @@ export const session07: Session = {
         minutes: 6,
         recallPrompt: 'From memory.',
         questions: [
-          'Why is memory captured before EDR isolation, rather than after?',
+          'Why can collecting memory before isolation help, and when might containment take priority?',
           'In Session 6, what single artefact linked the Linux host to the Windows workstation?',
           'What did the cron entry */5 * * * * tell you, and what would you expect to see from the network side?',
           'Name two things that exist only in RAM.',
         ],
         answers: [
-          'Isolation may terminate the injected process, destroying the evidence of the connection at the same moment it ends the connection.',
+          'Isolation may change connections or trigger process termination, so volatile evidence can be lost. Balance collection against ongoing harm and follow the incident plan.',
           'known_hosts — the SSH file listing machines connected to from that host.',
-          'A five-minute interval, which is a beacon schedule rather than a maintenance job. From the network side: regular, small, evenly spaced outbound connections to one destination.',
+          'A five-minute schedule. It could be malicious or legitimate automation; compare the job and its network activity with the baseline.',
           'Injected code with no file on disk, decrypted credentials, encryption keys, and the live connection table at the moment of capture.',
         ],
         provenance: 'supplementary',
@@ -70,7 +70,7 @@ export const session07: Session = {
         synthetic: true,
         setting: 'An NDR alert at 03:00.',
         narrative: [
-          'WORKSTATION-07 is making connections to 91.92.251.103 every four minutes. Forty-eight connections in three hours. Each one is small and almost exactly the same size.',
+          'WORKSTATION-07 is making connections to 91.92.251.103 every four minutes. Forty-eight connections in the selected window. Each one is small and almost exactly the same size.',
           'No user is logged in. The machine should be idle.',
           'The disk forensics report, completed yesterday, found nothing.',
         ],
@@ -92,7 +92,7 @@ export const session07: Session = {
           { verb: 'Detect', text: 'DGA and DNS tunnelling from query patterns' },
           { verb: 'Distinguish', text: 'exfiltration from legitimate transfer using baselines' },
           { verb: 'Run', text: 'the core Volatility workflow and interpret its output' },
-          { verb: 'Explain', text: 'why executable-and-writable memory containing a PE header is near-certain injection' },
+          { verb: 'Explain', text: 'how to evaluate writable executable memory and executable headers in process context' },
         ],
       },
 
@@ -102,17 +102,17 @@ export const session07: Session = {
         title: 'PCAP triage: volume first, timing second, packets last',
         minutes: 8,
         lead:
-          'A packet capture records every byte. That is exactly why you do not start by reading packets.',
+          'A packet capture records traffic visible at its capture point, subject to collection and truncation settings. That is exactly why you do not start by reading packets.',
         points: [
           'Statistics → Conversations, sorted by bytes. The highest-volume external conversations appear immediately.',
-          'Statistics → IO Graph. Regular, evenly spaced peaks that continue outside working hours are a beacon signature.',
+          'Statistics → IO Graph. Regular peaks continuing outside working hours suggest automation; compare them with legitimate services.',
           'Only then filter: ip.addr for a specific host, http.request.method == POST for uploads, dns for resolution.',
           'Follow TCP Stream reassembles one conversation in full, when you already know which one matters.',
-          'A workstation sending 800 MB outbound to an unknown destination at 03:00 needs no packet-level analysis to be a finding.',
+          'A workstation sending 800 MB outbound to an unknown destination at 03:00 warrants investigation; volume alone does not prove data theft.',
         ],
         callout: {
           tone: 'note',
-          text: 'Encrypted traffic still reveals metadata: who is talking to whom, how often, how much, and for how long. That metadata alone confirms C2, lateral movement and exfiltration without decrypting anything.',
+          text: 'Encrypted traffic still reveals metadata: who is talking to whom, how often, how much, and for how long. Metadata can support hypotheses about C2, movement or transfer, but does not alone establish malicious purpose.',
         },
         redView:
           'A capture contains the full payload of anything unencrypted — credentials, file contents, tokens. This is why HTTPS is the minimum for any sensitive communication, including the attacker\'s own.',
@@ -131,12 +131,12 @@ export const session07: Session = {
         lead:
           'Adjust the jitter and compare the connection timing against real user traffic. Watch what survives the randomisation and what does not.',
         teaches:
-          'That beaconing is detected by statistical regularity rather than by any single connection, and that jitter raises the detection threshold without removing the signal — because no human activity clusters around a central interval the way a timer does.',
+          'That beaconing is detected by statistical regularity rather than by any single connection, and that jitter raises the detection threshold without removing the signal — and that benign scheduled software can produce similar regularity.',
         provenance: 'source',
         sources: [{ file: FILE, section: '4.2 C2 Beaconing Pattern Detection' }],
         detail: [
-          'The point to land: regularity itself is the signature. A user generates irregular bursts with long gaps. A timer generates a distribution clustered around a mean. Even at ±30% jitter the clustering is visible to a statistical test, where an exact-interval rule would already have failed.',
-          'Jitter has an operational cost to the attacker as well. Widening it enough to defeat statistical detection means the implant\'s responsiveness becomes unpredictable, which degrades interactive use of the channel.',
+          'The point to land: regularity itself is the signature. In this teaching comparison, user activity is bursty while the timer clusters around a mean. Real benign automation can also be regular. Even at ±30% jitter the clustering is visible to a statistical test, where an exact-interval rule may fail. Benign scheduled traffic can also cluster.',
+          'Jitter changes interval distributions and can reduce the reliability of timing-only detection. Compare the resulting pattern with benign automation and other telemetry.',
         ],
         data: {
           intervalSeconds: 240,
@@ -144,7 +144,7 @@ export const session07: Session = {
             { label: 'None (0%)', jitter: 0, note: 'Metronomic. Trivially detectable by an exact-interval rule.' },
             { label: 'Low (10%)', jitter: 0.1, note: 'Defeats exact-interval matching. Statistical clustering remains obvious.' },
             { label: 'Typical (25%)', jitter: 0.25, note: 'Common C2 framework default. Still clusters clearly around the mean.' },
-            { label: 'Aggressive (50%)', jitter: 0.5, note: 'Noticeably irregular — and still nothing like user traffic, which has no central tendency at all.' },
+            { label: 'Aggressive (50%)', jitter: 0.5, note: 'Less regular; compare the distribution and other signals with the baseline.' },
           ],
           comparison: {
             label: 'Real user traffic, same host, same duration',
@@ -173,18 +173,18 @@ export const session07: Session = {
         title: 'DNS: the cheapest high-value telemetry there is',
         minutes: 8,
         lead:
-          'Every connection begins with a resolution. Logging every DNS query gives you a complete record of what every device tried to reach.',
+          'Many connections depend on DNS. Collected query logs show observed resolution activity; cached answers, literal addresses and encrypted DNS can leave gaps.',
         points: [
-          'DGA — hundreds of NXDOMAIN responses to random-looking names, then one that resolves. No human produces that pattern.',
+          'DGA — hundreds of NXDOMAIN responses to random-looking names, then one that resolves. Benign automation can also produce failures; investigate the context.',
           'DNS tunnelling — data encoded in subdomains. Very long labels, very high query volume to one domain, larger-than-normal packets, TXT or NULL record types.',
-          'Fast flux — one domain rotating its addresses every few seconds, with a very low TTL. Defeats address-based blocking.',
-          'Detection thresholds that work: more than ten NXDOMAIN responses in sixty seconds from one host; DNS packets over 200 bytes; subdomain strings over fifty characters.',
+          'Fast flux — one domain rotating its addresses every few seconds, with a very low TTL. Can reduce the durability of address-based blocking.',
+          'Illustrative starting thresholds to test against the local baseline: more than ten NXDOMAIN responses in sixty seconds from one host; DNS packets over 200 bytes; subdomain strings over fifty characters.',
           'In the opening scenario, the DGA ran six hours before the beacon started. DNS logging would have given six hours of warning.',
         ],
         redView:
           'Firewalls almost always permit outbound port 53, and DNS volume is naturally high, which makes it good cover. The detection risks are packet size and query volume per domain, which is why careful tunnels limit their data rate.',
         blueView:
-          'DNS logging is low cost, low overhead and available everywhere, and organisations routinely do not collect it. Two rules — NXDOMAIN volume per host, and subdomain length — cover the main DNS attack techniques with few false alarms.',
+          'DNS logging is low cost, low overhead and available everywhere, and organisations routinely do not collect it. Two rules — NXDOMAIN volume per host, and subdomain length — provide useful starting points, with tuning and validation required.',
         provenance: 'source',
         sources: [{ file: FILE, section: '4.3 DNS Anomaly Detection' }],
       },
@@ -199,8 +199,8 @@ export const session07: Session = {
         points: [
           'HTTP/HTTPS POST — large uploads to an unknown destination, or to a bare address with no domain. Unusual Content-Type such as application/octet-stream.',
           'DNS tunnelling — slow, and it passes through controls that block everything else.',
-          'Cloud storage abuse — OneDrive, Dropbox, Google Drive, Mega. The destination is on your allowlist, so only volume distinguishes it.',
-          'Volume baselines are the only reliable detection for cloud abuse. Normal users upload kilobytes; an exfiltration event moves gigabytes.',
+          'Cloud storage abuse — OneDrive, Dropbox, Google Drive, Mega. An allowed destination still requires volume, identity, process and activity context.',
+          'Volume baselines help detect cloud abuse, but legitimate uploads can be large and theft can be slow. Correlate identity, application, timing and data access.',
           'Correlate three sources: outbound volume from the network, tool attribution from SRUM, and staging evidence from the disk.',
         ],
         callout: {
@@ -218,10 +218,11 @@ export const session07: Session = {
         minutes: 14,
         language: 'bash',
         assumes:
-          'Volatility with a memory image and a matching profile for the captured operating system version. Profiles must be prepared in advance for every OS build in your environment — this is a preparation task, not an incident task.',
+          'The commands below illustrate legacy Volatility 2 profile syntax; profile names are examples, not a runnable setup for this output-only workshop. Volatility 3 uses symbol tables and different plugin names. Verify the installed version, supported image and required symbols before an incident.',
         lead:
-          'Six commands answer most memory forensics questions. Run them in this order; each narrows what the next one has to look at.',
-        code: `# 1. Identify the image — OS version and architecture
+          'This example orders common memory questions. Adapt the commands to the installed Volatility version and captured operating system.',
+        code: `# Legacy Volatility 2 example; not Volatility 3 syntax.
+# 1. Identify the image — OS version and architecture
 volatility -f memory.dmp imageinfo
 
 # 2. Process list, then the tree with parent-child relationships
@@ -244,18 +245,18 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
           { part: 'imageinfo', explains: 'Determines the profile. Everything after this depends on getting it right; a wrong profile produces plausible nonsense rather than an error.' },
           { part: 'pslist / pstree', explains: 'pslist enumerates processes; pstree shows parentage. The parent-child reasoning from Session 2 applies here identically.' },
           { part: 'netscan', explains: 'Connections as the OS saw them at capture, including recently closed ones. Attributes a connection to a process, which firewall logs cannot do.' },
-          { part: 'malfind', explains: 'Scans for memory regions that are executable but not backed by a file. This is the signature of code written into a process rather than loaded from disk.' },
+          { part: 'malfind', explains: 'Uses memory-protection and mapping heuristics to surface suspicious regions. Validate the bytes, backing and process context; it is not a conclusive injection detector.' },
           { part: 'cmdline', explains: 'Arguments for each process. Encoded commands and script paths surface here even when the parent chain looks ordinary.' },
-          { part: 'memdump + strings', explains: 'Extracts a process and searches its memory for addresses, domains and commands. The last resort, and often the most productive one.' },
+          { part: 'memdump + strings', explains: 'Extracts a process and searches its memory for addresses, domains and commands. A useful follow-up when extraction and deeper inspection are justified.' },
         ],
         expected:
           'On a clean image, malfind returns little and what it returns is explicable — some legitimate software uses just-in-time compilation, which produces writable executable memory. On a compromised image, malfind plus netscan together name the process, the injected region and the destination it is talking to.',
         limitations: [
-          'Requires a matching profile. Without one for the exact OS build, output is unreliable.',
-          'Memory shows the moment of capture only. Activity before it is not there.',
-          'Some legitimate software — .NET, Java, browsers with JIT compilation — produces writable executable memory. The MZ header is what distinguishes injected binaries from JIT output.',
+          'This legacy example requires a matching profile; Volatility 3 requires suitable symbols. Validate version-specific prerequisites.',
+          'Memory is a snapshot that may retain traces of earlier activity; it is not a complete historical record.',
+          'Some legitimate software — .NET, Java, browsers with JIT compilation — produces writable executable memory. An MZ header is a lead to validate as a PE structure, not a universal test separating injection from legitimate activity.',
           'A sufficiently sophisticated implant can separate the write and execute phases so that the combined permission never appears at capture time.',
-          'malfind confirms injection, not communication. netscan confirms communication, not malice. The finding requires both.',
+          'malfind surfaces suspicious regions; netscan attributes socket artefacts. Correlate both with process context and other evidence before concluding malicious injection.',
         ],
         provenance: 'source',
         sources: [{ file: FILE, section: '4.6 Memory Artifacts & Volatility' }],
@@ -267,16 +268,16 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
         title: 'Instructor demonstration: reading malfind output',
         minutes: 12,
         synthetic: true,
-        lead: 'This is what injected code looks like. Select each line.',
+        lead: 'Inspect a suspicious memory region and its connection. Select each line and distinguish observations from conclusions.',
         caption: 'Synthetic Volatility malfind and netscan output',
-        source: 'Fabricated for teaching. Output format follows Volatility conventions.',
+        source: 'Fabricated for teaching. The supplied exercise also validates the PE structure and private, unbacked mapping for PID2344, and attributes the other regions to legitimate runtimes. The bytes alone are not conclusive.',
         lines: [
           {
             text: 'Process: explorer.exe   Pid: 2344   Address: 0x7ff000200000',
             note: {
               kind: 'observation',
               label: 'A trusted process, and that is the point',
-              body: 'explorer.exe is the Windows shell. It always runs, it is never stopped, it has broad network permissions and security software trusts it. Those four properties are exactly why it is a preferred injection target, along with svchost.exe — of which many instances run at once, so one more is hard to notice.',
+              body: 'explorer.exe is the Windows shell. Its familiar name is not evidence of innocence. Inspect its path, parentage, memory regions and network activity; attackers can inject into legitimate processes.',
             },
           },
           {
@@ -284,15 +285,15 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
             note: {
               kind: 'hypothesis',
               label: 'Writable and executable at the same time',
-              body: 'Legitimate code is normally one or the other. It is written once by the loader and then executed from read-only memory. Code that must be written into a process and then run from that same region needs both permissions simultaneously — which is the structural signature of injection, not a quirk.',
+              body: 'Memory permissions vary with loader behaviour, runtime and mapping. Writable executable memory warrants inspection, but legitimate JIT engines can use it and malicious code can change permissions between writing and execution.',
             },
           },
           {
             text: '0x7ff000200000  4d 5a 90 00 03 00 00 00  MZ......',
             note: {
               kind: 'confirmed',
-              label: 'MZ — a complete executable, in memory, with no file',
-              body: '4d 5a is the magic number marking the start of a Windows PE executable. A full binary is present in writable executable memory inside explorer.exe, and no corresponding file exists on disk. Combined with the permission above, this is a near-certain injection indicator — there is no innocent reason for a process with no need to load an additional binary to contain one this way.',
+              label: 'MZ — inspect the executable structure and mapping',
+              body: '4d 5a marks an MZ header. Validate the PE signature and structure, determine whether the region is file-backed, and assess its purpose. The excerpt is suspicious but the two bytes alone do not prove a complete injected binary.',
             },
           },
           {
@@ -376,7 +377,7 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
             stem: 'An implant uses 25% jitter on a five-minute beacon. Does that defeat detection?',
             options: [
               {
-                text: 'It defeats exact-interval matching, and the timing still clusters around a mean in a way user traffic never does',
+                text: 'It can defeat exact-interval matching; assess remaining timing patterns against benign scheduled traffic',
                 correct: true,
                 feedback:
                   'Correct. The detection moves from matching an interval to measuring a distribution. Human traffic has no central tendency; a timer does, whatever noise is added.',
@@ -385,7 +386,7 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
                 text: 'Yes — randomised intervals cannot be distinguished from normal traffic',
                 correct: false,
                 feedback:
-                  'Jittered intervals are randomised around a value. Normal traffic is not randomised around anything, which is the whole difference.',
+                  'Jittered intervals may still cluster, but benign automation can also be regular. Compare timing with the baseline and independent signals.',
               },
               {
                 text: 'No — jitter has no effect on any detection method',
@@ -409,7 +410,7 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
                 text: 'Run netscan to establish whether that PID holds a network connection',
                 correct: true,
                 feedback:
-                  'Correct. malfind establishes injection; netscan establishes communication. The two-source finding is what justifies immediate escalation, and either alone is incomplete.',
+                  'Correct. malfind surfaces a suspicious region; netscan adds connection context. The two-source finding is what justifies immediate escalation, and either alone is incomplete.',
               },
               {
                 text: 'Escalate immediately — injection is confirmed',
@@ -421,7 +422,7 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
                 text: 'Check the disk for the corresponding file',
                 correct: false,
                 feedback:
-                  'There will not be one. Memory not backed by a file is the definition of what malfind found.',
+                  'There will not be one. Inspect file backing as well as memory; malfind is a heuristic, not proof that no related file exists.',
               },
               {
                 text: 'Dismiss it — svchost.exe is a legitimate Windows process',
@@ -442,10 +443,10 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
         provenance: 'source',
         sources: [{ file: FILE, section: '12. Actionable Takeaways' }],
         takeaways: [
-          'Capture memory before EDR isolation, without exception. Isolation can kill the process you were capturing.',
+          'Preserve volatile evidence before disruptive actions when safe and authorised; urgent containment may take priority. Document the decision.',
           'DNS logs are the highest-value early warning available and are routinely not collected.',
           'Beaconing is detected by statistical regularity, not by any single connection.',
-          'PAGE_EXECUTE_READWRITE plus an MZ header, confirmed by netscan, is the strongest memory evidence of active compromise.',
+          'Correlate suspicious executable memory, validated headers, process context and network activity; no single pattern proves injection.',
           'Disk, network and memory each close gaps the others leave. An investigation missing one has holes an attacker operates in.',
         ],
         furtherStudy: [
@@ -469,7 +470,7 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
         synthetic: true,
         resourceDir: 'network-memory-forensics',
         scenario:
-          'WORKSTATION-07 from the opening scenario. You have the DNS log for the previous twelve hours, a summarised packet capture for three hours, and parsed Volatility output from a memory image taken before isolation. Disk forensics found nothing.',
+          'WORKSTATION-07 from the opening scenario. You have the DNS log for the previous twelve hours, selected network conversation and timing summaries, and parsed Volatility output from a memory image taken before isolation. Disk forensics found nothing.',
         objectives: [
           'Establish the beacon interval and the destination, with evidence',
           'Find the DGA activity that preceded the beacon and state how much earlier it was detectable',
@@ -511,9 +512,9 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
               'From the conversation summary, identify the highest-volume and highest-count external destinations.',
               'For the suspected C2, calculate the mean interval between connections and the standard deviation.',
               'Compare the payload size variance against the user-traffic baseline included in the pack.',
-              'State what the jitter percentage appears to be, and show your working.',
+              'Report relative interval variation and explain any distribution assumption used to estimate jitter.',
             ],
-            produces: 'The beacon destination, interval, jitter estimate and the statistics supporting it.',
+            produces: 'The suspected beacon destination, interval, relative variation and supporting statistics.',
           },
           {
             ref: 'T2',
@@ -577,7 +578,7 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
             forTask: 'T1',
             tiers: [
               'Sort conversations by connection count as well as by bytes. A beacon is many small connections, so it may not top a byte-sorted list.',
-              'Jitter estimate: standard deviation divided by mean, expressed as a percentage.',
+              'Standard deviation divided by mean gives the coefficient of variation. To estimate configured jitter, state and justify the assumed interval distribution.',
               'Compare against the user baseline in the pack. The number that separates them most clearly is the standard deviation relative to the mean.',
             ],
           },
@@ -592,7 +593,7 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
           {
             forTask: 'T3',
             tiers: [
-              'Not every malfind hit is injection. Look for the MZ header — 4d 5a — to separate injected binaries from JIT compilation output.',
+              'Not every malfind hit is injection. Validate headers, file backing and process context; the MZ bytes alone do not distinguish injection from benign memory.',
               'Match PIDs between malfind and netscan. The overlap is your answer.',
               'Decode the command with CyberChef. It will name what the beacon was instructed to do.',
             ],
@@ -656,13 +657,13 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
             band: 'Statistical reasoning',
             weight: '20%',
             descriptor:
-              'Beacon detection is argued from interval statistics rather than asserted. The jitter estimate is supported by working.',
+              'Beacon detection is argued from interval statistics rather than asserted. Relative variation is supported by working; any estimate of configured jitter states its distribution assumption.',
           },
           {
             band: 'Memory interpretation',
             weight: '20%',
             descriptor:
-              'Injection identified correctly. JIT-explicable regions distinguished from genuine injection by the MZ header. Attribution confirmed by a second plugin.',
+              'Injection identified correctly. JIT-explicable regions distinguished from suspicious regions using validated headers, mapping and context. Socket attribution corroborated by another plugin; malicious purpose still needs process and network context.',
           },
           {
             band: 'Missed detection analysis',
@@ -673,7 +674,7 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
           {
             band: 'Evidence discipline',
             weight: '10%',
-            descriptor: 'Confidence labels applied correctly. Two independent sources required before any finding is marked confirmed.',
+            descriptor: 'Confidence labels applied correctly. Corroborate findings with process, mapping and independent network context; two plugins reading one image are not independent acquisitions.',
           },
         ],
         provenance: 'supplementary',
@@ -693,7 +694,7 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
           'If the memory capture had been taken after isolation instead of before, which of your findings disappears?',
         ],
         landingPoint:
-          'Each forensic layer has a blind spot the others cover: disk misses what never touched it, network misses what the code was, memory misses everything before the capture — and an investigation that uses one layer reports confidently on a third of the event.',
+          'Each forensic layer has a blind spot the others cover: disk misses what never touched it, network misses what the code was, memory is an incomplete snapshot rather than a full history — and an investigation that uses one layer reports confidently on a third of the event.',
         provenance: 'supplementary',
       },
 
@@ -704,12 +705,12 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
         provenance: 'source',
         sources: [{ file: FILE, section: '13. Summary' }],
         takeaways: [
-          'Network evidence cannot be deleted from inside the compromised host.',
+          'Independently collected, protected network logs can survive host cleanup; their integrity depends on logging controls.',
           'PCAP triage: conversations for volume, IO Graph for timing, packets last.',
           'Beaconing is timing regularity, small consistent payloads, one destination, unchanged outside hours.',
-          'DGA is hundreds of NXDOMAIN responses then one resolution — detectable from DNS logs alone.',
+          'Many NXDOMAIN responses followed by a resolution can suggest a DGA; validate the source and benign explanations.',
           'Volatility: pstree, netscan, malfind, cmdline, memdump.',
-          'PAGE_EXECUTE_READWRITE plus MZ plus a netscan connection is the strongest memory finding available.',
+          'Writable executable memory, validated headers and a related connection are leads to investigate together.',
         ],
         furtherStudy: [
           { label: 'Volatility Foundation', note: 'Plugin reference and profile documentation.', href: 'https://volatilityfoundation.org/' },
@@ -725,9 +726,9 @@ strings /output/2344.dmp | grep -E "http|https|\\.exe|powershell"`,
     { term: 'Beaconing', definition: 'Regular timed outbound connections from an implant to its C2 server. Detected by timing regularity.' },
     { term: 'Jitter', definition: 'Random variation added to beacon intervals to defeat exact-interval detection. Raises the threshold; does not remove the signal.' },
     { term: 'DGA', definition: 'Domain Generation Algorithm. Malware generates many candidate domains and queries each until one resolves.' },
-    { term: 'NXDOMAIN', definition: 'A DNS response meaning the domain does not exist. High volume from one host is the DGA signature.' },
-    { term: 'malfind', definition: 'The Volatility plugin that scans for executable memory not backed by a file on disk — the injection signature.' },
+    { term: 'NXDOMAIN', definition: 'A DNS response meaning the domain does not exist. High volume from one host can suggest a DGA, misconfiguration or other automation.' },
+    { term: 'malfind', definition: 'The Volatility plugin that scans for executable memory not backed by a file on disk — a heuristic that requires further investigation.' },
     { term: 'PAGE_EXECUTE_READWRITE', definition: 'Memory that is both writable and executable. Legitimate code is normally one or the other.' },
-    { term: 'MZ header', definition: 'The two bytes 4d 5a marking the start of a Windows PE executable. In unbacked memory, it means an injected binary.' },
+    { term: 'MZ header', definition: 'The two bytes 4d 5a marking an MZ header, normally present before the PE signature. In unbacked memory it warrants validating the PE structure and process context.' },
   ],
 }

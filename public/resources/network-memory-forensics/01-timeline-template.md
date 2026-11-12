@@ -40,7 +40,7 @@
 
 ## T3 — Memory
 
-| Process | PID | PAGE_EXECUTE_READWRITE? | MZ header? | Injection or JIT? | Network connection? |
+| Process | PID | PAGE_EXECUTE_READWRITE? | MZ header? | Interpretation and supporting checks | Network connection? |
 |---|---|---|---|---|---|
 | | | | | | |
 | | | | | | |

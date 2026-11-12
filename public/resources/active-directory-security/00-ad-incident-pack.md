@@ -12,10 +12,11 @@
 
 ```
 04:07:12  SIEM ALERT  P1
-Rule   : AD-DCSYNC-001 · Replication rights invoked by non-DC account
+Rule   : AD-DCSYNC-001 · Unexpected directory replication activity
 Detail : Event ID 4662, SubjectUserName=jsmith, source WORKSTATION-22,
          Properties contains 1131f6aa and 1131f6ad
-Note   : WORKSTATION-22 is not a domain controller.
+Note   : WORKSTATION-22 is not a domain controller. The SIEM source field
+         is correlated from4624 on the recording DC, not native4662 data.
 ```
 
 ---
@@ -40,15 +41,17 @@ TIME      EVENT  HOST             DETAIL
                                   source=WORKSTATION-14
 02:14:02  5140   FILESERVER-01    ShareName=\\*\ADMIN$  user=svc_backup
                                   source=WORKSTATION-14
-03:12:55  4769   DC-01            user=svc_backup  ServiceName=krbtgt
+03:12:55  4769   DC-01            user=svc_backup  ServiceName=svc_sql
                                   TicketEncryptionType=0x17
 03:18:40  4728   DC-01            GroupName="Domain Admins"  MemberAdded=svc_backup
                                   SubjectUserName=svc_backup
 03:52:18  4698   DC-01            TaskName=\WindowsUpdateHelper
                                   TaskContent=C:\Windows\Temp\wuh.exe
                                   SubjectUserName=svc_backup
-04:07:12  4662   WORKSTATION-22   user=jsmith  Properties=1131f6aa,1131f6ad
-04:07:12  4662   WORKSTATION-22   user=jsmith  Properties=1131f6ad
+04:06:57  4624   DC-01            user=jsmith  LogonType=3  TargetLogonId=0x9c21
+                                  source=WORKSTATION-22
+04:07:12  4662   DC-01            user=jsmith  SubjectLogonId=0x9c21  Properties=1131f6aa,1131f6ad
+04:07:12  4662   DC-01            user=jsmith  SubjectLogonId=0x9c21  Properties=1131f6ad
 04:11:08  4794   DC-01            DSRM administrator password set attempt
                                   SubjectUserName=svc_backup
 04:19:33  5136   DC-01            ObjectDN=CN=AdminSDHolder,CN=System,DC=corp,DC=local
@@ -87,7 +90,7 @@ DC-03   \CorpBackupPreflight             D:\Scripts\preflight.ps1             20
 
 ```csv
 rule_id,title,event_id,status,fired_this_incident
-AD-DCSYNC-001,Replication rights invoked by non-DC account,4662,stable,YES
+AD-DCSYNC-001,Unexpected directory replication activity,4662,stable,YES
 AD-GRP-002,Privileged group membership change,4728/4732/4756,stable,NO (disabled 2026-01-12 for noise)
 AD-NTLM-003,NTLM network logon from non-admin source,4624,not deployed,NO
 AD-KRB-004,RC4 service ticket for non-computer account,4769,not deployed,NO

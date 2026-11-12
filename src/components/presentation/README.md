@@ -11,3 +11,7 @@ Right arrow/Space/PageDown reveal the next point, then advance. Left/PageUp reve
 Keep titles under10 words, bullets under14 words and takeaways under16. Use no more than4 bullets,5 flow steps,3 comparison columns or5 excerpt lines. Evidence is labelled illustrative; full workshop packs remain on the exercise page. Split a dense slide instead of reducing its font.
 
 Run `node scripts/check-presentations.mjs` and `npm run build`. Browser verification must cover all slides fully revealed, slide bounds, next/previous/reveal-all, overview, fullscreen, resume and reduced motion. Test at1920×1080 and1440×900; phone layouts offer a scaled deck with usable controls, while reading pages remain the way to study on a phone.
+
+## Motion
+
+`useProjectionMotion` uses finite Web Animations API effects on new build items. Previous points stay still. A process connector draws before the new step explanation; evidence reveals code before its annotation; comparisons expose a new side. Section outline stagger is bounded, and the cover's Observe → Reason → Decide sequence runs once per entry. Navigation, reverse, unmount and motion-off cancel outstanding effects. M toggles motion; device reduced motion takes precedence. No layout properties animate, no loops run, and no dependencies were added.

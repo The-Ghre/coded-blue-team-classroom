@@ -75,7 +75,7 @@ export const session05: Session = {
         narrative: [
           'The alert reads: CORP-DC-01 was accessed by a previously unseen account, svc_backup_new, which ran ntdsutil.exe. Ten minutes later, 4.2 GB was transferred to an external address.',
           'The machine is still running. Users are affected. The service owner is on the phone asking you to reboot it to restore service, and says they can give you ten minutes.',
-          'Everything you need is in RAM right now. In ten minutes it may not be.',
+          'Some evidence may exist only in RAM right now. A reboot could make that evidence unavailable.',
         ],
         drivingQuestion:
           'What do you do in the next ten minutes, in what order, and what exactly is lost if you get the order wrong?',
@@ -105,7 +105,7 @@ export const session05: Session = {
         title: 'Six phases, and what skipping each one costs',
         minutes: 8,
         lead:
-          'Every major IR framework — NIST SP 800-61, SANS, ISO 27035 — uses a version of these six. The phases are not bureaucracy; each exists because skipping it reliably produces worse outcomes than the attack.',
+          'This course uses the six-phase SANS-style teaching model. Other frameworks organise the work differently: current NIST SP 800-61r3 aligns incident response with CSF 2.0. Use the phases to organise responsibilities, not as a rigid sequence that delays urgent action.',
         points: [
           'Preparation — plan, named on-call, tested runbooks, pre-deployed tools, out-of-band comms, legal contacts, tabletop exercises. Skip it and you improvise under pressure.',
           'Identification — confirm the alert, determine scope and start time, establish whether the attacker is still active. Skip it and you waste capacity or extend dwell time.',
@@ -199,7 +199,7 @@ export const session05: Session = {
         title: 'Order of volatility: collect what disappears first',
         minutes: 9,
         lead:
-          'This is the hinge between response and forensics. Before you change anything, capture everything — in the order of how fast it vanishes.',
+          'This is the hinge between response and forensics. Prioritise evidence by how fast it vanishes, while controlling ongoing harm. Collection and containment may need to proceed together; the incident response plan and current risk determine the sequence.',
         points: [
           'CPU registers and cache — lost the instant the processor state changes. Practically uncollectable.',
           'RAM — lost on any reboot or power loss. Contains credentials, injected code, encryption keys, live connections.',
@@ -215,15 +215,15 @@ export const session05: Session = {
             { label: '2 · RAM', note: 'Credentials, injected code, encryption keys, live connections — gone on reboot', tone: 'attack' },
             { label: '3 · Connections and processes', note: 'Changing continuously while you read them', tone: 'hypothesis' },
             { label: '4 · Disk', note: 'Stable, but overwritable', tone: 'observation' },
-            { label: '5 · Remote and archival logs', note: 'Most stable — and already off the host, beyond the attacker\'s reach', tone: 'confirmed' },
+            { label: '5 · Remote and archival logs', note: 'Off-host copies resist local cleanup; protect access and retention', tone: 'confirmed' },
           ],
         },
         callout: {
           tone: 'warn',
-          text: 'Never reboot a potentially compromised machine before capturing memory. This is the single most common evidence-destruction mistake in incident response. The non-negotiable sequence is: memory capture, then log and network export, then isolation.',
+          text: 'A reboot destroys volatile memory. Preserve RAM before reboot when feasible, but do not delay urgent containment solely to finish collection. In this controlled scenario, practise memory capture, log and network export, then isolation; document any risk-based change to that order.',
         },
         redView:
-          'Memory forensics is what fileless technique exists to defeat, and it works only if the defender captures memory before shutting down. The race between an attacker destroying evidence and a defender capturing it is won by whoever rehearsed.',
+          'Fileless execution can evade disk-only investigation, while memory may retain injected code and live state. Rehearse capture and containment so the team can preserve volatile evidence without ignoring ongoing harm.',
         blueView:
           'For most incidents involving active malware, the volatile evidence in RAM is worth more than the marginal quality gain of a cleaner disk image from a powered-off machine. Memory capture on a 16 GB host takes three to five minutes.',
         provenance: 'source',
@@ -239,13 +239,13 @@ export const session05: Session = {
           'Four methods, and a list of four things that destroy evidence while appearing to help.',
         points: [
           'EDR network isolation — freezes the host for investigation while keeping the management channel. Fastest and cleanest.',
-          'Account disable, never delete — stops access while preserving the audit history, which is itself evidence.',
+          'Disable compromised accounts rather than deleting them during investigation, preserving the account object and its context. Revoke active sessions and tokens where applicable. Deletion does not erase historical Security log events.',
           'Firewall block or DNS sinkhole — cuts the C2 channel at the perimeter.',
           'VLAN isolation — separates several affected systems where some connectivity is still required.',
         ],
         callout: {
           tone: 'warn',
-          text: 'Do not reboot before capturing memory. Do not delete suspicious files before imaging the disk. Do not discuss the incident on systems that may be compromised. Do not wipe a machine before imaging it — a wiped machine cannot be investigated.',
+          text: 'Avoid rebooting before memory capture when feasible. Preserve suspicious files before removal and image storage before wiping when the response plan permits. Use trusted communications. If ongoing harm requires immediate containment, record the evidence impact and the reason for acting.',
         },
         redView:
           'Immediate isolation warns the operator, who may then take destructive action. Monitoring for longer risks more damage but reveals more scope. This is a judgement, and an attacker benefits either way if you have not decided the criteria in advance.',
@@ -383,9 +383,9 @@ export const session05: Session = {
             { id: 'e6', time: '09:00:12', pillar: 'identity', kind: 'observation', title: 'SIEM alert fires', body: 'Correlation rule for encoded PowerShell triggers. P3 assigned automatically.', evidence: 'SIEM alert record' },
             { id: 'e7', time: '09:05:33', pillar: 'identity', kind: 'hypothesis', title: 'Tier 1 confirms true positive', body: 'Analyst decodes the command, confirms the download and the dropped file. Escalates as P2.', evidence: 'Ticket notes; CyberChef decode output' },
             { id: 'e8', time: '09:11:47', pillar: 'network', kind: 'confirmed', title: 'Two further hosts found contacting the same C2', body: 'Cross-machine query finds the same destination from two other endpoints. Severity raised to P1.', evidence: 'EDR cross-machine query; firewall logs' },
-            { id: 'e9', time: '09:13:20', pillar: 'endpoint', kind: 'response', title: 'Memory captured on all three hosts', body: 'RAM acquired before any containment action. This is the decision the rest of the investigation depends on.', evidence: 'Magnet RAM Capture; hashes recorded at acquisition' },
+            { id: 'e9', time: '09:13:20', pillar: 'endpoint', kind: 'response', title: 'Memory captured on all three hosts', body: 'In this synthetic sequence, the team judged a short capture window acceptable and acquired RAM before isolation. Active spread or theft could require earlier containment.', evidence: 'Magnet RAM Capture; hashes recorded at acquisition' },
             { id: 'e10', time: '09:15:05', pillar: 'network', kind: 'response', title: 'Hosts isolated, C2 blocked', body: 'EDR network isolation applied; destination blocked at firewall and DNS.', evidence: 'EDR console action log; firewall change record' },
-            { id: 'e11', time: '09:16:40', pillar: 'identity', kind: 'response', title: 'Accounts disabled, not deleted', body: 'Three accounts disabled. Audit history preserved as evidence.', evidence: 'Directory service change log' },
+            { id: 'e11', time: '09:16:40', pillar: 'identity', kind: 'response', title: 'Accounts disabled, not deleted', body: 'Three accounts disabled, with session revocation handled where supported. Account objects and associated context retained; relevant audit events exported.', evidence: 'Directory service change log' },
             { id: 'e12', time: '09:30:00', pillar: 'endpoint', kind: 'response', title: 'Disk imaging begins', body: 'Hardware write blockers connected; E01 images created; hashes recorded.', evidence: 'FTK Imager log; chain of custody forms' },
           ],
           missedDetections: [
@@ -395,7 +395,7 @@ export const session05: Session = {
             { at: '08:52:40', text: 'Persistence creation was logged and not alerted. The event existed; nothing read it.' },
           ],
           debrief:
-            'Thirteen minutes elapsed between the first detectable event and the alert that actually fired, and four separate detection opportunities passed in that window. The response from 09:00 onwards is textbook — and the entire margin was lost before it began.',
+            'Thirteen minutes elapsed between the first detectable event and the alert that actually fired, and four separate detection opportunities passed in that window. This synthetic response illustrates evidence preservation; its sequence depends on the assessed risk. Detection delay consumed time before response began.',
         },
       },
 
@@ -408,13 +408,13 @@ export const session05: Session = {
         questions: [
           {
             id: 'q1',
-            stem: 'A compromised server is running. The business needs it rebooted in ten minutes. What do you do?',
+            stem: 'A compromised server is running. The response lead judges a brief collection window safe, tools are ready, and a reboot is planned in ten minutes. What best preserves volatile evidence?',
             options: [
               {
                 text: 'Capture memory first, then export logs and network state, then allow the reboot',
                 correct: true,
                 feedback:
-                  'Correct. Memory capture on a typical host takes three to five minutes, which fits. The sequence is non-negotiable because RAM is the only place some evidence exists, and a reboot is irreversible.',
+                  'Correct for the stated safe collection window. Capture RAM and export live evidence before the planned reboot, checking actual capture time. If ongoing harm changes the risk, contain sooner and document the evidence trade-off.',
               },
               {
                 text: 'Refuse the reboot until the full investigation is complete',
@@ -432,7 +432,7 @@ export const session05: Session = {
                 text: 'Isolate the host with EDR first, then capture memory',
                 correct: false,
                 feedback:
-                  'Plausible and backwards. Network isolation may terminate the injected process you were trying to capture, destroying the connection evidence at the same moment it ends the connection. Capture first, isolate second.',
+                  'Isolation can be the right first action when ongoing harm demands it. In this question the lead has judged a short collection window safe, so preserving memory and connection state before changing connectivity best meets the stated evidence goal. EDR isolation does not inherently terminate every process.',
               },
             ],
           },
@@ -470,10 +470,10 @@ export const session05: Session = {
             stem: 'Why disable a compromised account rather than delete it?',
             options: [
               {
-                text: 'Deleting destroys the audit history attached to the account, which is itself evidence',
+                text: 'Disabling retains the account object and context while the team investigates and revokes active access',
                 correct: true,
                 feedback:
-                  'Correct. Both actions stop access. Only one preserves the record of what the account did, which you will need for scope, for the report, and potentially for proceedings.',
+                  'Correct. Disabling retains account attributes and relationships for investigation. Historical Security events can remain after deletion and still identify the SID; deletion is not a log-erasure operation. Session and token revocation may also be required.',
               },
               {
                 text: 'Deleted accounts can be recreated by an attacker with the same name',
@@ -504,16 +504,18 @@ export const session05: Session = {
         provenance: 'source',
         sources: [{ file: FILE, section: '12. Actionable Takeaways' }],
         takeaways: [
-          'Capture memory before any other action, every time. This rule is broken more often than any other.',
+          'Preserve volatile evidence before destructive changes when feasible. Do not postpone urgent containment solely to complete collection.',
           'Hash at every stage. A mismatch is a stop event, not a footnote.',
-          'Containment freezes; it does not fix. Evidence comes first in the same breath.',
+          'Containment limits expansion; eradication removes persistence and entry points. Balance ongoing harm with evidence preservation.',
           'Severity is reassessed continuously. A P3 at 09:00 can be a P1 at 09:11.',
-          'Multiple evidence sources resist anti-forensics. An attacker who clears one log cannot clear them all.',
+          'Independent evidence sources can survive local cleanup. Protect forwarded copies and verify their retention and integrity.',
           'Lessons learned is where an incident becomes a detection improvement, and it depends entirely on what you preserved.',
         ],
         furtherStudy: [
-          { label: 'NIST SP 800-61r2', note: 'The authoritative incident handling guide behind the six-phase model.', href: 'https://csrc.nist.gov/pubs/sp/800/61/r2/final' },
+          { label: 'NIST SP 800-61r3', note: 'Current risk-based incident response guidance aligned with CSF 2.0; it does not use this course’s six phases as a rigid sequence.', href: 'https://csrc.nist.gov/pubs/sp/800/61/r3/final' },
           { label: 'RFC 3227 — Guidelines for Evidence Collection and Archiving', note: 'The primary source for order of volatility.', href: 'https://datatracker.ietf.org/doc/html/rfc3227' },
+          { label: 'Microsoft: revoke user access in an emergency', note: 'Account disablement and active session revocation are separate response concerns.', href: 'https://learn.microsoft.com/en-us/entra/identity/users/users-revoke-access' },
+          { label: 'Windows Security Event 4726', note: 'The account-deletion event retains identifiers; deletion does not erase historical audit events.', href: 'https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4726' },
           { label: 'Volatility Foundation', note: 'The memory analysis framework. Used properly in Session 7.', href: 'https://volatilityfoundation.org/' },
         ],
       },
@@ -564,7 +566,7 @@ export const session05: Session = {
         title: 'Your tasks',
         minutes: 55,
         lead:
-          'Injects arrive at 10, 20, 30 and 40 minutes into the task window. Everything is timestamped. Work the incident, do not read ahead.',
+          'Injects arrive at 10, 20, 30, 40 and 50 minutes into the task window. Everything is timestamped. Work the incident, do not read ahead.',
         tasks: [
           {
             ref: 'T1',
@@ -701,7 +703,7 @@ export const session05: Session = {
             band: 'Evidence sequencing',
             weight: '30%',
             descriptor:
-              'Memory before isolation, isolation before shutdown. Every containment action is checked against what it would change. Any sequence that would destroy volatile evidence loses most of this band regardless of the rest.',
+              'Collection and containment are sequenced against both ongoing harm and evidence volatility. Preserve RAM before planned reboot when feasible; justify urgent earlier containment and document what it changes. An unsupported delay in containment or avoidable evidence loss weakens this band.',
           },
           {
             band: 'Chain of custody completeness',
@@ -737,7 +739,7 @@ export const session05: Session = {
         title: 'Debrief',
         minutes: 10,
         questions: [
-          'Who captured memory before isolating? Who did it the other way round, and what would have been lost?',
+          'Who captured memory before isolation, and what risk made that window acceptable? Who contained first, and how did you document the evidence trade-off?',
           'Compare incident start times across the room. Who worked back furthest, and what artefact let them?',
           'At which inject did severity change for you? Did everyone change at the same one?',
           'Did anyone take a containment action that would have destroyed evidence they had not yet captured?',
@@ -760,7 +762,7 @@ export const session05: Session = {
           'The six phases exist because skipping any one reliably causes worse outcomes than the attack.',
           'Order of volatility: RAM before connections before disk before archived logs.',
           'Chain of custody with hash verification is what makes findings defensible.',
-          'Disk shows history; memory shows the live state. Fileless malware is invisible to the first.',
+          'Disk and memory answer different questions. Memory can preserve code absent from disk, while logs and disk artefacts may still record fileless activity.',
           'Timelines built from many sources resist anti-forensic cleanup far better than single-source timelines.',
         ],
         furtherStudy: [
@@ -773,7 +775,7 @@ export const session05: Session = {
   },
 
   terms: [
-    { term: 'Order of volatility', definition: 'The rule for sequencing evidence collection by how quickly each type disappears. RAM before disk, always.' },
+    { term: 'Order of volatility', definition: 'The rule for sequencing evidence collection by how quickly each type disappears. On a live host, RAM usually has higher collection priority than disk; balance this with ongoing harm and collection feasibility.' },
     { term: 'Chain of custody', definition: 'The documented, unbroken record of who handled evidence, when, and what they did with it.' },
     { term: 'Write blocker', definition: 'A hardware device preventing any write to an evidence drive during acquisition. Hardware is preferred to software for legal proceedings.' },
     { term: 'E01', definition: 'The Expert Witness forensic image format. Carries hashes and acquisition metadata inside the image itself.' },

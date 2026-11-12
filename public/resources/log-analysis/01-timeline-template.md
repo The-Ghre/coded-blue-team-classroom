@@ -24,7 +24,7 @@
 **Confidence rules**
 - `obs` — a source literally recorded this
 - `hyp` — your proposed explanation, not yet supported
-- `confirmed` — **two or more independent sources** support it. Name both.
+- `confirmed` — **two supporting sources** support the interpretation for this workshop. Name both and state any shared collector or trust boundary.
 
 ---
 

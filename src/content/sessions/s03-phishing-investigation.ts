@@ -9,7 +9,7 @@ export const session03: Session = {
   summary:
     'A user reports a suspicious email. You have thirty minutes to find out who else got it, who clicked, and who typed their password.',
   abstract:
-    'More than ninety per cent of breaches begin with email. This session teaches the investigation you will run more often than any other: reading headers for the routing truth the From field hides, interpreting SPF, DKIM and DMARC results without over-trusting them, analysing attachments and URLs without detonating them on your own machine, and assessing user impact in the order that minimises damage. The practical is a complete phishing investigation against the clock.',
+    'This session teaches a common defensive investigation: reading headers for the routing truth the From field hides, interpreting SPF, DKIM and DMARC results without over-trusting them, analysing attachments and URLs without detonating them on your own machine, and assessing user impact in the order that minimises damage. The practical is a complete phishing investigation against the clock.',
   track: 'core',
   themes: ['Headers', 'Authentication', 'Blast radius'],
   prerequisites: [
@@ -18,7 +18,7 @@ export const session03: Session = {
     'Basic DNS: what a TXT record is and what it means for a domain to resolve',
   ],
   outcomes: [
-    'Extract the true origin of an email from its Received chain and Return-Path, independent of the From display',
+    'Trace delivery using trusted Received records and distinguish claimed domains from verified routing',
     'Interpret combined SPF, DKIM and DMARC results and explain why passing authentication does not mean an email is safe',
     'Analyse attachments and URLs safely using sandboxes and scanners, without executing anything locally',
     'Run a user impact assessment in the correct order and calibrate the response to the confirmed blast radius',
@@ -27,6 +27,7 @@ export const session03: Session = {
   ],
   sourceFiles: [FILE],
   sourceNotes: [
+    'Technical review: RFC 7489 requires an authenticated domain aligned with From for DMARC pass. This teaching example therefore uses the lookalike domain in From as well as SPF/DKIM. RFC 8601 defines the trust boundary for Authentication-Results; matching sender-supplied fields are not independent verification. HTTP POST semantics do not establish credential contents.',
     'The source file references Foundation Days 4, 5, 8 and 9 for DNS, session hijacking, password security and file analysis. Those files were not supplied; the specific assumptions are listed as prerequisites instead of being relied on silently.',
   ],
 
@@ -52,14 +53,14 @@ export const session03: Session = {
         recallPrompt: 'From memory first.',
         questions: [
           'In Session 2 you reconstructed an attack that began with a spreadsheet. What was the first Sysmon event that revealed it?',
-          'Which two Sysmon Event IDs would confirm that someone opened a malicious attachment, and what does each prove?',
+          'What different findings do Sysmon Events 11 and 1 support, and how would you link them to an attachment?',
           'What does the "corroboration" criterion in false positive assessment require?',
           'Why does an alert with no follow-on events not mean nothing happened?',
         ],
         answers: [
           'Event ID 1 — process creation — showing EXCEL.EXE as the parent of powershell.exe. The parent-child relationship, not the command.',
-          'Event ID 11 proves a file with the attachment\'s name was written to disk. Event ID 1 proves a process was created from it. The first shows arrival, the second shows execution.',
-          'That the same finding is supported by two or more independent sources, so it survives one source being wrong, missing, or tampered with.',
+          'Event 11 records a file creation or overwrite; Event 1 records process creation. Link file paths or hashes, the parent process and arguments to establish whether the attachment caused execution. A filename alone does not establish delivery or execution.',
+          'Seek independent evidence supporting the same finding. Repeated sender-controlled fields are not independent, and multiple event types from one collector share its integrity limits.',
           'Because absence of events and absence of telemetry look identical. Silence is a question, not an answer.',
         ],
         provenance: 'supplementary',
@@ -93,7 +94,7 @@ export const session03: Session = {
         minutes: 3,
         provenance: 'supplementary',
         objectives: [
-          { verb: 'Extract', text: 'the true origin of an email from its Received chain and Return-Path' },
+          { verb: 'Trace', text: 'email delivery through trusted routing records and identify claimed sending domains' },
           { verb: 'Interpret', text: 'combined SPF, DKIM and DMARC results, and their limits' },
           { verb: 'Analyse', text: 'attachments and URLs safely, without local execution' },
           { verb: 'Assess', text: 'user impact in the order that minimises damage' },
@@ -125,7 +126,7 @@ export const session03: Session = {
             { label: 'Infrastructure', note: 'Domain registered. Certificate transparency can warn you here — before any email is sent.', tone: 'hypothesis' },
             { label: 'Weaponisation', note: 'Attacker-side only. Nothing to see.', tone: 'attack' },
             { label: 'Delivery', note: 'Gateway: authentication results, attachment type, link age.', tone: 'observation' },
-            { label: 'Exploitation', note: 'Proxy and DNS show the click. A POST shows the submission.', tone: 'confirmed' },
+            { label: 'Exploitation', note: 'Correlate requests with user activity. POST alone does not show submitted contents.', tone: 'confirmed' },
             { label: 'Objectives', note: 'Authentication logs show the stolen credential in use. Late and expensive.', tone: 'response' },
           ],
         },
@@ -137,28 +138,28 @@ export const session03: Session = {
         sources: [{ file: FILE, section: '4.1 The Phishing Attack Lifecycle' }],
         detail: [
           'Lookalike domain techniques from the source, worth being able to recognise on sight: typosquatting replaces a character with a similar one (micros0ft.com); combo-squatting appends trust words (paypal-secure-login.com); subdomain spoofing puts the real brand in front of a fake registrable domain (microsoft.com.verify-account.net); TLD variation changes the suffix (company.net for company.com); and homograph attacks substitute a Unicode character that renders identically (Cyrillic а in аpple.com).',
-          'Subdomain spoofing is the one that fools technically competent people, because microsoft.com.verify-account.net genuinely contains microsoft.com. The registrable domain is the last two labels. Read domains right to left.',
+          'Subdomain spoofing is the one that fools technically competent people, because microsoft.com.verify-account.net genuinely contains microsoft.com. The registrable domain is the public suffix plus one label; for example, example.co.uk, not co.uk. Use the Public Suffix List rather than always taking two labels.',
         ],
       },
 
       {
         kind: 'concept',
         id: 'headers',
-        title: 'The header is the only part of an email that is hard to fake',
+        title: 'Identify which header fields your infrastructure can verify',
         minutes: 8,
         lead:
-          'The From field is cosmetic. Any client can display any name and address. The routing data underneath is the forensic record.',
+          'Names and sender-supplied fields can be forged. Start with routing and authentication records added by infrastructure you trust, then state where that trust ends.',
         points: [
           'From — what the user sees. Freely forged. Never trust it alone.',
           'Reply-To — where replies actually go. A mismatch with From is a strong signal in business email compromise.',
-          'Return-Path — where bounces go. Frequently exposes the true sending domain when From does not.',
-          'Received — the routing trail, one entry per hop. Read it bottom to top: the bottom entry is the origin.',
-          'Authentication-Results — the SPF, DKIM and DMARC verdicts as your gateway computed them.',
-          'Message-ID — its format reveals the sending platform. An unusual format suggests a non-standard sending tool.',
+          'Return-Path — the envelope return address for bounces. Compare its domain, but do not treat it as proof of who owns the infrastructure.',
+          'Received — each receiving server prepends a hop. Start at your trusted gateway and trace backward through verified relays; earlier sender-supplied entries can be forged.',
+          'Authentication-Results — use verdicts from a known, trusted authentication service. A sender can insert a forged header with the same name.',
+          'Message-ID — a useful correlation clue, but sender-controlled and not proof of a particular sending platform.',
         ],
         callout: {
           tone: 'warn',
-          text: 'Ask users to forward suspicious emails as attachments, not as ordinary forwards. An ordinary forward strips the original headers and destroys the routing evidence. In Gmail: three dots → Forward as attachment. In Outlook: Forward as Attachment. This single procedural detail decides whether an investigation has data.',
+          text: 'Ask users to forward suspicious emails as attachments, not as ordinary forwards. An ordinary forward may omit original routing headers; preserve the original message as an attachment. In Gmail: three dots → Forward as attachment. In Outlook: Forward as Attachment. This single procedural detail decides whether an investigation has data.',
         },
         redView:
           'The From field is display text. Crafting it to read "Microsoft Support <support@microsoft.com>" costs nothing and is what the user actually sees. Header analysis works precisely because it reads the data the user never sees.',
@@ -178,22 +179,22 @@ export const session03: Session = {
         points: [
           'SPF asks: was this sent from an address the domain owner authorised? The owner publishes a DNS TXT record listing permitted senders.',
           'DKIM asks: has the content been altered since it was signed? The sender signs with a private key; the receiver verifies with the public key in DNS.',
-          'DMARC says what to do when either fails — p=none monitors, p=quarantine sends to spam, p=reject blocks.',
-          'Both failing is a strong spoofing indicator. SPF passing with DKIM failing suggests alteration in transit.',
-          'A domain publishing p=none has, in effect, announced that it will not enforce. Attackers check this before building a campaign.',
+          'DMARC passes when SPF or DKIM passes with a domain aligned to the visible From domain. If neither aligns, the published policy requests monitoring, quarantine or rejection; receiver policy can override handling.',
+          'Authentication failures need context: forwarding, message modification and configuration errors can affect results. A failure alone does not prove spoofing or malicious intent.',
+          'A p=none policy does not request rejection or quarantine for DMARC failure. Receivers can still filter malicious mail using their own controls.',
         ],
         callout: {
           tone: 'rule',
           text: 'An attacker who registers micros0ft-support247.com and configures SPF, DKIM and DMARC for it will pass every authentication check — because the checks verify the lookalike domain, which the attacker legitimately controls. Passing authentication is not a safety signal. The question is always which domain passed.',
         },
         redView:
-          'Domains with no DMARC policy, or p=none, are preferred spoofing infrastructure, because failures are never blocked. Many organisations\' own older domains and subsidiary brands sit in exactly this state.',
+          'Domains with no DMARC policy, or p=none, do not request DMARC rejection. A receiving service can still block messages under its own filtering policy. Many organisations\' own older domains and subsidiary brands sit in exactly this state.',
         blueView:
           'Publishing DMARC p=reject on every domain you send from is one of the highest-value anti-phishing controls available — but note precisely what it protects: it stops others spoofing your domain against third parties. It does nothing against a lookalike domain aimed at you.',
         provenance: 'source',
         sources: [{ file: FILE, section: '4.3 SPF, DKIM & DMARC' }],
         detail: [
-          'The combination table from the source: pass/pass/pass is a legitimate email passing all checks. Fail/fail is a strong spoofing indicator, investigate immediately. Pass/fail suggests content changed after sending. Fail/pass means it was sent from an unauthorised server even though the content is intact — suspicious. And any combination against a domain with p=none means no enforcement happened regardless of the result.',
+          'Read the authenticated domain and alignment, not a pass/fail shortcut table. SPF may fail after forwarding while an aligned DKIM signature still makes DMARC pass. DKIM failure can reflect modification, invalid keys or other verification errors. DMARC policy is a domain request, not proof of the disposition a receiver actually applied.',
           'This is the single most common analytical error in phishing triage: reading "SPF pass, DKIM pass, DMARC pass" and concluding the email is safe. The scenario in this session is built specifically to break that habit.',
         ],
       },
@@ -210,27 +211,27 @@ export const session03: Session = {
         source: 'Fabricated for teaching. Structure follows RFC 5322 header conventions.',
         lines: [
           {
-            text: 'From: Microsoft Support <support@microsoft.com>',
+            text: 'From: Microsoft Support <support@micros0ft-support247.com>',
             note: {
               kind: 'observation',
               label: 'What the user saw, and nothing more',
-              body: 'This is display text. It can say anything. It establishes what the user believed, which matters for understanding why they clicked, but it establishes nothing at all about origin.',
+              body: 'The display name imitates Microsoft, while the visible address uses a lookalike domain. DMARC can pass for that lookalike when its authenticated domain aligns; this does not authenticate Microsoft or the human sender.',
             },
           },
           {
             text: 'Reply-To: account-team@micros0ft-support247.com',
             note: {
               kind: 'confirmed',
-              label: 'The mismatch',
-              body: 'Replies would go to a different domain entirely. Read the domain carefully: micros0ft, with a zero. This is typosquatting plus combo-squatting in one string. A From/Reply-To mismatch across different registrable domains has very few innocent explanations.',
+              label: 'The lookalike domain',
+              body: 'Replies go to the lookalike domain used in From. Read it carefully: micros0ft, with a zero. The misleading display name is the important mismatch with the claimed brand. A Reply-To mismatch elsewhere is a lead to check, not proof by itself.',
             },
           },
           {
             text: 'Return-Path: <bounce@micros0ft-support247.com>',
             note: {
               kind: 'confirmed',
-              label: 'The true sending domain, corroborated',
-              body: 'Bounces go to the lookalike domain, which means the sending infrastructure belongs to it. This is now the second independent header field pointing at the same domain. Two fields agreeing is corroboration.',
+              label: 'The envelope return domain',
+              body: 'The return address uses the same lookalike domain. This is useful consistency, but two sender-influenced fields are not independent proof of ownership. Use trusted authentication results to assess the domain relationship.',
             },
           },
           {
@@ -238,7 +239,7 @@ export const session03: Session = {
             note: {
               kind: 'observation',
               label: 'Top of the chain — your own infrastructure',
-              body: 'The last hop, added by your own mail server. Working upwards through the file means working forwards in time. To find the origin you read downwards, to the bottom.',
+              body: 'This final hop is added by your trusted receiving infrastructure. Trace backward while you can verify each relay. The bottommost claimed hop is not automatically trustworthy.',
             },
           },
           {
@@ -253,30 +254,30 @@ export const session03: Session = {
             text: 'Received: from [185.220.101.45] by smtp-relay-07.bulkmail-svc.net; Mon, 11:02:31',
             note: {
               kind: 'confirmed',
-              label: 'The bottom entry is the origin',
-              body: 'This is where the email entered the mail system. Note it is a bare address with no resolvable hostname — the relay could not identify the sender. This address is your first IOC and the starting point for every pivot you will run later.',
+              label: 'Earlier claimed source — validate the relay',
+              body: 'This earlier entry claims a source address. It establishes that source only if the relay that recorded it is independently trusted or corroborated by its logs. A bare address does not prove a missing hostname or attacker ownership.',
             },
           },
           {
-            text: 'Authentication-Results: mx1.ourcompany.com; spf=pass (domain of micros0ft-support247.com designates 185.220.101.45 as permitted sender); dkim=pass header.d=micros0ft-support247.com; dmarc=pass',
+            text: 'Authentication-Results: mx1.ourcompany.com; spf=pass (domain of micros0ft-support247.com designates 198.51.100.77 as permitted sender); dkim=pass header.d=micros0ft-support247.com; dmarc=pass',
             note: {
               kind: 'hypothesis',
               label: 'The line that fools people — read the domain, not the verdict',
-              body: 'Three passes. Every check succeeded. And every one of them was evaluated against micros0ft-support247.com, which the attacker owns and has configured correctly. SPF confirms the attacker sent from their own authorised server. It is a true statement about an irrelevant domain. If you take one thing from this session, take this line.',
+              body: 'The trusted gateway reports SPF and DKIM passing for the lookalike domain. That domain also appears in From, so DMARC alignment can pass. These are domain-authentication results, not three independent proofs of a benign sender or infrastructure ownership.',
             },
           },
           {
             text: 'X-Originating-IP: [185.220.101.45]',
             note: {
               kind: 'confirmed',
-              label: 'Third agreement',
-              body: 'The same address as the bottom Received entry. Three independent header fields now agree on the origin. This is a confirmed finding, and the confidence comes from the agreement rather than from any single field.',
+              label: 'A repeated claim, not independent corroboration',
+              body: 'X-Originating-IP repeats the earlier claimed source, but a sender can supply or forge it. Agreement between forgeable fields does not establish origin. Confirm with trusted relay or gateway records.',
             },
           },
         ],
         proves: [
-          'The email originated from 185.220.101.45 and was sent on behalf of micros0ft-support247.com',
-          'The From display was forged to read microsoft.com while all routing points elsewhere',
+          'The trusted gateway reports authentication for micros0ft-support247.com; earlier headers claim 185.220.101.45, which requires relay validation',
+          'The display name imitates Microsoft while the From address uses a lookalike domain',
           'All three authentication mechanisms passed — for the attacker-controlled lookalike domain',
         ],
         doesNotProve: [
@@ -304,10 +305,10 @@ export const session03: Session = {
           'Analysing the email tells you what it is. Impact assessment tells you what it did — and the order you ask the questions in matters more than the answers.',
         points: [
           'Who received it? Query the gateway by subject, sender domain or attachment hash. Never assume it was one person.',
-          'Who opened it? Gateway open events, and tracking pixel loads visible as requests to the attacker domain in proxy logs.',
-          'Who clicked? Proxy and DNS logs showing resolution of or connection to the phishing domain.',
-          'Who submitted credentials? A POST request to the phishing URL in proxy logs. This is the question that changes everything.',
-          'Who ran the attachment? Sysmon Event ID 11 then Event ID 1 — the file arrived, then a process was created from it.',
+          'Who may have opened it? Treat open events and tracking pixels as imperfect signals: image proxies and automated fetches can produce them.',
+          'Who clicked? Correlate proxy requests, endpoint/browser evidence and user reports. DNS alone proves a lookup, not a human click.',
+          'Who may have submitted credentials? A POST to a known credential endpoint warrants prompt containment assessment, but method alone does not reveal submitted contents. Corroborate with available page analysis, user reports and account activity.',
+          'Who ran the attachment? Correlate file creation with process and parent/child execution evidence. Event 11 alone does not show execution; a document can execute code through its application rather than as its own process image.',
         ],
         callout: {
           tone: 'rule',
@@ -334,10 +335,10 @@ export const session03: Session = {
           'The domain you just blocked is one domain. The address it resolves to may host the three the attacker plans to use next week.',
         points: [
           'From the domain, find the address it resolves to. Then ask passive DNS what else has resolved there.',
-          'From WHOIS, find registration date and registrant. Domains registered within 72 hours of a campaign that impersonate a known brand are almost always malicious.',
+          'From WHOIS, find registration date and registrant. A recent registration that imitates a brand is a useful risk signal, not a verdict by itself.',
           'From the TLS certificate, search certificate transparency logs. Attackers frequently reuse one certificate across several campaign domains.',
           'From the hosting, find the ASN. Other known-malicious addresses in the same range are worth checking.',
-          'Add everything you find to the IOC list and block it before it is used.',
+          'Record pivoted indicators separately, assess confidence and business impact, and block only when the evidence and response policy justify it.',
         ],
         redView:
           'Sophisticated operators make pivoting hard on purpose: privacy-protected WHOIS, shared hosting where hundreds of unrelated sites share an address, and free instant certificates that generate no useful correlation. Understand the limits of pivoting, not just the technique.',
@@ -379,7 +380,7 @@ export const session03: Session = {
                 { label: 'Domain age (WHOIS)', result: 'Registered 2 days before the campaign. Privacy-protected registrant. Hosted on a VPS in Romania.', weight: 'damning' },
                 { label: 'Recipients', result: '23 mailboxes received it. 2 gateway open events recorded.', weight: 'neutral' },
                 { label: 'Proxy — clicks', result: '3 hosts connected to the domain, including the reporting user.', weight: 'damning' },
-                { label: 'Proxy — POST requests', result: '2 of the 3 connections include a POST to the sign-in path. Credentials were submitted.', weight: 'damning' },
+                { label: 'Proxy — POST requests', result: 'Two hosts sent POST requests to the known credential endpoint. Treat their mapped accounts as potentially exposed; the proxy does not show the submitted values.', weight: 'damning' },
                 { label: 'Authentication logs', result: 'No logins from unfamiliar addresses yet. The report arrived 20 minutes after delivery.', weight: 'neutral' },
               ],
               options: [
@@ -388,21 +389,21 @@ export const session03: Session = {
                   label: 'Complete the full technical analysis, then act on the findings',
                   correct: false,
                   feedback:
-                    'The analysis is already sufficient on the point that matters: two POST requests mean two sets of credentials are in attacker hands right now. Finishing the sandbox run first spends the only minutes you had.',
+                    'The analysis is already sufficient on the point that matters: two POST requests to a verified credential form justify treating two accounts as potentially exposed. Finishing the sandbox run first spends the only minutes you had.',
                 },
                 {
                   id: 'reset-first',
                   label: 'Force a password reset on both confirmed submitters immediately, then continue investigating',
                   correct: true,
                   feedback:
-                    'Correct, and the ordering is the whole lesson. Reset and revoke active sessions for the two confirmed submitters first — session cookies survive a password change, so the revoke is not optional. Then block the domain, purge all 23 mailboxes, and pivot on the origin address. The source scenario found three further campaign domains at that pivot.',
+                    'Correct, and the ordering is the whole lesson. Reset and revoke active sessions for the two potentially exposed accounts first — session cookies survive a password change, so the revoke is not optional. Then block the domain, purge all 23 mailboxes, and pivot on the origin address. The source scenario found three further campaign domains at that pivot.',
                 },
                 {
                   id: 'block-only',
                   label: 'Block the domain at the perimeter and purge the email from all mailboxes',
                   correct: false,
                   feedback:
-                    'Necessary and insufficient. Blocking stops further clicks; it does nothing about the two credentials already captured. The attacker does not need your network to use them.',
+                    'Necessary and insufficient. Blocking stops further clicks; it does nothing about the two accounts that may already be exposed. The attacker does not need your network to use them.',
                 },
                 {
                   id: 'close',
@@ -498,7 +499,7 @@ export const session03: Session = {
                 { label: 'Domain age (WHOIS)', result: 'Registered 31 days ago. Just outside a 30-day age rule.', weight: 'damning' },
                 { label: 'Content fidelity', result: 'Uses the correct platform name, the real enrolment window dates, and internal terminology.', weight: 'damning' },
                 { label: 'Proxy — clicks', result: '12 hosts connected to the phishing domain.', weight: 'damning' },
-                { label: 'Proxy — POST requests', result: '8 POST requests to the credential page. Eight sets of credentials submitted.', weight: 'damning' },
+                { label: 'Proxy — POST requests', result: 'Eight distinct mapped users sent POSTs to the verified credential form. Treat them as potentially exposed; the method alone does not prove the contents.', weight: 'damning' },
                 { label: 'Authentication logs', result: '1 successful login for an affected account from an address in a country with no business presence, 90 minutes ago.', weight: 'damning' },
                 { label: 'Time elapsed', result: '4 hours between delivery and report.', weight: 'damning' },
               ],
@@ -542,7 +543,7 @@ export const session03: Session = {
             stem: 'An email passes SPF, DKIM and DMARC. What have you learned?',
             options: [
               {
-                text: 'That it was sent from a server authorised by whichever domain it claims — which may be a domain the attacker owns',
+                text: 'The trusted gateway reports authenticated domains and DMARC alignment with From; the domain may still be hostile',
                 correct: true,
                 feedback:
                   'Correct. Authentication verifies the relationship between the sending server and the claimed domain. It says nothing about whether that domain should be trusted.',
@@ -557,7 +558,7 @@ export const session03: Session = {
                 text: 'That the From address has been verified as genuine',
                 correct: false,
                 feedback:
-                  'SPF checks the envelope sender and DKIM checks the signing domain. Neither necessarily matches the visible From header.',
+                  'DMARC requires an authenticated domain aligned with From; it does not establish that the named person, mailbox or brand is genuine.',
               },
               {
                 text: 'That the content has not been altered and the sender is who they claim',
@@ -569,31 +570,31 @@ export const session03: Session = {
           },
           {
             id: 'q2',
-            stem: 'A user reports a phishing email twenty minutes after delivery. Proxy logs show a POST to the phishing URL from their host. What do you do first?',
+            stem: 'A verified credential-harvesting page received a POST from the reporting user’s mapped host. What do you do first while confirming the submitted contents?',
             options: [
               {
                 text: 'Force a password reset and revoke active sessions for that account',
                 correct: true,
                 feedback:
-                  'Correct. A POST to a credential page means the credentials are already gone. Revoking sessions matters as much as the reset, because a captured session cookie survives a password change.',
+                  'Correct. A POST to a verified credential form is enough risk to justify precautionary containment while you check what was submitted. Revoking sessions matters as much as the reset, because a captured session cookie survives a password change.',
               },
               {
                 text: 'Submit the URL to a sandbox to confirm it is a credential harvesting page',
                 correct: false,
                 feedback:
-                  'Thorough and too slow. The POST is already sufficient evidence to act. Confirmation can run in parallel with the reset, not before it.',
+                  'Thorough and too slow. The known credential form and mapped user request already justify precautionary action. Confirmation can run in parallel with the reset, not before it.',
               },
               {
                 text: 'Determine the full recipient list so the response covers everyone',
                 correct: false,
                 feedback:
-                  'Important, and second. The confirmed victim is a live exposure; the recipient list is scope work that does not get worse while you do the reset.',
+                  'Important, and second. The potentially exposed account is the urgent risk; the recipient list is scope work that does not get worse while you do the reset.',
               },
               {
                 text: 'Block the phishing domain at the perimeter',
                 correct: false,
                 feedback:
-                  'Prevents further clicks and does nothing about the credential already captured. The attacker is not using your network.',
+                  'Prevents further clicks and does nothing about the account potentially exposed. The attacker is not using your network.',
               },
             ],
           },
@@ -636,13 +637,16 @@ export const session03: Session = {
         provenance: 'source',
         sources: [{ file: FILE, section: '12. Actionable Takeaways' }],
         takeaways: [
-          'Read the Received chain bottom to top and check Return-Path. The From field is display text.',
+          'Trace backward from trusted Received records and compare claimed domains; do not assume the bottom header proves origin.',
           'Passing authentication tells you which domain was verified, not whether to trust it.',
           'If credentials were submitted, reset first and investigate second.',
           'Calibrate the response to confirmed impact, using the severity tiers.',
           'Always pivot before closing. One domain is rarely one domain.',
         ],
         furtherStudy: [
+          { label: 'RFC 8601 — Authentication-Results trust boundary', note: 'Why sender-supplied results and repeated header claims need validation.', href: 'https://www.rfc-editor.org/rfc/rfc8601.html' },
+          { label: 'RFC 9110 — HTTP method semantics', note: 'POST records data submitted for processing; the method does not identify the contents.', href: 'https://www.rfc-editor.org/rfc/rfc9110.html#section-9.3.3' },
+          { label: 'Public Suffix List', note: 'Find registrable domain boundaries instead of always taking two labels.', href: 'https://publicsuffix.org/learn/index.html' },
           { label: 'MXToolbox header analyser', note: 'Parses a pasted header into a readable hop-by-hop breakdown.', href: 'https://mxtoolbox.com/EmailHeaders.aspx' },
           { label: 'URLScan.io', note: 'Visits a URL in a sandboxed browser and records the page, DNS and network activity. Never click directly.', href: 'https://urlscan.io/' },
           { label: 'crt.sh — certificate transparency search', note: 'Finds other domains sharing a certificate. The highest-yield pivot available.', href: 'https://crt.sh/' },
@@ -664,9 +668,9 @@ export const session03: Session = {
         synthetic: true,
         resourceDir: 'phishing-investigation',
         scenario:
-          'At 09:14 a user reports an email. You have the original message with headers intact, the mail gateway delivery log, four hours of proxy log, and the authentication log for the affected window. The handover meeting is in ninety minutes and will ask you one question: is anyone still exposed?',
+          'At 09:40 a user reports an email. You have the original message with headers intact, the mail gateway delivery log, four hours of proxy log, and the authentication log for the affected window. The handover meeting is in ninety minutes and will ask you one question: is anyone still exposed?',
         objectives: [
-          'Determine the true origin of the email and the domain it was actually sent from',
+          'Identify trusted routing evidence, claimed sending domains and any unverified origin claim',
           'Interpret the authentication results correctly, including what they do not establish',
           'Establish the complete blast radius: received, opened, clicked, submitted',
           'Take the containment actions in the order that minimises exposure, and justify the order',
@@ -704,12 +708,12 @@ export const session03: Session = {
             minutes: 10,
             title: 'Header analysis',
             steps: [
-              'Read the Received chain bottom to top and record the originating address.',
+              'Start with trusted receiving records; record the earliest verified source and any earlier unverified claim.',
               'Record From, Reply-To and Return-Path, and note every mismatch.',
               'Record the authentication results and write one sentence stating what they actually establish.',
               'Look up the sending domain in the enrichment file. Record its registration age.',
             ],
-            produces: 'Header findings: origin address, true sending domain, authentication interpretation, domain age.',
+            produces: 'Header findings: verified route, claimed domains, authentication interpretation and domain age.',
           },
           {
             ref: 'T2',
@@ -718,7 +722,7 @@ export const session03: Session = {
             steps: [
               'Query the gateway log for all recipients of this campaign. Record the count.',
               'Search the proxy log for connections to the phishing domain. Record which hosts.',
-              'Search for POST requests to the phishing URL. These are confirmed credential submissions.',
+              'Find POST requests to the known credential endpoint. Assess likely exposure using the page analysis and host/account mapping; do not claim the unseen request contents are proven.',
               'The moment you confirm a submission, write down the containment action and the time. Do not wait until the end.',
               'Check the authentication log for logins from unfamiliar locations after delivery.',
             ],
@@ -741,9 +745,9 @@ export const session03: Session = {
             minutes: 10,
             title: 'Pivot',
             steps: [
-              'From the origin address, use the enrichment file\'s passive DNS section to find other domains that have resolved there.',
+              'From the labelled claimed-origin lead, use the enrichment file\'s passive DNS section to find other domains that have resolved there.',
               'From the phishing domain, use the certificate transparency section to find domains sharing its certificate.',
-              'Check the registration dates of anything you find. Clustered registrations indicate one campaign.',
+              'Compare registration dates and other relationships. Clustered dates support a lead but do not prove one campaign.',
               'Add every discovered indicator to the IOC list, marked as discovered-by-pivot rather than observed.',
             ],
             produces: 'At least two additional pieces of infrastructure, with the pivot path that found each.',
@@ -773,8 +777,8 @@ export const session03: Session = {
           {
             forTask: 'T1',
             tiers: [
-              'Received headers stack with the newest at the top. The origin is the bottom one.',
-              'Compare the registrable domain — the last two labels — across From, Reply-To and Return-Path. Subdomains are designed to mislead you here.',
+              'Received records normally stack newest first. Start at the trusted gateway; earlier sender-supplied claims need validation.',
+              'Compare registrable domains across From, Reply-To and Return-Path. Use the Public Suffix List: example.co.uk has three labels, not two.',
               'For the authentication sentence, complete: "These checks confirm that ___ authorised ___ to send on its behalf, which tells us nothing about whether ___."',
             ],
           },
@@ -782,8 +786,8 @@ export const session03: Session = {
             forTask: 'T2',
             tiers: [
               'Search the gateway log by sending domain rather than by subject — subject lines are varied within a single campaign.',
-              'In the proxy log, the method column distinguishes a click from a submission. GET is a visit. POST is a form.',
-              'If you have found a POST and have not yet written down a containment action, stop reading and write it down now. That ordering is 20% of the assessment.',
+              'A GET records a request, not necessarily a human click. A POST records data submission, but does not reveal credentials unless the supporting evidence establishes the content.',
+              'For a POST to the known credential form, document a prompt precautionary containment decision and its evidence limits. Sequencing is 25% of the assessment.',
             ],
           },
           {
@@ -791,14 +795,14 @@ export const session03: Session = {
             tiers: [
               'For a zero-detection hash during an active investigation, reread the Session 3 triage console feedback on alert PH-0233.',
               'Execution is confirmed by endpoint telemetry, not by the presence of the file at the gateway.',
-              'If there is no endpoint evidence of execution, say so explicitly as a finding. "No evidence of execution on any host, confirmed by absence of file creation events" is a result.',
+              'If there is no endpoint evidence of execution, say so explicitly as a finding. "Execution cannot be established from this pack because endpoint process telemetry is not supplied" is a result.',
             ],
           },
           {
             forTask: 'T4',
             tiers: [
               'Two pivot paths are available: address-to-domains via passive DNS, and certificate-to-domains via transparency logs.',
-              'Look at registration dates on whatever you find. Several domains registered within the same few days is one campaign being staged.',
+              'Look at registration dates on whatever you find. Several domains registered near the same time may be related; validate the relationship before attributing or blocking them.',
               'Mark pivoted indicators differently from observed ones in your IOC list. A blocklist entry nobody has seen in traffic carries different confidence, and the person who acts on it needs to know.',
             ],
           },
@@ -850,7 +854,7 @@ export const session03: Session = {
             band: 'Containment sequencing',
             weight: '25%',
             descriptor:
-              'Credential resets are initiated on confirmation of submission, before the remaining analysis. Session revocation accompanies the reset. The action log shows the ordering, with times.',
+              'Precautionary resets and session revocation are justified promptly for likely credential exposure; the report states the evidence and remaining uncertainty. Session revocation accompanies the reset. The action log shows the ordering, with times.',
           },
           {
             band: 'Impact accuracy',
@@ -911,7 +915,7 @@ export const session03: Session = {
         provenance: 'source',
         sources: [{ file: FILE, section: '13. Summary' }],
         takeaways: [
-          'Headers carry the routing truth. From is display text; Received bottom-up and Return-Path are the evidence.',
+          'Trusted receiving records support routing findings. Sender-supplied fields and earlier claimed hops can be forged.',
           'SPF, DKIM and DMARC verify a relationship to a claimed domain, and a lookalike domain can satisfy all three.',
           'Never open attachments or visit URLs directly. Sandboxes and scanners exist for this.',
           'Impact assessment has an order, and credential submission is the finding that interrupts everything else.',
@@ -930,8 +934,8 @@ export const session03: Session = {
   terms: [
     { term: 'SPF', definition: 'Sender Policy Framework. A DNS record listing which servers may send mail for a domain.' },
     { term: 'DKIM', definition: 'DomainKeys Identified Mail. A cryptographic signature proving content has not been altered since signing.' },
-    { term: 'DMARC', definition: 'Policy layer telling receivers what to do when SPF or DKIM fail: none, quarantine, or reject.' },
-    { term: 'Return-Path', definition: 'The header giving the bounce address. Frequently reveals the true sending domain when From does not.' },
+    { term: 'DMARC', definition: 'Domain-based Message Authentication, Reporting and Conformance. Evaluates alignment of a passing SPF or DKIM domain with From and publishes a requested failure policy.' },
+    { term: 'Return-Path', definition: 'The envelope return address for delivery failures. Compare its domain with authenticated domains; it does not prove sender identity or infrastructure ownership.' },
     { term: 'IOC', definition: 'Indicator of Compromise — an address, domain, hash or artefact that can be searched for or blocked.' },
     { term: 'Pivoting', definition: 'Using one indicator to discover related attacker infrastructure via passive DNS, WHOIS or certificate transparency.' },
     { term: 'BEC', definition: 'Business Email Compromise. Phishing with no malicious payload, where the instruction itself is the attack.' },

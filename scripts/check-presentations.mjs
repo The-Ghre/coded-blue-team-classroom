@@ -2,8 +2,10 @@ import { createServer } from 'vite'
 import assert from 'node:assert/strict'
 const server = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, cacheDir: '/tmp/coded-presentation-check-cache' })
 try {
-  const { sessions, getBlock } = await server.ssrLoadModule('/src/content/index.ts')
+  const { sessions, getBlock, checkTimings, checkDuplicateIds } = await server.ssrLoadModule('/src/content/index.ts')
   const { presentationPlans, getPresentation, buildCount } = await server.ssrLoadModule('/src/content/presentations/index.ts')
+  assert.deepEqual(checkDuplicateIds(), [], 'Reading blocks must retain unique IDs')
+  assert(checkTimings().every(report => report.ok), 'Reviewed sessions must retain 90/90 timing')
   const words = text => text.trim().split(/\s+/).length
   let total = 0
   for (const session of sessions) {

@@ -126,7 +126,7 @@ export const presentation07: PresentationPlan = {
           "id": "timer-or-user",
           "sourceId": "beacon",
           "kind": "compare",
-          "title": "A timer and a person leave different shapes",
+          "title": "Compare timing patterns with the baseline",
           "columns": [
             {
               "label": "Beacon",
@@ -144,7 +144,8 @@ export const presentation07: PresentationPlan = {
                 "Bursts separated by idle gaps"
               ]
             }
-          ]
+          ],
+          "takeaway": "Benign scheduled software can also be regular; corroborate the pattern."
         },
         {
           "id": "jitter-build",
@@ -215,7 +216,7 @@ export const presentation07: PresentationPlan = {
             },
             {
               "label": "NXDOMAIN",
-              "note": "Repeated failures from one host"
+              "note": "NXDOMAIN means the queried name does not exist"
             },
             {
               "label": "Resolution",
@@ -225,7 +226,8 @@ export const presentation07: PresentationPlan = {
               "label": "Connection",
               "note": "Compare with the beacon destination"
             }
-          ]
+          ],
+          "takeaway": "This pattern suggests a domain generation algorithm; investigate benign automation too."
         },
         {
           "id": "dns-patterns",
@@ -369,7 +371,7 @@ export const presentation07: PresentationPlan = {
             },
             {
               "text": "4d 5a 90 00  MZ..",
-              "note": "A PE header in the region"
+              "note": "MZ header: validate the PE structure"
             },
             {
               "text": "netscan: PID 2344 -> 192.0.2.24:443",
@@ -394,7 +396,7 @@ export const presentation07: PresentationPlan = {
             {
               "label": "Check next",
               "points": [
-                "Distinguish legitimate JIT activity",
+                "Check legitimate just-in-time compilation",
                 "Inspect command lines",
                 "Correlate with network history"
               ]
@@ -409,7 +411,8 @@ export const presentation07: PresentationPlan = {
           "points": [
             "Identify evidence that could disappear.",
             "Explain what network logs would still preserve."
-          ]
+          ],
+          "takeaway": "Preserve evidence when safe; urgent containment may take priority."
         }
       ]
     },
@@ -442,7 +445,7 @@ export const presentation07: PresentationPlan = {
           "points": [
             "Record destination and connection count.",
             "Calculate mean interval and standard deviation.",
-            "Compare timing and payload variance with the baseline."
+            "Report relative variation; state assumptions before estimating configured jitter."
           ]
         },
         {
@@ -473,7 +476,7 @@ export const presentation07: PresentationPlan = {
           "kind": "activity",
           "title": "T4 · Follow movement and outbound data",
           "points": [
-            "Record the largest transfer’s size, time and destination.",
+            "Record transfer size, time, destination and Content-Type.",
             "Review internal SMB and RDP traffic.",
             "Place lateral contacts relative to the transfer."
           ]
@@ -532,7 +535,7 @@ export const presentation07: PresentationPlan = {
           "title": "Show the reasoning behind each conclusion",
           "points": [
             "Support timing claims with calculations.",
-            "Distinguish JIT-explicable regions from suspicious injected code.",
+            "Distinguish legitimate runtime memory from suspicious regions using context.",
             "Label confidence and join independent sources."
           ]
         },

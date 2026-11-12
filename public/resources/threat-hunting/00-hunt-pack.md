@@ -34,6 +34,7 @@ AUDITING STATUS  <-- check this before interpreting ANY null result
   Process creation (4688) with command line : ENABLED
   PowerShell script block logging           : ENABLED
   Directory Service Object Access (4662)    : ENABLED, since 2026-01-04
+  Relevant replication SACL and collection : VERIFIED for this synthetic window
   Sysmon                                    : deployed, 94% of estate
   Kerberos service ticket auditing (4769)   : ENABLED
 ```
@@ -127,15 +128,17 @@ DATE       TIME      HOST             USER       IMAGE                    COMMAN
 
 ## Data source 3 — Windows Security Event ID 4662 (30 days, replication properties only)
 
+The source-host column is pre-correlated enrichment from matching logon IDs in Event ID4624 on the same recording DC. It is not a native4662 field. Validate source roles and authorised replication services; do not exclude accounts solely because their names end in$.
+
 ```
-DATE       TIME      HOST             SUBJECT USER      PROPERTIES
-2026-02-20 03:00:14  DC-02            DC-01$            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
-2026-02-20 03:00:14  DC-03            DC-01$            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
-2026-02-27 03:00:11  DC-02            DC-01$            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
-2026-03-06 03:00:09  DC-03            DC-02$            1131f6ad-9c07-11d1-f79f-00c04fc2dcd2
-2026-03-11 02:47:03  FILESERVER-01    jsmith            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
-2026-03-11 02:47:03  FILESERVER-01    jsmith            1131f6ad-9c07-11d1-f79f-00c04fc2dcd2
-2026-03-13 03:00:22  DC-02            DC-01$            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+DATE       TIME      LOGGING DC  SUBJECT USER  SOURCE HOST      PROPERTIES
+2026-02-20 03:00:14  DC-02       DC-01$        DC-01            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+2026-02-20 03:00:14  DC-03       DC-01$        DC-01            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+2026-02-27 03:00:11  DC-02       DC-01$        DC-01            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+2026-03-06 03:00:09  DC-03       DC-02$        DC-02            1131f6ad-9c07-11d1-f79f-00c04fc2dcd2
+2026-03-11 02:47:03  DC-01       jsmith        FILESERVER-01    1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+2026-03-11 02:47:03  DC-01       jsmith        FILESERVER-01    1131f6ad-9c07-11d1-f79f-00c04fc2dcd2
+2026-03-13 03:00:22  DC-02       DC-01$        DC-01            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
 ```
 
 ---

@@ -78,7 +78,8 @@ export const presentation08: PresentationPlan = {
           "points": [
             "Never execute a sample on a production machine.",
             "Keep sample execution inside a controlled isolated environment.",
-            "Run host forensics in parallel with sample analysis."
+            "Run host forensics in parallel with sample analysis.",
+            "Use maintained analysis tools; static inspection also needs isolation."
           ]
         }
       ]
@@ -121,15 +122,15 @@ export const presentation08: PresentationPlan = {
           "id": "magic-bytes",
           "sourceId": "static",
           "kind": "evidence",
-          "title": "The extension is a label; the bytes identify format",
+          "title": "Use header bytes to check the claimed format",
           "lines": [
             {
               "text": "4D 5A             MZ",
-              "note": "Windows PE executable"
+              "note": "MZ header; verify the PE structure"
             },
             {
               "text": "50 4B 03 04       PK",
-              "note": "ZIP container; includes modern Office"
+              "note": "ZIP container; modern Office can use it"
             },
             {
               "text": "25 50 44 46       %PDF",
@@ -137,7 +138,7 @@ export const presentation08: PresentationPlan = {
             },
             {
               "text": "D0 CF 11 E0",
-              "note": "Legacy Office OLE2 container"
+              "note": "OLE compound file; inspect its contents"
             }
           ]
         },
@@ -426,7 +427,7 @@ export const presentation08: PresentationPlan = {
           "kind": "activity",
           "title": "T1 · Make the static triage record",
           "points": [
-            "Record true type, hashes and format mismatch.",
+            "Record type and hashes; note any extension mismatch.",
             "Interpret the reputation result in context.",
             "Extract addresses, paths and registry indicators."
           ]

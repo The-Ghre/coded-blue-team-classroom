@@ -8,7 +8,7 @@ export function AccessGraph({ reached = 6, compact = false }: { reached?: number
     { x: 300, y: 355, name: 'FILESERVER-01', kind: 'computer', at: 1 },
     { x: 500, y: 355, name: 'FILESERVER-02', kind: 'computer', at: 2 },
     { x: 500, y: 255, name: 'DC-01', kind: 'computer', at: 3 },
-    { x: 300, y: 225, name: 'krbtgt', kind: 'ticket', at: 4 },
+    { x: 300, y: 225, name: 'svc_sql', kind: 'ticket', at: 4 },
     { x: 100, y: 145, name: 'Domain Admins', kind: 'group', at: 5 },
     { x: 300, y: 45, name: 'Domain root', kind: 'directory', at: 6 },
   ]
@@ -20,7 +20,7 @@ export function AccessGraph({ reached = 6, compact = false }: { reached?: number
     { d: 'M84 419 C20 370 20 260 20 215 L20 165 L72 165', x: 200, y: 205, label: '4728 · MemberOf' },
     { d: 'M122 130 Q190 45 271 45', x: 300, y: 115, label: '4662 · Replication' },
   ]
-  return <div data-keys-own className="ad-graph-scroll" role="region" aria-label="Privilege climb: account access, group membership and replication rights; scroll horizontally to inspect all objects" tabIndex={0}><svg className={`ad-graph${compact ? ' ad-graph--compact' : ''}`} viewBox="0 0 620 505" fill="none" stroke="currentColor" role="img" aria-label="Synthetic event map: svc_backup authenticates to two file servers and DC-01 over NTLM, requests an RC4 ticket for krbtgt, joins Domain Admins, then invokes domain replication rights.">
+  return <div data-keys-own className="ad-graph-scroll" role="region" aria-label="Privilege climb: account access, group membership and replication rights; scroll horizontally to inspect all objects" tabIndex={0}><svg className={`ad-graph${compact ? ' ad-graph--compact' : ''}`} viewBox="0 0 620 505" fill="none" stroke="currentColor" role="img" aria-label="Synthetic event map: svc_backup authenticates to two file servers and DC-01 over NTLM, requests an RC4 service ticket for svc_sql, joins Domain Admins, then invokes domain replication rights.">
     <defs><marker id={arrow} markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="currentColor" /></marker></defs>
     {edges.map((e, i) => <g key={e.label + i} data-active={reached > i} className="ad-graph__edge"><path pathLength="1" d={e.d} markerEnd={`url(#${arrow})`}/><text x={e.x} y={e.y} textAnchor="middle" fill="currentColor" stroke="none">{e.label}</text></g>)}
     {nodes.map(n => <g key={n.name} transform={`translate(${n.x} ${n.y})`} className="ad-graph__node" data-active={reached >= n.at}>

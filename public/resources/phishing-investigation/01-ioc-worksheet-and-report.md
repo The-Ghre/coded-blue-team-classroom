@@ -26,7 +26,7 @@ clock time at which you decided each one.
 
 | Field | Value | What it establishes |
 |---|---|---|
-| Originating address (bottom Received) | | |
+| Earliest verified peer / earlier unverified claim | | |
 | Return-Path | | |
 | Reply-To | | |
 | From (display) | | |
@@ -44,9 +44,9 @@ clock time at which you decided each one.
 | Level | Count | Hosts / accounts | Log source that establishes it |
 |---|---|---|---|
 | Received | | | |
-| Opened | | | |
-| Clicked | | | |
-| Credentials submitted | | | |
+| Open signals (state limits) | | | |
+| Requests / corroborated clicks | | | |
+| Potential credential exposure (state evidence) | | | |
 | Attachment executed | | | |
 
 ---

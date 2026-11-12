@@ -25,6 +25,7 @@ export const session01: Session = {
   ],
   sourceFiles: [FILE],
   sourceNotes: [
+    'Technical review: the tier structure is a teaching model, not a universal staffing requirement. NIST SP 800-61r3 applies defined incident criteria and risk evaluation to declaration, prioritisation and escalation; it does not require complete certainty before urgent protective action. MITRE tactics describe adversary goals rather than a mandatory linear sequence.',
     'The source file closes with a forward pointer to "detection engineering … and proactive threat hunting" as the next day. In the supplied sequence the next file is Day 2 (log analysis), and detection engineering is Day 4. The backward-pointing "Yesterday" chain across all ten files is internally consistent, so this course follows that chain. The forward pointer appears to survive from an earlier ordering.',
     'The file repeatedly references a "Foundation series" (Days 1, 4, 5, 6, 7, 8 and 9) as assumed prior knowledge. Those files were not supplied, so this session states the specific prerequisites inline rather than assuming them silently.',
   ],
@@ -114,10 +115,10 @@ export const session01: Session = {
         minutes: 6,
         lead: 'Each tier is defined by the question it is allowed to answer and the point at which it must hand the problem on.',
         points: [
-          'Tier 1 answers one question: is this real, or is it noise? They do not investigate — they route, and they document.',
+          'In this course’s tier model, Tier 1 performs initial triage: assess the evidence, gather context, route and document. Real teams can combine these responsibilities.',
           'Tier 2 answers two: how did it happen, and how far did it go? They build the timeline and determine scope.',
-          'Incident Response starts from confirmed findings, never from suspicion. Its job is contain, eradicate, recover.',
-          'Detection Engineering does not watch anything. It builds the rules, and it owns the ATT&CK coverage map.',
+          'Incident Response coordinates containment, eradication and recovery under the response plan. Activation and urgent protective action depend on defined incident criteria and risk, not complete certainty.',
+          'Detection Engineering builds and validates rules, reviews their performance, and maintains the ATT&CK coverage map.',
           'The loop closes when Tier 1 feeds a documented false positive back to Detection Engineering. Without that step, a SOC never improves — it just gets older.',
         ],
         diagram: {
@@ -319,7 +320,7 @@ export const session01: Session = {
         lead: 'MITRE ATT&CK catalogues adversary techniques by tactic — the goal — and technique — the method. For a defender it does four specific jobs.',
         points: [
           'It is a shared language. T1078 means the same thing in every team, in every country, with no ambiguity in handovers.',
-          'It identifies phase. Knowing the technique tells you where the attacker is: early discovery, or active exfiltration.',
+          'It describes the behaviour and tactical goal. A technique mapping supports interpretation, but does not establish a fixed attack phase or the full sequence by itself.',
           'It drives coverage mapping. Every rule is tagged; untagged techniques are visible gaps rather than unknown ones.',
           'It connects threat intelligence to action. A report saying a group uses T1055 becomes a specific thing to hunt for.',
           'The goal is not full coverage of all techniques. It is strong coverage of the techniques that matter to your sector.',
@@ -435,7 +436,7 @@ export const session01: Session = {
           'Timing — is this normal for this hour and this day? A night-shift admin at 03:00 is not an anomaly.',
           'Correlation — has this account or address appeared in other recent alerts? One alert is an event; three are a pattern.',
           'Context window — what happened in the thirty minutes either side? The alert is a slice, not the story.',
-          'Technique — which ATT&CK technique is this, and therefore which attack phase?',
+          'Technique — which ATT&CK technique is this, and which tactical goal does the evidence support?',
         ],
         callout: {
           tone: 'rule',
@@ -540,7 +541,7 @@ export const session01: Session = {
                   label: 'Activate Incident Response directly',
                   correct: false,
                   feedback:
-                    'Too early. IR starts from confirmed findings, not from a strong hypothesis. Nothing here yet establishes what the session did — and with the EDR agent dead on that host, Tier 2 has real scoping work to do first. Activating IR on every strong suspicion exhausts the capacity you need for the real ones.',
+                    'For this exercise, the escalation route is Tier 2 with context so the missing endpoint evidence can be investigated. In practice, follow incident criteria, asset criticality and risk: urgent protective action or IR involvement can be justified before every detail is confirmed.',
                 },
               ],
             },
@@ -1123,9 +1124,9 @@ export const session01: Session = {
         ],
         furtherStudy: [
           {
-            label: 'NIST SP 800-61r2 — Computer Security Incident Handling Guide',
-            note: 'The framework behind the escalation and response structure. Session 5 works through it properly.',
-            href: 'https://csrc.nist.gov/pubs/sp/800/61/r2/final',
+            label: 'NIST SP 800-61r3 — Incident Response Recommendations',
+            note: 'Current risk-based incident response guidance. Apply your organisation’s incident criteria and escalation plan.',
+            href: 'https://csrc.nist.gov/pubs/sp/800/61/r3/final',
           },
           {
             label: 'MITRE ATT&CK Enterprise matrix',

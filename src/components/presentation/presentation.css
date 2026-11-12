@@ -23,7 +23,7 @@
 .projector-flow { list-style:none; padding:0; margin:0; display:flex; gap:36px; align-items:stretch; }
 .projector-flow li { flex:1; position:relative; min-width:0; padding-top:12px; border-top:4px solid var(--accent,var(--text)); }
 .projector-node { display:block; font-size:34px; margin:16px 0 32px; font-variant-numeric:tabular-nums; }
-.projector-flow li+li::before { content:''; width:18px; height:18px; border-top:4px solid var(--text); border-right:4px solid var(--text); transform:rotate(45deg); position:absolute; top:-13px; left:-29px; background:var(--bg); }
+.projector-connector::after { content:''; width:18px; height:18px; border-top:4px solid var(--text); border-right:4px solid var(--text); transform:rotate(45deg); position:absolute; top:-13px; right:0; background:var(--bg); }
 .projector-flow p { font-size:38px; line-height:1.3; margin:0; }
 .projector-compare { display:flex; gap:72px; }
 .projector-compare section { flex:1; min-width:0; border-top:5px solid var(--accent,var(--text)); padding-top:30px; }
@@ -43,8 +43,7 @@
 .projector-cover-mark i { width:160px; height:3px; background:currentColor; position:relative; }
 .projector-cover-mark i::after { content:''; position:absolute; right:0; top:-7px; width:15px; height:15px; border-top:3px solid currentColor; border-right:3px solid currentColor; transform:rotate(45deg); }
 .projector-slide [data-revealed=false] { visibility:hidden; }
-.projector-slide [data-revealed=true] { animation:projection-reveal .32s cubic-bezier(.16,1,.3,1) both; }
-@keyframes projection-reveal { from { clip-path:inset(0 100% 0 0); } to { clip-path:inset(0); } }
+
 .present--deck .present__build { font-size:12px; font-variant-numeric:tabular-nums; white-space:nowrap; }
 @media(prefers-reduced-motion:reduce) { .projector-slide [data-revealed=true] { animation:none; } }
 @media(max-width:700px) { [data-lesson] .present.present--deck { grid-template-rows:auto minmax(0,1fr) auto; } [data-lesson] .present--deck .present__top { padding:8px; flex-wrap:wrap; } .present--deck .present__session { display:none; } .present--deck .present__top-right { gap:4px; } .present--deck .present__top-right .btn { font-size:11px; padding:6px; } .present--deck .present__slide-title { display:none; } }
@@ -55,3 +54,19 @@
 .projector-point-index[data-ordered=false]::before { content:''; display:inline-block; width:14px; height:14px; border-radius:50%; background:currentColor; vertical-align:middle; }
 @media(max-width:700px) { [data-lesson] .present--deck .present__bottom { gap:8px; flex-wrap:wrap; padding:4px 8px; } [data-lesson] .present--deck .present__controls { gap:8px; padding:4px; } .present--deck .present__build { font-size:10px; } }
 .projector-slide { view-transition-name:slide; }
+
+/* Flow motion traces a relationship before revealing the next step's explanation. */
+.projector-connector { position:absolute; left:-36px; top:-4px; width:36px; height:4px; background:var(--accent,var(--text)); }
+.projector-connector::after { top:-7px; width:14px; height:14px; }
+.projector-node { width:54px; height:54px; display:grid; place-items:center; border:2px solid var(--line); border-radius:50%; transition:background-color 160ms,color 160ms,border-color 160ms; }
+.projector-flow [data-current=true] .projector-node { background:var(--text); color:var(--bg); border-color:var(--text); }
+.projector-slide--section .projector-point-index { font-weight:600; }
+[data-lesson] .present--deck .present__top, [data-lesson] .present--deck .present__bottom { backdrop-filter:none; }
+:root[data-lesson][data-presentation-motion=full]::view-transition-old(slide) { animation:projector-leave 160ms ease-out both; }
+:root[data-lesson][data-presentation-motion=full]::view-transition-new(slide) { animation:projector-arrive 300ms cubic-bezier(.16,1,.3,1) both; }
+:root[data-lesson][data-presentation-motion=full][data-slide-dir=back]::view-transition-new(slide) { animation-name:projector-return; }
+@keyframes projector-leave { to { opacity:0; } }
+@keyframes projector-arrive { from { translate:40px 0; opacity:.2; } to { translate:0 0; opacity:1; } }
+@keyframes projector-return { from { translate:-40px 0; opacity:.2; } to { translate:0 0; opacity:1; } }
+:root[data-lesson][data-presentation-motion=off]::view-transition-old(slide), :root[data-lesson][data-presentation-motion=off]::view-transition-new(slide) { animation:none!important; }
+@media(prefers-reduced-motion:reduce) { .projector-node { transition-duration:0s; } }

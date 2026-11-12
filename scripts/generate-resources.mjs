@@ -432,7 +432,7 @@ evidence" — that is a correct and complete answer.
 **Confidence rules**
 - \`obs\` — a source literally recorded this
 - \`hyp\` — your proposed explanation, not yet supported
-- \`confirmed\` — **two or more independent sources** support it. Name both.
+- \`confirmed\` — **two supporting sources** support the interpretation for this workshop. Name both and state any shared collector or trust boundary.
 
 ---
 
@@ -506,7 +506,7 @@ function session03() {
   )}
 ## The report
 
-At 09:14 a user forwarded this message to the SOC inbox, correctly, as an
+At 09:40 a user forwarded this message to the SOC inbox, correctly, as an
 attachment — so the original headers are preserved.
 
 > "I got a strange email from Microsoft Support saying my account will be
@@ -523,23 +523,23 @@ The user has not said whether they typed anything.
 \`\`\`
 Return-Path: <bounce@micros0ft-support247[.]com>
 Received: from mail.ourcompany.com (10.0.0.25)
-        by mx1.ourcompany.com with ESMTPS; Mon, 12 Mar 2026 09:02:41 +0300
+        by mx1.ourcompany.com with ESMTPS; Thu, 12 Mar 2026 09:02:41 +0300
 Received: from smtp-relay-07.bulkmail-svc[.]net (198[.]51[.]100[.]77)
-        by mail.ourcompany.com with ESMTP; Mon, 12 Mar 2026 09:02:38 +0300
+        by mail.ourcompany.com with ESMTP; Thu, 12 Mar 2026 09:02:38 +0300
 Received: from [185[.]220[.]101[.]45]
-        by smtp-relay-07.bulkmail-svc[.]net with SMTP; Mon, 12 Mar 2026 09:02:31 +0300
+        by smtp-relay-07.bulkmail-svc[.]net with SMTP; Thu, 12 Mar 2026 09:02:31 +0300
 Authentication-Results: mx1.ourcompany.com;
         spf=pass (domain of micros0ft-support247[.]com designates
-             185[.]220[.]101[.]45 as permitted sender);
+             198[.]51[.]100[.]77 as permitted sender);
         dkim=pass header.d=micros0ft-support247[.]com;
         dmarc=pass
 X-Originating-IP: [185[.]220[.]101[.]45]
 Message-ID: <a71f2c99-bulk-0442@micros0ft-support247[.]com>
-From: Microsoft Support <support@microsoft.com>
+From: Microsoft Support <support@micros0ft-support247[.]com>
 Reply-To: account-team@micros0ft-support247[.]com
 To: s.alqattan@ourcompany.com
 Subject: Action required: your account will be deleted in 24 hours
-Date: Mon, 12 Mar 2026 09:02:28 +0300
+Date: Thu, 12 Mar 2026 09:02:28 +0300
 Content-Type: text/html; charset=UTF-8
 
 --- body (rendered text) ---
@@ -553,6 +553,16 @@ Microsoft Account Team
 
 ---
 
+### Evidence boundary for this synthetic message
+
+The gateway trusts its internal relay mail.ourcompany.com and its own
+Authentication-Results record. The internal relay records external peer
+198[.]51[.]100[.]77. The earlier claimed origin 185[.]220[.]101[.]45 and
+X-Originating-IP are unverified until a trusted relay record corroborates them.
+Use the claimed address as a labelled pivot lead, not a verified attribution.
+The visible From address uses the lookalike domain, allowing its aligned
+SPF/DKIM authentication to produce DMARC pass.
+
 ## 2. Mail gateway delivery log
 
 \`\`\`
@@ -565,11 +575,11 @@ SENDER DOMAIN: micros0ft-support247[.]com
 09:02:42  DELIVERED  f.alsalem@ourcompany.com
 09:02:43  DELIVERED  n.aldosari@ourcompany.com
 09:02:43  DELIVERED  y.almutairi@ourcompany.com
-... (41 further DELIVERED entries omitted for length)
+... (40 further DELIVERED entries omitted for length)
 09:03:12  DELIVERED  r.alenezi@ourcompany.com
 
 TOTAL DELIVERED: 47
-OPEN EVENTS RECORDED: 9
+OPEN SIGNALS RECORDED: 9  (tracking signals, not proof of nine human opens)
 \`\`\`
 
 ---
@@ -581,6 +591,20 @@ ${proxy.map((p) => `${p.t}  ${p.s}`).join('\n')}
 \`\`\`
 
 ---
+
+### Asset/account mapping supplied for this exercise
+
+| Host | Assigned user account |
+|---|---|
+| 10.0.4.18 | s.alqattan |
+| 10.0.4.31 | m.alotaibi |
+| 10.0.5.07 | a.hassan |
+
+The page analysis below identifies a credential form. Requests to that form
+justify prompt precautionary containment of mapped accounts. The proxy log
+contains request metadata, not passwords or a captured request body. Distinguish
+likely credential exposure from a proven statement about the submitted values.
+DNS queries, tracking pixels and automated URL fetches do not prove a human click.
 
 ## 4. Authentication log (09:00–13:00, external sources only)
 
@@ -679,7 +703,7 @@ clock time at which you decided each one.
 
 | Field | Value | What it establishes |
 |---|---|---|
-| Originating address (bottom Received) | | |
+| Earliest verified peer / earlier unverified claim | | |
 | Return-Path | | |
 | Reply-To | | |
 | From (display) | | |
@@ -697,9 +721,9 @@ clock time at which you decided each one.
 | Level | Count | Hosts / accounts | Log source that establishes it |
 |---|---|---|---|
 | Received | | | |
-| Opened | | | |
-| Clicked | | | |
-| Credentials submitted | | | |
+| Open signals (state limits) | | | |
+| Requests / corroborated clicks | | | |
+| Potential credential exposure (state evidence) | | | |
 | Attachment executed | | | |
 
 ---
@@ -1241,16 +1265,12 @@ $ sudo debsums -c
 /usr/bin/ps
 /usr/bin/netstat
 /usr/bin/ss
-
-$ rpm -Va  (equivalent output from the compatibility layer)
-S.5....T.    /usr/bin/ps
-S.5....T.    /usr/bin/netstat
-S.5....T.    /usr/bin/ss
 \`\`\`
 
-> Flag \`5\` is a hash mismatch: the file differs from what the package
-> manager installed. Decide what this means for every other Linux artefact
-> below before you use any of them.
+> This Ubuntu host uses Debian packages: \`debsums -c\` lists files whose
+> checksums differ from package records. Investigate these differences from
+> a trusted examination environment. A mismatch alone does not prove malware,
+> and local package metadata is not an independent trusted baseline.
 
 ## A2. Authentication log
 
@@ -1307,7 +1327,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQ...  admin@corp-jump-01      # pre-existing, Jan 2
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5...                        # added 2026-03-11 03:19
 \`\`\`
 
-## A5. Pivot evidence
+## A5. Candidate pivot evidence
 
 \`\`\`
 $ cat /root/.ssh/known_hosts
@@ -1501,7 +1521,7 @@ function session07() {
   for (let i = 0; i < 200; i++) {
     let d = ''
     for (let j = 0; j < 10; j++) d += chars[Math.floor(rnd() * chars.length)]
-    dga.push(`21:0${int(0, 2)}:${pad(int(0, 59))}  10.0.3.22  QUERY  ${d}[.]${pick(tlds)}  ->  NXDOMAIN`)
+    dga.push(`15:0${int(0, 2)}:${pad(int(0, 59))}  10.0.3.22  QUERY  ${d}[.]${pick(tlds)}  ->  NXDOMAIN`)
   }
   dga.sort()
 
@@ -1520,10 +1540,13 @@ function session07() {
 \`\`\`
 HOUR    NXDOMAIN COUNT    NOTE
 -----   ---------------   --------------------------------
+15:00               200   <-- anomalous
+16:00                 1   baseline
+17:00                 0   baseline
 18:00                 2   baseline
 19:00                 1   baseline
 20:00                 3   baseline
-21:00               200   <-- anomalous
+21:00                 1   baseline
 22:00                 1   baseline
 23:00                 0   baseline
 00:00                 2   baseline
@@ -1531,12 +1554,12 @@ HOUR    NXDOMAIN COUNT    NOTE
 02:00                 0   baseline
 \`\`\`
 
-### 1b. The 21:00 window (abridged — 40 of 200 shown)
+### 1b. The 15:00 window (abridged — 40 of 200 shown)
 
 \`\`\`
 ${dga.slice(0, 40).join('\n')}
 ... 160 further NXDOMAIN responses in this window ...
-21:03:18  10.0.3.22  QUERY  update-cdn-srv[.]com  ->  A  91[.]92[.]251[.]103
+15:03:18  10.0.3.22  QUERY  update-cdn-srv[.]com  ->  A  91[.]92[.]251[.]103
 \`\`\`
 
 > One query in this window resolved. Note the time, and note what time the
@@ -1551,7 +1574,7 @@ These are exports of what Wireshark's **Statistics -> Conversations** and
 **IO Graph** views would show you. Opening a raw capture is a tooling
 exercise; the inference is the same either way.
 
-### 2a. Conversations, sorted by packet count
+### 2a. Selected conversation summaries (not sorted)
 
 \`\`\`
 ADDRESS A      ADDRESS B                PACKETS   BYTES A->B   BYTES B->A   DURATION
@@ -1622,6 +1645,8 @@ Image date (UTC)  : 2026-03-12 03:12:44
 \`\`\`
 
 ### 3c. malfind (abridged)
+
+Additional supplied validation: PID2344 has a private, unbacked region with a valid PE structure. The chrome and OUTLOOK regions below have been attributed to their legitimate runtimes. Real investigations require these checks; MZ or writable executable memory alone does not prove injection.
 \`\`\`
 Process: explorer.exe   Pid: 2344   Address: 0x7ff000200000
 Vad Tag: VadS   Protection: PAGE_EXECUTE_READWRITE
@@ -1703,7 +1728,7 @@ Part of task T5 is explaining which question.
 
 ## T3 — Memory
 
-| Process | PID | PAGE_EXECUTE_READWRITE? | MZ header? | Injection or JIT? | Network connection? |
+| Process | PID | PAGE_EXECUTE_READWRITE? | MZ header? | Interpretation and supporting checks | Network connection? |
 |---|---|---|---|---|---|
 | | | | | | |
 | | | | | | |
@@ -1805,7 +1830,7 @@ Size    412,672 bytes
 ### 1c. Reputation (VirusTotal, hash submitted — not the file)
 \`\`\`
 Detection ratio : 0 / 72
-First seen      : never submitted
+First seen      : 2026-03-11 (recent analysis)
 Related samples : none
 Network IOCs    : none
 \`\`\`
@@ -2157,6 +2182,7 @@ AUDITING STATUS  <-- check this before interpreting ANY null result
   Process creation (4688) with command line : ENABLED
   PowerShell script block logging           : ENABLED
   Directory Service Object Access (4662)    : ENABLED, since 2026-01-04
+  Relevant replication SACL and collection : VERIFIED for this synthetic window
   Sysmon                                    : deployed, 94% of estate
   Kerberos service ticket auditing (4769)   : ENABLED
 \`\`\`
@@ -2191,15 +2217,17 @@ DATE       TIME      HOST             USER       IMAGE                    COMMAN
 
 ## Data source 3 — Windows Security Event ID 4662 (30 days, replication properties only)
 
+The source-host column is pre-correlated enrichment from matching logon IDs in Event ID4624 on the same recording DC. It is not a native4662 field. Validate source roles and authorised replication services; do not exclude accounts solely because their names end in$.
+
 \`\`\`
-DATE       TIME      HOST             SUBJECT USER      PROPERTIES
-2026-02-20 03:00:14  DC-02            DC-01$            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
-2026-02-20 03:00:14  DC-03            DC-01$            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
-2026-02-27 03:00:11  DC-02            DC-01$            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
-2026-03-06 03:00:09  DC-03            DC-02$            1131f6ad-9c07-11d1-f79f-00c04fc2dcd2
-2026-03-11 02:47:03  FILESERVER-01    jsmith            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
-2026-03-11 02:47:03  FILESERVER-01    jsmith            1131f6ad-9c07-11d1-f79f-00c04fc2dcd2
-2026-03-13 03:00:22  DC-02            DC-01$            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+DATE       TIME      LOGGING DC  SUBJECT USER  SOURCE HOST      PROPERTIES
+2026-02-20 03:00:14  DC-02       DC-01$        DC-01            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+2026-02-20 03:00:14  DC-03       DC-01$        DC-01            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+2026-02-27 03:00:11  DC-02       DC-01$        DC-01            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+2026-03-06 03:00:09  DC-03       DC-02$        DC-02            1131f6ad-9c07-11d1-f79f-00c04fc2dcd2
+2026-03-11 02:47:03  DC-01       jsmith        FILESERVER-01    1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+2026-03-11 02:47:03  DC-01       jsmith        FILESERVER-01    1131f6ad-9c07-11d1-f79f-00c04fc2dcd2
+2026-03-13 03:00:22  DC-02       DC-01$        DC-01            1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
 \`\`\`
 
 ---
@@ -2363,10 +2391,11 @@ function session10() {
 
 \`\`\`
 04:07:12  SIEM ALERT  P1
-Rule   : AD-DCSYNC-001 · Replication rights invoked by non-DC account
+Rule   : AD-DCSYNC-001 · Unexpected directory replication activity
 Detail : Event ID 4662, SubjectUserName=jsmith, source WORKSTATION-22,
          Properties contains 1131f6aa and 1131f6ad
-Note   : WORKSTATION-22 is not a domain controller.
+Note   : WORKSTATION-22 is not a domain controller. The SIEM source field
+         is correlated from4624 on the recording DC, not native4662 data.
 \`\`\`
 
 ---
@@ -2391,15 +2420,17 @@ TIME      EVENT  HOST             DETAIL
                                   source=WORKSTATION-14
 02:14:02  5140   FILESERVER-01    ShareName=\\\\*\\ADMIN$  user=svc_backup
                                   source=WORKSTATION-14
-03:12:55  4769   DC-01            user=svc_backup  ServiceName=krbtgt
+03:12:55  4769   DC-01            user=svc_backup  ServiceName=svc_sql
                                   TicketEncryptionType=0x17
 03:18:40  4728   DC-01            GroupName="Domain Admins"  MemberAdded=svc_backup
                                   SubjectUserName=svc_backup
 03:52:18  4698   DC-01            TaskName=\\WindowsUpdateHelper
                                   TaskContent=C:\\Windows\\Temp\\wuh.exe
                                   SubjectUserName=svc_backup
-04:07:12  4662   WORKSTATION-22   user=jsmith  Properties=1131f6aa,1131f6ad
-04:07:12  4662   WORKSTATION-22   user=jsmith  Properties=1131f6ad
+04:06:57  4624   DC-01            user=jsmith  LogonType=3  TargetLogonId=0x9c21
+                                  source=WORKSTATION-22
+04:07:12  4662   DC-01            user=jsmith  SubjectLogonId=0x9c21  Properties=1131f6aa,1131f6ad
+04:07:12  4662   DC-01            user=jsmith  SubjectLogonId=0x9c21  Properties=1131f6ad
 04:11:08  4794   DC-01            DSRM administrator password set attempt
                                   SubjectUserName=svc_backup
 04:19:33  5136   DC-01            ObjectDN=CN=AdminSDHolder,CN=System,DC=corp,DC=local
@@ -2438,7 +2469,7 @@ DC-03   \\CorpBackupPreflight             D:\\Scripts\\preflight.ps1            
 
 \`\`\`csv
 rule_id,title,event_id,status,fired_this_incident
-AD-DCSYNC-001,Replication rights invoked by non-DC account,4662,stable,YES
+AD-DCSYNC-001,Unexpected directory replication activity,4662,stable,YES
 AD-GRP-002,Privileged group membership change,4728/4732/4756,stable,NO (disabled 2026-01-12 for noise)
 AD-NTLM-003,NTLM network logon from non-admin source,4624,not deployed,NO
 AD-KRB-004,RC4 service ticket for non-computer account,4769,not deployed,NO
@@ -2544,16 +2575,18 @@ Sequenced. Dependencies stated. Every step verified.
 | 9 | | | |
 | 10 | | | |
 
-### The KRBTGT procedure — six steps, not two
+### Coordinate KRBTGT recovery with the AD team
 
 | # | Step | Verification | Done |
 |---|---|---|---|
 | 1 | Confirm all DCs online and replicating | \`repadmin /showrepl\` — all success, 0 failures | ☐ |
 | 2 | Reset KRBTGT password (first) | | ☐ |
-| 3 | Wait for replication, then **verify** | | ☐ |
+| 3 | Wait the configured ticket-lifetime interval; verify first-reset replication | | ☐ |
 | 4 | Reset KRBTGT password (second) | | ☐ |
 | 5 | Wait for replication, then **verify** | | ☐ |
-| 6 | Coordinate helpdesk for domain-wide re-authentication | | ☐ |
+| 6 | Coordinate helpdesk and verify authentication impact | | ☐ |
+
+Follow the current Microsoft procedure. At default ticket lifetimes, allow at least ten hours between resets, longer if required by configured policy, and verify replication. Do not treat this worksheet as a live reset runbook.
 
 **Why twice, in your own words:**
 

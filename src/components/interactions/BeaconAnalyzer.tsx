@@ -166,13 +166,14 @@ export function BeaconAnalyzer({ data }: { data: unknown }) {
       </div>
 
       <div className="beacon__verdict">
-        <EvidenceChip kind="confirmed" label="What survives the jitter" />
+        <EvidenceChip kind="observation" label="Timing in this synthetic sample" />
         <p>
           At {preset.label.toLowerCase()} the beacon's standard deviation is{' '}
           <strong>{beaconStats.cv.toFixed(2)}×</strong> its mean. User traffic sits at{' '}
           <strong>{userStats.cv.toFixed(2)}×</strong>. An exact-interval rule has already failed
-          here — and a test that asks whether intervals cluster around a central value has not,
-          because {userStats.cv > 1 ? 'user traffic has no central value to cluster around' : 'the shapes remain different in kind'}.
+          here. The synthetic series still differ in dispersion, which can support a timing-based
+          investigation. Timing alone does not prove command-and-control traffic: legitimate
+          automation can also repeat regularly.
         </p>
       </div>
 
