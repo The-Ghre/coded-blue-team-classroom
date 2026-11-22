@@ -1,0 +1,67 @@
+# =========================================================================
+# SIGMA RULE TEMPLATE — CODED Blue Team Classroom, Session 4
+# =========================================================================
+# Fill every field. The comments explain what each one is for and what a
+# reviewer will check. Delete the comments in your submission.
+#
+# Validate your YAML before submitting: indentation is significant.
+# =========================================================================
+
+# Written for the analyst receiving the alert at 03:00, not for you.
+# State what fired and why that is unusual.
+title:
+
+# A UUID. Generate one — it lets this rule be referenced unambiguously
+# across platforms, teams and organisations.
+id:
+
+# Honest maturity signalling. Nothing you write today is 'stable'.
+#   experimental -> test -> stable
+status: experimental
+
+# Full explanation: what this detects, and why these conditions.
+description: >
+
+references:
+  - https://attack.mitre.org/techniques/
+
+author:
+date: 2026/03/14
+
+# Tactic and technique. This is what populates the coverage heatmap.
+# A rule covering two stages carries tags for both.
+tags:
+  - attack.
+  - attack.t
+
+# The category the rule needs. THIS IS THE LINE THAT SILENTLY FAILS if the
+# source is not onboarded — check it against the log source audit.
+logsource:
+  category:
+  product: windows
+
+detection:
+  selection:
+    # field|modifier: value
+
+  # Exclusions go here. Name MORE THAN ONE FIELD. An exclusion on an account
+  # name alone becomes a hole the moment that account is compromised.
+  # filter:
+
+  condition: selection
+
+# NOT a disclaimer — operational instructions for the analyst. These are the
+# things to check before escalating. An empty section means you have not
+# worked out what else produces this pattern. There is always something.
+falsepositives:
+  -
+  -
+
+level:
+
+# ---- Internal notes, beyond the Sigma standard --------------------------
+# validation_plan:   what data proves it fires; what measures the FP rate
+# tuning_notes:      what was tuned and why
+# adapted_from:      if you started from a SigmaHQ rule, which one and what
+#                    you changed
+
