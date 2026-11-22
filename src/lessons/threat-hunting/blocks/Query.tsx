@@ -8,8 +8,7 @@ import { Detail, Footer, Head } from '../parts'
    QUERY — every clause pinned to its explanation
    =========================================================================
    The walkthrough items are controls. Choosing one pins its number to the
-   lines of the query it explains, the way a specialist's annotation pins a
-   leader to the exact flaw on the stamp. Lines are matched by the tokens
+   lines of the query it explains, connecting an explanation to the actual SPL clause. Lines are matched by the tokens
    the walkthrough itself names, so a content edit keeps working; an item
    whose tokens match nothing simply pins nothing.
    ========================================================================= */

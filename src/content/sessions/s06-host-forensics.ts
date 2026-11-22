@@ -51,16 +51,16 @@ export const session06: Session = {
         minutes: 6,
         recallPrompt: 'From memory.',
         questions: [
-          'What is captured first on a live compromised host, and what is lost if you reboot instead?',
+          'Which volatile evidence should you preserve before a planned reboot when feasible, and what changes if urgent containment is needed?',
           'What does a hash mismatch between acquisition and analysis mean, and what do you do?',
           'Why disable a compromised account rather than delete it?',
           'Why does a timeline built from many sources resist anti-forensic cleanup?',
         ],
         answers: [
-          'Memory. A reboot destroys running processes, injected code with no file on disk, active connections, cached credentials and any encryption keys.',
+          'Preserve RAM before planned reboot when feasible: running processes, injected code, connections and keys may be lost. Ongoing harm can require earlier containment; document the evidence trade-off.',
           'The evidence is not intact. Stop, document the discrepancy, escalate, and do not proceed with analysis.',
-          'Disabling preserves the account\'s audit history, which is itself evidence. Both stop access; only one keeps the record.',
-          'Because an attacker who clears one source cannot simultaneously clear all of them — and anything already forwarded off the host is beyond their reach entirely.',
+          'Disabling retains the account object and its context. Historical audit events are not erased simply by deletion; active sessions and tokens may need separate revocation.',
+          'Independent sources and forwarded copies can survive local cleanup. Their retention, integrity and access controls still need verification.',
         ],
         provenance: 'supplementary',
       },
@@ -228,7 +228,7 @@ export const session06: Session = {
           {
             label: 'Audit approach',
             cells: [
-              'Autoruns (Sysinternals) shows every startup location in one view. The single most efficient Windows persistence audit.',
+              'Autoruns (Sysinternals) surveys many common automatic startup locations. Use it alongside task, service, WMI and event evidence rather than treating its output as exhaustive.',
               'No single equivalent. Run find / -name authorized_keys -newer /etc/passwd, crontab -l for every user, and find /etc/systemd/system/ -newer /etc/passwd as a fixed checklist.',
             ],
           },
@@ -271,7 +271,7 @@ export const session06: Session = {
             label: 'Lateral movement linkage',
             cells: [
               'Event ID 4648 at the source paired with Event ID 4624 Type 10 at the destination. RDP target history in the registry.',
-              '~/.ssh/known_hosts lists every machine connected to over SSH. Accepted publickey entries in the destination\'s auth log.',
+              '~/.ssh/known_hosts stores trusted host keys, not a complete connection history. Corroborate with Accepted publickey entries in the destination\'s auth log.',
             ],
           },
           {
@@ -297,7 +297,7 @@ export const session06: Session = {
         detail: [
           'Shellbags are the artefact that most surprises people. They record that a user navigated into a folder, and they persist in the registry after the folder itself is gone. In an insider threat case, shellbags plus RecentDocs plus LNK files give three independent sources for the same access — far harder to challenge than any one.',
           'SRUM is the counterpart for volume. It records how many bytes each application transferred over thirty days, which means that once an exfiltration is in the SRUM record, the volume is difficult to deny even if the network logs are incomplete.',
-          'On Linux, known_hosts is the single artefact most likely to link two machines. It lists every host the user connected to over SSH, and an attacker focused on deleting the files they copied frequently does not think to clear it.',
+          'On Linux, known_hosts can suggest a link between machines, but entries may be pre-populated, hashed or removed. Use command history and destination authentication logs to establish an attempted or successful connection and its timing.',
         ],
       },
 
@@ -348,7 +348,7 @@ export const session06: Session = {
             note: {
               kind: 'confirmed',
               label: 'Run this first — everything after it depends on the answer',
-              body: 'Flag 5 is a hash mismatch: these binaries differ from what the package manager installed. Both ps and netstat have been replaced. Every process listing and every connection listing from this host is now untrustworthy — not incomplete, actively false. This is why integrity verification is the first Linux step, not a later one.',
+              body: 'Flag 5 is a hash mismatch: these binaries differ from what the package manager installed. The files differ from local package metadata. This warrants investigation, but a mismatch alone does not establish malicious replacement. Verify from trusted media or a clean examination system; local tools and the package database may themselves be compromised. This is why integrity verification is the first Linux step, not a later one.',
             },
           },
           {
@@ -380,7 +380,7 @@ export const session06: Session = {
             note: {
               kind: 'confirmed',
               label: 'The artefact that links the two machines',
-              body: 'This is the answer to the scenario\'s driving question. The internal address of the Windows finance workstation appears in the SSH known_hosts file of the Linux server, which means someone connected from here to there. The attacker deleted their tools and cleared their history and did not think about this file.',
+              body: 'This is the answer to the scenario\'s driving question. The internal address of the Windows finance workstation appears in the SSH known_hosts file of the Linux server. This is a lead linking the hosts, not proof of successful authentication; correlate command history and destination logs. The attacker deleted their tools and cleared their history and did not think about this file.',
             },
           },
           {
@@ -396,7 +396,7 @@ export const session06: Session = {
             note: {
               kind: 'confirmed',
               label: 'Persistence, same two tells as Session 2',
-              body: 'A name borrowed from a security product, a binary named after a real Windows process, and a path no legitimate installer uses. Autoruns shows every startup location at once, which is why it is the first Windows persistence check rather than inspecting the task list by hand.',
+              body: 'A name borrowed from a security product, a binary named after a real Windows process, and an unusual path that requires verification. Autoruns surveys many common startup locations, which is why it is the first Windows persistence check rather than inspecting the task list by hand.',
             },
           },
           {
@@ -411,8 +411,8 @@ export const session06: Session = {
             text: '[WINDOWS] > SRUM Explorer  →  robocopy.exe   bytes sent: 2,471,829,504   window: 02:40–04:55',
             note: {
               kind: 'confirmed',
-              label: 'Now you can say it',
-              body: '2.3 GB sent by a file-copy utility during the intrusion window. Combined with the shellbag, you now have navigation to the folder and a volume transferred by a copying tool in the same window — two independent artefacts supporting the exfiltration finding. Neither alone would have carried it.',
+              label: 'Transfer volume strengthens the hypothesis',
+              body: 'The records support folder navigation and application network volume in a related window. They do not identify the transmitted files or destination. Correlate destination and network evidence before concluding external exfiltration.',
             },
           },
           {
@@ -425,9 +425,9 @@ export const session06: Session = {
           },
         ],
         proves: [
-          'System binaries on the Linux host were replaced, so no live tool output from it can be trusted',
+          'System binary contents differ from package metadata, requiring trusted verification before relying on live output',
           'The Linux host was compromised via a downloaded script, with cron persistence at five-minute intervals',
-          'An SSH connection was made from the Linux host to the Windows workstation at 10.0.0.44',
+          'SSH host-key data links the Linux host to 10.0.0.44; command history can support an attempt, but authentication success needs corroboration',
           'Mimikatz executed twice on the Windows host despite having been deleted',
           'The CFO financial reports folder was navigated, and 2.3 GB was transferred by robocopy in the same window',
           'The Windows Security log was cleared at 04:58, after the activity it would have recorded',
@@ -455,36 +455,36 @@ export const session06: Session = {
         questions: [
           {
             id: 'q1',
-            stem: 'You are triaging a live Linux host you suspect is compromised. What is your first command?',
+            stem: 'From a trusted examination environment, which check compares Linux system files with package metadata?',
             options: [
               {
-                text: 'rpm -Va or debsums -c, to verify that the system binaries have not been replaced',
+                text: 'rpm -Va on RPM systems, or debsums -c on Debian-based systems',
                 correct: true,
                 feedback:
-                  'Correct. Until you know whether ps, netstat and ls are genuine, every other command\'s output is unverifiable. A rootkitted binary does not fail silently — it returns plausible, false information.',
+                  'Correct. These checks compare files with package records; differences need investigation. A clean local result alone does not rule out compromise, especially if the verification tools or database are untrusted.',
               },
               {
                 text: 'ps aux, to see what is currently running',
                 correct: false,
                 feedback:
-                  'A reasonable instinct and the wrong order. If ps has been replaced, it will helpfully omit the attacker\'s process and you will record a clean result.',
+                  'ps lists processes; it does not verify package files. A compromised copy can hide activity, so examine with trusted tools.',
               },
               {
                 text: 'cat /var/log/auth.log, to find the initial access',
                 correct: false,
                 feedback:
-                  'Valuable, and second. It also may have been truncated — and on Linux, unlike Windows, that leaves no clearing event.',
+                  'This reads authentication history rather than verifying system files. Preserve the log and consider truncation or other tampering.',
               },
               {
                 text: 'netstat -antp, to find active connections',
                 correct: false,
-                feedback: 'Same problem as ps. netstat is one of the most commonly replaced binaries for exactly this reason.',
+                feedback: 'netstat reports connections rather than verifying file integrity. A compromised local copy can omit activity.',
               },
             ],
           },
           {
             id: 'q2',
-            stem: 'An attacker resets nothing, but your incident response resets every password in the environment. On a Linux host, what persistence survives?',
+            stem: 'After every password is reset, which key-based persistence mechanism can still grant access to a Linux host?',
             options: [
               {
                 text: 'A public key added to authorized_keys, because key authentication is independent of passwords',
@@ -501,7 +501,7 @@ export const session06: Session = {
                 text: 'A cron job, because cron does not authenticate',
                 correct: false,
                 feedback:
-                  'Cron does survive a password reset — but it is usually found, because checking crontabs is a standard step. The authorized_keys entry is the one that is routinely missed.',
+                  'Cron can also survive a password reset, but it is scheduled execution rather than key-based authentication. The question asks specifically about keys.',
               },
               {
                 text: 'Nothing. A full password reset removes all persistence.',
@@ -579,12 +579,12 @@ export const session06: Session = {
         synthetic: true,
         resourceDir: 'host-forensics',
         scenario:
-          'Two hosts, suspected to be one intrusion. Linux web server, Windows finance workstation. The attacker deleted their tools, cleared logs on both, and disabled the EDR agent on the Windows host. Reconstruct the full cross-platform timeline and prove the link between the machines.',
+          'Two hosts, suspected to be one intrusion. Linux web server, Windows finance workstation. The attacker deleted their tools, cleared logs on both, and disabled the EDR agent on the Windows host. Reconstruct the cross-platform timeline, test the suspected link, and state where destination evidence is missing.',
         objectives: [
           'Determine initial access on the Linux host and prove it from more than one artefact',
           'Find every persistence mechanism on both hosts, not only the first',
           'Prove execution on Windows for tools that no longer exist on disk',
-          'Establish the pivot path between the two machines with a named artefact',
+          'Identify a candidate pivot with named artefacts and distinguish attempts from authenticated access',
           'Distinguish file navigation from file transfer in your findings, and support each separately',
           'Produce one cross-platform timeline and a finding in the standard report format',
         ],
@@ -611,7 +611,7 @@ export const session06: Session = {
         id: 'tasks',
         title: 'Your tasks',
         minutes: 55,
-        lead: 'Work both hosts in parallel. The artefact that links them appears early on one of the two.',
+        lead: 'Work both hosts in parallel. A candidate link appears early on one host; assess whether the other host corroborates it.',
         tasks: [
           {
             ref: 'T1',
@@ -632,7 +632,7 @@ export const session06: Session = {
             steps: [
               'Read the bash history. Record the full command sequence and note what the attacker attempted to hide.',
               'Check every persistence location: crontabs for all users, systemd units, and authorized_keys.',
-              'Check known_hosts. This is where the pivot path appears.',
+              'Use known_hosts to identify a possible pivot, then distinguish a recorded command from successful destination authentication.',
               'Record each finding with its artefact source.',
             ],
             produces: 'The Linux execution chain, every persistence mechanism found, and the pivot artefact.',
@@ -688,9 +688,9 @@ export const session06: Session = {
           {
             forTask: 'T1',
             tiers: [
-              'A flag containing 5 in rpm -Va output is a hash mismatch — the file differs from what was installed.',
-              'For initial access, count the failed entries before the accepted one. The ratio tells you brute force rather than a stolen credential.',
-              'For truncation: if auth.log\'s earliest entry is later than the host\'s uptime suggests it should be, something removed the earlier entries.',
+              'On this Ubuntu host, debsums lists files differing from package records. A mismatch calls for trusted verification, not automatic attribution to malware.',
+              'For initial access, count the failed entries before the accepted one. Repeated failures followed by success support password guessing, but do not establish how the successful credential was obtained.',
+              'For truncation: if auth.log\'s earliest entry is later than the host\'s uptime suggests it should be, check rotation, retention and collection scope before attributing the gap to tampering.',
             ],
           },
           {
@@ -698,7 +698,7 @@ export const session06: Session = {
             tiers: [
               'Read the history file even though the attacker ran history -c. That command clears the session, not necessarily the file.',
               'Persistence: check crontabs, systemd units and authorized_keys. There is more than one mechanism in this pack.',
-              'The pivot is a file listing machines connected to over SSH. Compare what is in it against the Windows host\'s address.',
+              'Compare known_hosts with the Windows address, then use command history and destination authentication records to test the link.',
             ],
           },
           {
@@ -713,7 +713,7 @@ export const session06: Session = {
             forTask: 'T4',
             tiers: [
               'Sort everything by timestamp first, with the host as a column, before interpreting anything.',
-              'The pivot event should appear in the Linux evidence and have a corresponding authentication event on the Windows side. Find both.',
+              'Look for corresponding destination authentication. If the pack does not establish the same source, account and protocol, label the pivot a hypothesis and name the missing record.',
               'For "what survived": for each anti-forensic act, list the artefacts it did not touch. That list is the strongest paragraph in your report.',
             ],
           },
@@ -738,7 +738,7 @@ export const session06: Session = {
           { ref: 'D1', text: 'Linux integrity assessment stating what can and cannot be trusted', required: true },
           { ref: 'D2', text: 'Per-host artefact findings, each with its source named', required: true },
           { ref: 'D3', text: 'Complete persistence inventory for both hosts, covering more than one mechanism class each', required: true },
-          { ref: 'D4', text: 'The pivot artefact and the corresponding evidence on the destination host', required: true },
+          { ref: 'D4', text: 'Candidate pivot artefacts, destination corroboration if present, and explicitly identified evidence gaps', required: true },
           { ref: 'D5', text: 'One cross-platform timeline, classified and ATT&CK-mapped', required: true },
           { ref: 'D6', text: 'One finding in the standard format, with every claim cited to an artefact', required: true },
         ],
@@ -768,7 +768,7 @@ export const session06: Session = {
             band: 'Cross-host correlation',
             weight: '20%',
             descriptor:
-              'The pivot is identified with a named artefact and corroborated on the destination host. The timeline reads correctly as one intrusion across two machines.',
+              'The candidate pivot is supported by named artefacts and tested against destination evidence. Missing or inconsistent source, account and protocol data are stated explicitly rather than filled with assumptions.',
           },
           {
             band: 'Persistence completeness',
@@ -797,7 +797,7 @@ export const session06: Session = {
         title: 'Debrief',
         minutes: 10,
         questions: [
-          'Who checked Linux binary integrity before reading anything else from that host? What did everyone else do with the rootkitted output?',
+          'Who checked Linux binary integrity before reading anything else from that host? Which local outputs remain unverified, and how would you verify them from a trusted environment?',
           'How many persistence mechanisms did the room find per host? Compare the counts — the spread is usually two to one.',
           'Which artefact did you use for the pivot? Did anyone find it a different way?',
           'Did anyone write that the CFO files were stolen? What artefact were they relying on, and what does it actually record?',
@@ -816,17 +816,19 @@ export const session06: Session = {
         provenance: 'source',
         sources: [{ file: FILE, section: '13. Summary' }],
         takeaways: [
-          'The same five questions apply on both platforms. Only the evidence locations change.',
+          'The same five questions guide both platforms, with platform-specific evidence and limitations.',
           'Prefetch and auditd prove execution after deletion. Check them first; they are fast.',
           'authorized_keys persistence survives a password reset. Shellbags survive folder deletion.',
-          'Log tampering removes the local record only. Name what survived.',
+          'Local log tampering may leave independent copies intact. Check and name what survived.',
           'On Linux, verify tool integrity before trusting any live output.',
           'Correlate lateral movement across both ends of the pivot, never from one machine\'s view.',
         ],
         furtherStudy: [
           { label: 'Eric Zimmerman\'s tools', note: 'The standard Windows artefact parsers, with documentation for each.', href: 'https://ericzimmerman.github.io/' },
-          { label: 'Autoruns (Sysinternals)', note: 'Every Windows startup location in one view.', href: 'https://learn.microsoft.com/en-us/sysinternals/downloads/autoruns' },
+          { label: 'Autoruns (Sysinternals)', note: 'A survey of many common Windows startup locations; corroborate with other evidence.', href: 'https://learn.microsoft.com/en-us/sysinternals/downloads/autoruns' },
           { label: 'AIDE', note: 'Linux file integrity monitoring, configured before the incident.', href: 'https://aide.github.io/' },
+          { label: 'OpenSSH ssh-keyscan', note: 'Host keys can be collected without login; known_hosts alone does not prove authentication.', href: 'https://man.openbsd.org/ssh-keyscan' },
+          { label: 'RPM verification', note: 'Verification compares files with package metadata; treat mismatches as findings requiring investigation.', href: 'https://rpm.org/docs/4.20.x/man/rpm.8' },
           { label: 'Next: Session 7 — Network and Memory Forensics', note: 'Disk told you the history. Next: the layer the attacker cannot clean, and the one that holds what never touched disk.' },
         ],
       },
@@ -839,7 +841,7 @@ export const session06: Session = {
     { term: 'SRUM', definition: 'System Resource Usage Monitor — a Windows database recording per-application network bytes over 30 days.' },
     { term: 'UserAssist', definition: 'A registry key recording GUI program execution, ROT13 encoded.' },
     { term: 'authorized_keys', definition: 'The SSH file listing public keys permitted to authenticate. Persistence here survives a password reset.' },
-    { term: 'known_hosts', definition: 'The SSH file listing every host a user has connected to. Frequently the artefact that links two compromised machines.' },
+    { term: 'known_hosts', definition: 'An SSH file storing trusted host keys. It can suggest host relationships but does not prove a successful login or provide a complete connection history.' },
     { term: 'SUID', definition: 'A Linux permission bit running a program with the owner\'s privileges. Misconfiguration is a common escalation path.' },
     { term: 'Rootkit', definition: 'Malware that hides itself by replacing system tools. A rootkitted binary returns false output rather than failing.' },
   ],

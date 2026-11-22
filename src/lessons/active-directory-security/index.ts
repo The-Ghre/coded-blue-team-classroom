@@ -1,4 +1,4 @@
-import { createElement } from 'react'
+import { createElement, useMemo } from 'react'
 import type { BlockOverrideProps, BlockOverrides, LessonKit } from '../types'
 import type { Block, EvidenceBlock } from '@/types/content'
 import './theme.css'
@@ -8,15 +8,10 @@ import Hero from './Hero'
 import { TitleSheet } from './blocks/TitleSheet'
 import { ConceptSheet } from './blocks/Concept'
 import { Climb, canClimb } from './blocks/Climb'
+import { ReadingPanes } from './blocks/ReadingPanes'
 import { Sheet } from './blocks/Sheet'
 
-/**
- * Lesson world: active-directory-security — AS-BUILT.
- * The domain as a building's construction drawings: a floor plan nobody
- * re-drew, a red route through doors keyed years ago, a section that climbs
- * one storey per event, and a key revision issued twice. See theme.css for
- * the palette and src/lessons/README.md for the kit contract.
- */
+/** Effective Access: directory relationships, credential propagation and revocation. */
 
 function EvidenceSheet(props: BlockOverrideProps<EvidenceBlock>) {
   if (canClimb(props.block)) return createElement(Climb, props)
@@ -50,12 +45,24 @@ const blocks = {
   evidence: EvidenceSheet,
 } as unknown as BlockOverrides
 
+/** Stable adapter identities also preserve state when presentation chrome changes. */
+function withReader(Renderer: typeof Sheet) {
+  return function ReaderOverride(props: BlockOverrideProps) {
+    const Content = useMemo(() => function PaneContent(paneProps: Pick<BlockOverrideProps, 'block' | 'mode'>) {
+      return createElement(Renderer, { ...paneProps, Default: props.Default })
+    }, [props.Default])
+    return createElement(ReadingPanes, { ...props, Default: Content })
+  }
+}
+
 const kit: LessonKit = {
   slug: 'active-directory-security',
   Backdrop,
   Overlay,
   Hero,
-  blocks,
+  blocks: Object.fromEntries(Object.entries(blocks).map(([kind, Renderer]) =>
+    [kind, withReader(Renderer as typeof Sheet)]
+  )) as BlockOverrides,
 }
 
 export default kit

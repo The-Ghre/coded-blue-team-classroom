@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { getSession, getSlides } from '@/content'
-import { BlockView } from '@/components/teaching/blocks'
+import { getSession, getBlock } from '@/content'
+import { getPresentation, buildCount } from '@/content/presentations'
+import { ProjectionSlide } from '@/components/presentation/ProjectionSlide'
 import { MonoLabel, Wordmark } from '@/components/brand/Brand'
 import { useAnnounce, useDocumentTitle, useFullscreen, useShortcuts } from '@/lib/hooks'
 import { useProgress } from '@/lib/progress'
 import { NotFound } from './NotFound'
-import { LessonBackdrop, LessonOverlay } from '@/lessons/LessonLayers'
+import { LessonBackdrop } from '@/lessons/LessonLayers'
 import { PresentCtx, useReducedMotion } from '@/motion'
 
 /* =========================================================================
@@ -37,7 +38,13 @@ export function Present() {
   const [helpOpen, setHelpOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const idleTimer = useRef<number | null>(null)
-  const reducedMotion = useReducedMotion()
+  const prefersReducedMotion = useReducedMotion()
+  const [motionPaused, setMotionPaused] = useState(false)
+  const reducedMotion = prefersReducedMotion || motionPaused
+  useEffect(() => {
+    document.documentElement.dataset.presentationMotion = reducedMotion ? 'off' : 'full'
+    return () => { delete document.documentElement.dataset.presentationMotion }
+  }, [reducedMotion])
   const pendingTransition = useRef<{ skipTransition: () => void } | null>(null)
   /* The slide most recently asked for. Relative steps read this rather than
      the rendered index, so two presses inside one frame move two slides. */
@@ -46,10 +53,15 @@ export function Present() {
      below can tell its own navigations from browser back/forward. */
   const committedByPlayer = useRef<number | null>(null)
 
-  const slides = session ? getSlides(session) : []
+  const slides = session ? getPresentation(session) : []
   const parsed = Number(index)
   const current = Number.isFinite(parsed) ? Math.min(Math.max(parsed, 0), slides.length - 1) : 0
   const slide = slides[current]
+  const [buildState, setBuildState] = useState({ index: current, count: 0 })
+  const build = buildState.index === current ? buildState.count : 0
+  const builds = slide ? buildCount(slide) : 0
+  const buildRef = useRef({ index: current, count: 0 })
+  if (buildRef.current.index !== current) buildRef.current = { index: current, count: 0 }
 
   /* Direction of travel, derived from the index rather than from which key
      was pressed, so browser back/forward and the overview animate correctly. */
@@ -86,6 +98,8 @@ export function Present() {
         startViewTransition?: (cb: () => void) => {
           skipTransition: () => void
           updateCallbackDone: Promise<void>
+          ready?: Promise<void>
+          finished?: Promise<void>
         }
       }
 
@@ -115,6 +129,10 @@ export function Present() {
         flushSync(() => navigate(to))
       }
       const vt = doc.startViewTransition(commit)
+      // Skipping an interrupted snapshot rejects ready; that is expected,
+      // and must not surface as an unhandled error during rapid navigation.
+      void vt.ready?.catch(() => undefined)
+      void vt.finished?.catch(() => undefined)
       // Skipping must commit this navigation synchronously, before the next
       // one, or an older target could land after a newer one.
       const handle = {
@@ -130,17 +148,28 @@ export function Present() {
           vt.skipTransition()
         }
       }, 120)
-      vt.updateCallbackDone
-        .catch(() => undefined)
-        .finally(() => {
-          window.clearTimeout(safety)
-          if (pendingTransition.current === handle) pendingTransition.current = null
-        })
+      void vt.updateCallbackDone.catch(() => undefined).finally(() => window.clearTimeout(safety))
+      void (vt.finished ?? vt.updateCallbackDone).catch(() => undefined).finally(() => {
+        if (pendingTransition.current === handle) pendingTransition.current = null
+      })
     },
     [session, slides.length, navigate, reducedMotion],
   )
 
-  const step = useCallback((delta: number) => go(intended.current + delta), [go])
+  const step = useCallback((delta: number) => {
+    if (overviewOpen || helpOpen) return
+    const active = slides[intended.current]
+    const count = active ? buildCount(active) : 0
+    if (buildRef.current.index !== intended.current) buildRef.current = { index: intended.current, count: 0 }
+    const value = buildRef.current.count
+    if (delta > 0 && value < count) {
+      buildRef.current = { index: intended.current, count: value + 1 }
+      setBuildState(buildRef.current)
+    } else if (delta < 0 && value > 0) {
+      buildRef.current = { index: intended.current, count: value - 1 }
+      setBuildState(buildRef.current)
+    } else go(intended.current + delta)
+  }, [go, slides, overviewOpen, helpOpen])
 
   /* Keep the intended slide honest when the URL changes by other means:
      browser back/forward, the overview, a deep link. */
@@ -164,7 +193,7 @@ export function Present() {
 
   useEffect(() => {
     if (!session || !slide) return
-    markViewed(session.slug, slide.id, 'present')
+    markViewed(session.slug, slide.sourceId, 'present', slide.id)
     announce(`Slide ${current + 1} of ${slides.length}. ${slide.title}`)
   }, [session, slide, current, slides.length, markViewed, announce])
 
@@ -209,6 +238,8 @@ export function Present() {
     PageUp: () => step(-1),
     Home: () => go(0),
     End: () => go(slides.length - 1),
+    m: () => setMotionPaused(value => !value),
+    a: () => { buildRef.current = { index: current, count: builds }; setBuildState(buildRef.current) },
     f: () => void toggleFullscreen(),
     o: () => setOverviewOpen((v) => !v),
     '?': () => setHelpOpen((v) => !v),
@@ -220,14 +251,14 @@ export function Present() {
 
   if (!session || !slide) return <NotFound />
 
-  const isPractical = session.practical.blocks.some((b) => b.id === slide.id)
+  const isPractical = slide.half === 'practical'
   const progressPct = ((current + 1) / slides.length) * 100
   const stage = {
     surface: 'present' as const,
     session,
     slideIndex: current,
     slideCount: slides.length,
-    block: slide,
+    block: getBlock(session, slide.sourceId),
     half: isPractical ? ('practical' as const) : ('theory' as const),
     direction,
     focusMode: !chromeVisible,
@@ -239,7 +270,7 @@ export function Present() {
       value={{ presenting: true, slideIndex: current, direction, focusMode: !chromeVisible }}
     >
     <div
-      className={`present${chromeVisible ? ' chrome-on' : ' chrome-off'}`}
+      className={`present present--deck${chromeVisible ? ' chrome-on' : ' chrome-off'}`}
       data-half={stage.half}
       data-kind={slide.kind}
     >
@@ -271,6 +302,11 @@ export function Present() {
           >
             Overview <kbd>O</kbd>
           </button>
+          <button type="button" className="btn btn--ghost btn--sm" aria-pressed={!reducedMotion}
+            onClick={() => setMotionPaused(value => !value)} disabled={prefersReducedMotion}
+            title={prefersReducedMotion ? 'Reduced motion follows your device setting' : 'Toggle presentation motion'}>
+            Motion {reducedMotion ? 'off' : 'on'} <kbd>M</kbd>
+          </button>
           {fullscreenSupported && (
             <button type="button" className="btn btn--ghost btn--sm" onClick={() => void toggleFullscreen()}>
               {isFullscreen ? 'Exit full screen' : 'Full screen'} <kbd>F</kbd>
@@ -289,13 +325,7 @@ export function Present() {
       </header>
 
       {/* ---------------- Slide ---------------- */}
-      <main className="present__stage">
-        <div className="present__slide" key={slide.id} data-kind={slide.kind}>
-          <BlockView block={slide} mode="slide" />
-        </div>
-      </main>
-
-      <LessonOverlay {...stage} />
+      <ProjectionSlide frame={slide} build={build} number={current + 1} total={slides.length} sessionNumber={session.number} motionEnabled={!reducedMotion} />
 
       {/* ---------------- Bottom bar ---------------- */}
       <footer className="present__bottom">
@@ -307,8 +337,8 @@ export function Present() {
             type="button"
             className="btn btn--icon"
             onClick={() => step(-1)}
-            disabled={current === 0}
-            aria-label="Previous slide"
+            disabled={current === 0 && build === 0}
+            aria-label="Previous point or slide"
           >
             <span aria-hidden="true">←</span>
           </button>
@@ -324,12 +354,14 @@ export function Present() {
             type="button"
             className="btn btn--icon"
             onClick={() => step(1)}
-            disabled={current === slides.length - 1}
-            aria-label="Next slide"
+            disabled={current === slides.length - 1 && build === builds}
+            aria-label="Next point or slide"
           >
             <span aria-hidden="true">→</span>
           </button>
         </div>
+        <span className="present__build">{builds > 0 ? `Build ${build + 1}/${builds + 1}` : slide.kind === 'section' ? 'Section outline' : 'All points visible'}</span>
+        <Link className="btn btn--ghost btn--sm" to={`/session/${session.slug}/${isPractical ? 'practical' : 'study'}#${slide.sourceId}`} target="_blank" rel="noreferrer">{isPractical ? 'Open exercise' : 'Full explanation'}</Link>
         <div className="present__slide-title">{slide.title}</div>
       </footer>
 
@@ -365,7 +397,7 @@ export function Present() {
 
             <ol className="present__overview-grid">
               {slides.map((s, i) => {
-                const practical = session.practical.blocks.some((b) => b.id === s.id)
+                const practical = s.half === 'practical'
                 return (
                   <li key={s.id}>
                     <button
@@ -381,7 +413,7 @@ export function Present() {
                       <span className="present__thumb-num">{String(i + 1).padStart(2, '0')}</span>
                       <span className="present__thumb-title">{s.title}</span>
                       <span className="present__thumb-kind">{s.kind}</span>
-                      {s.minutes ? <span className="present__thumb-min">{s.minutes}m</span> : null}
+
                     </button>
                   </li>
                 )
@@ -420,13 +452,13 @@ export function Present() {
                 <dt>
                   <kbd>→</kbd> <kbd>Space</kbd> <kbd>PgDn</kbd>
                 </dt>
-                <dd>Next slide</dd>
+                <dd>Reveal next point, then next slide</dd>
               </div>
               <div>
                 <dt>
                   <kbd>←</kbd> <kbd>PgUp</kbd>
                 </dt>
-                <dd>Previous slide</dd>
+                <dd>Previous point or slide</dd>
               </div>
               <div>
                 <dt>
@@ -434,6 +466,8 @@ export function Present() {
                 </dt>
                 <dd>First or last slide</dd>
               </div>
+              <div><dt><kbd>M</kbd></dt><dd>Toggle motion (respects device reduced motion)</dd></div>
+              <div><dt><kbd>A</kbd></dt><dd>Reveal all points on this slide</dd></div>
               <div>
                 <dt>
                   <kbd>O</kbd>

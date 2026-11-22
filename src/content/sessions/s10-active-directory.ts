@@ -9,7 +9,7 @@ export const session10: Session = {
   summary:
     'Whoever controls Active Directory controls everything. Here is what that compromise looks like in the logs, and what it takes to actually remove the attacker.',
   abstract:
-    'Active Directory is the master key cabinet for a Windows estate, and compromising it bypasses every other control at once. This extension session covers Kerberos abuse detection, Pass-the-Hash, suspicious SMB behaviour, domain privilege escalation, abnormal administrative logons and domain persistence. It also covers the remediation steps that are not obvious — above all the KRBTGT double reset, without which a cleaned domain is still owned. The practical investigates a DCSync and plans the recovery.',
+    'Active Directory is the master key cabinet for a Windows estate, and compromising it can undermine identity-based controls across the estate. This extension session covers Kerberos abuse detection, Pass-the-Hash, suspicious SMB behaviour, domain privilege escalation, abnormal administrative logons and domain persistence. It also covers the remediation steps that are not obvious — above all the KRBTGT double reset, without which a cleaned domain is still owned. The practical investigates a DCSync and plans the recovery.',
   track: 'extension',
   themes: ['Kerberos', 'Escalation', 'Recovery'],
   prerequisites: [
@@ -57,10 +57,10 @@ export const session10: Session = {
           'Which Session 9 hypothesis required you to verify the data source before trusting a clean result?',
         ],
         answers: [
-          'A network logon — a file share or remote service, not an interactive session. NTLM is suspicious because modern AD prefers Kerberos; a fallback to NTLM for internal access is unusual.',
-          '1131f6aa (DS-Replication-Get-Changes) and 1131f6ad (DS-Replication-Get-Changes-All). They are the replication permissions DCSync abuses.',
-          'Disabling preserves the audit history, which is evidence. Both stop access.',
-          'The DCSync hunt. Without directory service object access auditing enabled, Event ID 4662 is never generated and the query returns clean on a compromised domain.',
+          'A network logon — a file share or remote service, not an interactive session. NTLM can be legitimate. Compare the source, account and workflow with the environment baseline before treating it as suspicious.',
+          '1131f6aa (DS-Replication-Get-Changes) and 1131f6ad (DS-Replication-Get-Changes-All). They are replication permissions used by DCSync; validate auditing and source context.',
+          'Disable for reversible containment while preserving account context. Historical audit events survive account deletion too. Existing sessions or tickets may require separate containment.',
+          'The DCSync hunt. Verify directory service access auditing, relevant SACL coverage and ingestion before interpreting an empty result.',
         ],
         provenance: 'supplementary',
       },
@@ -74,7 +74,7 @@ export const session10: Session = {
         setting: 'A SIEM alert at 04:07.',
         narrative: [
           'Event ID 4662: replication rights invoked by WORKSTATION-22. WORKSTATION-22 is not a domain controller.',
-          'By the time you read this, every password hash in the domain has been extracted. Every account. Including KRBTGT, the account that signs every Kerberos ticket in the environment.',
+          'Treat this as a potential domain-credential compromise. Determine what was replicated, including possible KRBTGT exposure; the alert alone does not enumerate every stolen secret.',
           'Resetting every user password will not remove the attacker.',
         ],
         drivingQuestion:
@@ -108,10 +108,10 @@ export const session10: Session = {
           'Kerberos issues a Ticket Granting Ticket at logon, then service tickets on request. Attackers abuse the process at several points, and most of the abuse is visible in one field.',
         points: [
           'Kerberoasting (T1558.003) — any domain user can request a service ticket for any service. The ticket is encrypted with the service account\'s password hash and cracked offline. No network noise, no account lockout.',
-          'The signature: Event ID 4769 with TicketEncryptionType 0x17 (RC4) for an account not ending in $. Modern AD uses AES (0x11 or 0x12). An RC4 service ticket request for a user service account is the finding.',
+          'A lead: Event ID 4769 with TicketEncryptionType 0x17 (RC4), especially where AES is expected. Inspect the service account, request pattern and baseline; RC4 can also reflect legacy configuration.',
           'AS-REP Roasting (T1558.004) — targets accounts with Kerberos pre-authentication disabled. The KDC returns a crackable response with no credentials required at all.',
-          'The signature: Event ID 4768 with PreAuthType 0. A secure environment should have almost no such accounts.',
-          'Golden Ticket (T1558.001) — forges TGTs using the KRBTGT hash. Grants access as any user, including accounts that do not exist, and can be set valid for ten years.',
+          'A lead: Event ID 4768 with PreAuthType 0, evaluated with account settings and request context. A secure environment should have almost no such accounts.',
+          'Golden Ticket (T1558.001) — forges TGTs using the KRBTGT hash. Can enable impersonation while the compromised KRBTGT key remains valid. Accepted use depends on domain configuration and current ticket-validation controls.',
           'Silver Ticket (T1558.002) — forges a service ticket directly, bypassing the KDC. Hardest to detect, because no ticket request event is generated at all.',
         ],
         callout: {
@@ -119,13 +119,13 @@ export const session10: Session = {
           text: 'Silver Ticket detection requires correlating across two hosts: a service authentication at the target (Event ID 4624) with no matching service ticket request (Event ID 4769) on the domain controller beforehand. A single-machine view cannot see it.',
         },
         redView:
-          'Kerberoasting is valuable because it generates almost no noise. Every domain user can legitimately request service tickets, so the requests themselves are unremarkable. One detail reveals it: RC4 encryption where AES is expected.',
+          'Kerberoasting is valuable because it generates almost no noise. Every domain user can legitimately request service tickets, so the requests themselves are unremarkable. RC4 where AES is expected can be useful, but the field alone does not prove roasting.',
         blueView:
-          'The RC4 filter on Event ID 4769 is one of the most precise rules in enterprise security. In an environment enforcing AES for service accounts, a single RC4 service ticket request is near-certain Kerberoasting. It is cheap to write and it catches one of the most common AD techniques.',
+          'The RC4 filter on Event ID 4769 is a useful starting point where AES is expected. Unexpected RC4 requests need investigation; legacy services and encryption configuration can also explain them. It is cheap to write and it catches one of the most common AD techniques.',
         provenance: 'source',
         sources: [{ file: FILE, section: '4.1 Kerberos Abuse Detection' }],
         detail: [
-          'Defensive controls for Kerberoasting, in order of value: configure service accounts for AES only and disable RC4 where possible, which removes the cracking opportunity entirely rather than merely detecting it; use Group Managed Service Accounts, whose automatically rotated long passwords make a cracked hash useless; and monitor service accounts for unusual authentication patterns.',
+          'Defensive controls for Kerberoasting, in order of value: configure service accounts for AES only and disable RC4 where possible, which reduces exposure but does not eliminate offline guessing against weak service-account passwords; use Group Managed Service Accounts, whose long, automatically managed passwords make offline guessing more difficult; and monitor service accounts for unusual authentication patterns.',
           'For AS-REP Roasting the control is simply to audit which accounts have pre-authentication disabled and enable it. The attack requires no credentials at all, which makes any such account a standing invitation.',
         ],
       },
@@ -138,16 +138,16 @@ export const session10: Session = {
         lead:
           'NTLM accepts a password hash directly. An attacker who dumps hashes can authenticate across the network without ever learning a password.',
         points: [
-          'The signature is a combination, not a single field: Event ID 4624, LogonType 3 (network), AuthenticationPackageName NTLM, LogonProcessName NtLmSsp, from an unexpected source.',
-          'Modern Active Directory prefers Kerberos. Internal network logons falling back to NTLM are unusual by default.',
-          'The highest-priority variant is a Domain Admin account authenticating over NTLM. This should essentially never happen for internal lateral movement.',
+          'A suspicious combination to investigate, not proof of Pass-the-Hash: Event ID 4624, LogonType 3 (network), AuthenticationPackageName NTLM, LogonProcessName NtLmSsp, from an unexpected source.',
+          'Modern Active Directory prefers Kerberos. Internal NTLM use can be legitimate; evaluate it against account, source and service baselines.',
+          'A privileged account using NTLM from an unexpected source is high priority. Check legitimate administration and configuration alongside abuse.',
           'Restricted Admin Mode for RDP stops credentials being cached on the remote machine, reducing the material available to steal.',
           'Credential Guard uses virtualisation-based security to make hashes and tickets unreachable from the normal OS, blocking most extraction techniques at source.',
         ],
         redView:
           'Pass-the-Hash needs no cracking — the hash is the credential. The detection risk is the protocol choice itself, which is why environments that enforce Kerberos and restrict NTLM make the technique unavailable rather than merely visible.',
         blueView:
-          'Configure the Domain Admin NTLM alert for immediate escalation at any hour. The combination of a DA account, NTLM, a network logon and an unusual source is near-certain credential theft or badly misconfigured tooling, and both need attention tonight.',
+          'Configure the Domain Admin NTLM alert for immediate escalation at any hour. The combination of a DA account, NTLM, a network logon and an unusual source is a high-priority lead for credential abuse or misconfiguration, and both need attention tonight.',
         provenance: 'source',
         sources: [{ file: FILE, section: '4.2 Pass-the-Hash Detection' }],
       },
@@ -161,9 +161,9 @@ export const session10: Session = {
           'Most AD privilege escalation abuses permissions that were granted years ago, by someone solving a different problem, and never audited since.',
         points: [
           'AdminSDHolder — a security template whose permissions propagate to all privileged accounts within about an hour. Event ID 5136 on that object almost never fires legitimately.',
-          'ACL abuse — GenericAll on a user permits a password reset; GenericWrite on a group permits adding members; WriteDACL on anything permits granting yourself any permission on it.',
+          'ACL abuse — GenericAll on a user permits a password reset; WriteProperty on a group’s member attribute can permit adding members; WriteDACL on anything permits granting yourself any permission on it.',
           'Group membership — Event IDs 4728, 4732 and 4756 for Domain Admins, Enterprise Admins, Schema Admins, Backup Operators and Account Operators. In a stable environment the change frequency should be near zero.',
-          'DCSync (T1003.006) — abuses the replication service to request all credential data without touching a domain controller directly. Event ID 4662 with the replication GUIDs from a non-DC account.',
+          'DCSync (T1003.006) — abuses the replication service to request all credential data through replication requests to a domain controller rather than interactive access. Event ID 4662 with replication GUIDs, correlated logon context and an unexpected source or account. A machine-account suffix does not establish a DC role.',
           'BloodHound maps every ACL relationship and finds the escalation paths that already exist. PingCastle and Purple Knight score the configuration.',
         ],
         callout: {
@@ -187,14 +187,14 @@ export const session10: Session = {
         lead:
           'Six events, one account, twenty minutes. Select each line and watch the privilege climb.',
         caption: 'Synthetic SIEM output, 03:00–03:22',
-        source: 'Fabricated for teaching. Event IDs and field names follow the Windows Security schema.',
+        source: 'Fabricated for teaching. The view is synthetic, enriched SIEM output. Source hosts on 4662 rows come from correlated logon evidence on the DC, not a native 4662 source-address field.',
         lines: [
           {
             text: '03:00  4624  LogonType=3  NTLM  user=svc_backup  src=WORKSTATION-14  dest=FILESERVER-01',
             note: {
               kind: 'hypothesis',
               label: 'NTLM where Kerberos is expected',
-              body: 'A service account authenticating over NTLM from a workstation. Two things are wrong: the protocol, in an environment that prefers Kerberos, and the source — a service account should not be originating connections from a user workstation. This is the Pass-the-Hash signature. T1550.002.',
+              body: 'A service account authenticating over NTLM from a workstation. Two things are wrong: the protocol, in an environment that prefers Kerberos, and the source — a service account should not be originating connections from a user workstation. This is a Pass-the-Hash lead; legitimate NTLM workflows are possible and the original credential use needs corroboration. T1550.002.',
             },
           },
           {
@@ -214,11 +214,11 @@ export const session10: Session = {
             },
           },
           {
-            text: '03:12  4769  user=svc_backup  ServiceName=krbtgt  TicketEncryptionType=0x17',
+            text: '03:12  4769  user=svc_backup  ServiceName=svc_sql  TicketEncryptionType=0x17',
             note: {
               kind: 'confirmed',
-              label: 'RC4, and the service name is the alarming part',
-              body: '0x17 is RC4 where AES is expected — the Kerberoasting signature. But read the service name: krbtgt. A service ticket request targeting the account that signs every ticket in the domain is an attempt at the keys to the entire estate. T1558.003.',
+              label: 'An RC4 service-ticket request to investigate',
+              body: '0x17 is RC4. Read the service account and compare with the expected encryption settings. The requested service account is svc_sql. Investigate its privileges, encryption settings and request pattern; this event alone does not show password recovery or explain the later group change.',
             },
           },
           {
@@ -233,21 +233,21 @@ export const session10: Session = {
             text: '03:22  4662  user=svc_backup  Properties=DS-Replication-Get-Changes  src=WORKSTATION-22',
             note: {
               kind: 'confirmed',
-              label: 'DCSync — every credential in the domain',
-              body: 'Replication rights invoked from a workstation. The attacker now holds every password hash in the domain, including KRBTGT. From this moment, resetting user passwords does not remove them: with the KRBTGT hash they can forge a Golden Ticket valid for any user, including users that do not exist. T1003.006.',
+              label: 'Replication abuse — investigate credential exposure',
+              body: 'Replication rights invoked from a workstation. The activity can expose credential data, potentially including KRBTGT; determine scope and apply the incident plan. From this moment, resetting user passwords does not remove them: with the KRBTGT hash they can forge a Golden Ticket valid for any user, subject to current domain ticket-validation controls. T1003.006.',
             },
           },
         ],
         proves: [
           'The svc_backup credential was used from WORKSTATION-14 over NTLM to three servers including a domain controller',
-          'A service ticket for krbtgt was requested with RC4 encryption',
+          'A service ticket for svc_sql was requested with RC4 encryption; its intent remains to be investigated',
           'svc_backup was added to Domain Admins at 03:18',
           'Directory replication rights were invoked from WORKSTATION-22, a non-domain-controller, at 03:22',
           'All domain credential hashes, including KRBTGT, must be presumed compromised',
         ],
         doesNotProve: [
           'How the svc_backup hash was originally obtained — that requires investigating WORKSTATION-14',
-          'Whether a Golden Ticket has actually been created. The capability is confirmed; the act is not.',
+          'Whether a Golden Ticket has actually been created. The event raises a credential-exposure concern; it does not prove which tickets were forged.',
           'That WORKSTATION-14 was the first compromised host',
           'That no other persistence was established alongside this. Assume it was until checked.',
         ],
@@ -267,9 +267,9 @@ export const session10: Session = {
         lead:
           'These mechanisms exist specifically to outlast the remediation that follows discovery.',
         points: [
-          'Golden Ticket — forged TGTs from the KRBTGT hash. Survives every password reset in the domain. Can be valid for ten years.',
+          'Golden Ticket — forged TGTs using an exposed KRBTGT key can survive ordinary user password resets while that key remains valid. Acceptance also depends on domain policy and current security checks.',
           'Skeleton Key (T1556.001) — patches LSASS on a domain controller to accept one universal password while normal passwords keep working. Survives until the DC reboots.',
-          'DSRM account abuse (T1003.006) — changing the Directory Services Restore Mode password and enabling network authentication creates a local administrator backdoor on a DC. Event ID 4794, which almost never fires legitimately.',
+          'DSRM account abuse — changing the Directory Services Restore Mode password and enabling network authentication creates a local administrator backdoor on a DC. Event ID 4794, which almost never fires legitimately.',
           'SID History injection (T1134.005) — injects a privileged SID into an account\'s SID History, granting invisible elevated access. Event ID 4765. Should never fire outside a migration.',
           'Malicious GPO (T1484.001) — a single Group Policy Object can deploy a backdoor to every machine in an organisational unit, and redeploy it on every policy refresh. Event IDs 5136, 5137, 5141.',
         ],
@@ -294,18 +294,18 @@ export const session10: Session = {
           'This is the most non-obvious and most critical AD recovery procedure. Document it before you need it, because you will be executing it at 04:00.',
         points: [
           'Confirm every domain controller is online and replicating normally. Starting with a broken replication topology makes the rest unverifiable.',
-          'Reset the KRBTGT password. Wait for replication to complete across all DCs — at least ten minutes.',
+          'Reset the KRBTGT password under the current Microsoft procedure. Allow the required ticket-lifetime interval before the second reset: normally at least ten hours at default settings, adjusted for configured lifetimes, and verify replication.',
           'Verify replication has completed. Do not assume it; check it.',
           'Reset the KRBTGT password a second time. Wait for replication again.',
           'Verify the second reset has replicated.',
-          'All previously issued Kerberos tickets are now invalid. Coordinate with the helpdesk — every user will re-authenticate.',
+          'The old KRBTGT keys can no longer validate TGTs after completed rotation and replication. Existing service tickets and sessions have separate lifetimes; coordinate authentication impact with the AD team.',
         ],
         callout: {
           tone: 'rule',
           text: 'Why twice: Active Directory retains the previous KRBTGT password so that tickets issued just before a reset keep working. One reset leaves forged tickets valid within that window. The second reset invalidates the retained previous password, closing it. Resetting twice in rapid succession without verifying replication between them can break authentication domain-wide — the verification step is not optional padding.',
         },
         blueView:
-          'After a confirmed DCSync or Golden Ticket, the full remediation is: reset KRBTGT twice with verification between, reset all Domain Admin passwords, force a reset for every domain account, remove any attacker-added group memberships, delete persistence from every domain controller, isolate every compromised host, and assess for Golden Ticket usage. Any one of those omitted leaves the attacker a route back.',
+          'After a confirmed DCSync or Golden Ticket, coordinate containment and scope, remove persistence, assess affected accounts and keys, and follow the current Microsoft recovery procedure. KRBTGT rotation, other credential resets and verification must be sequenced by the AD and incident teams for the established compromise.',
         provenance: 'source',
         sources: [{ file: FILE, section: '8. Defender\'s View — The KRBTGT Double-Reset Procedure' }],
         detail: [
@@ -329,7 +329,7 @@ export const session10: Session = {
                 text: 'No — with the KRBTGT hash they can forge tickets for any account, so KRBTGT must be reset twice',
                 correct: true,
                 feedback:
-                  'Correct. DCSync extracted every hash including KRBTGT. A Golden Ticket forged from it authenticates as anyone, including accounts that do not exist, and is unaffected by password resets.',
+                  'If KRBTGT was exposed, password resets of ordinary users do not invalidate its signing key. A Golden Ticket forged from it authenticates as anyone, subject to current domain ticket-validation controls, and is unaffected by password resets.',
               },
               {
                 text: 'Yes — all credentials are now changed',
@@ -351,13 +351,13 @@ export const session10: Session = {
           },
           {
             id: 'q2',
-            stem: 'Event ID 4769 with TicketEncryptionType 0x17 for an account not ending in $. What is this?',
+            stem: 'Event ID 4769 with TicketEncryptionType 0x17 for an account not ending in $. What should you investigate?',
             options: [
               {
-                text: 'Kerberoasting — an RC4 service ticket request for a user service account',
+                text: 'Possible Kerberoasting — investigate this RC4 service-ticket request in context',
                 correct: true,
                 feedback:
-                  'Correct. Modern AD uses AES. RC4 for a non-machine account is one of the highest-precision detections available.',
+                  'This is a Kerberoasting lead, not proof. RC4 service tickets also occur during legitimate legacy authentication; investigate service, account and request context.',
               },
               {
                 text: 'AS-REP Roasting',
@@ -368,12 +368,12 @@ export const session10: Session = {
                 text: 'A Golden Ticket in use',
                 correct: false,
                 feedback:
-                  'Golden Ticket indicators are unusual ticket lifetimes and authentication from accounts that do not exist. This is a ticket request, not a forged ticket.',
+                  'This request alone does not establish a Golden Ticket. Correlate ticket characteristics, identity context and current domain security behaviour.',
               },
               {
                 text: 'Normal service authentication',
                 correct: false,
-                feedback: 'Normal service authentication in a modern environment uses AES — 0x11 or 0x12.',
+                feedback: 'AES is preferred, but legacy configuration can still produce legitimate RC4 tickets. A baseline is needed.',
               },
             ],
           },
@@ -382,7 +382,7 @@ export const session10: Session = {
             stem: 'Why reset KRBTGT twice rather than once?',
             options: [
               {
-                text: 'AD retains the previous password so recently issued tickets keep working; one reset leaves forged tickets valid in that window',
+                text: 'AD retains a previous KRBTGT key; one reset can leave tickets forged with that retained key usable',
                 correct: true,
                 feedback:
                   'Correct. The second reset invalidates the retained previous password and closes the window — and the replication verification between the two is what stops the procedure itself breaking authentication.',
@@ -426,7 +426,7 @@ export const session10: Session = {
           { label: 'Microsoft — AD Security Best Practices', note: 'Authoritative guidance on privileged access, tiering and administrative workstations.', href: 'https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/security-best-practices/best-practices-for-securing-active-directory' },
           { label: 'BloodHound', note: 'Maps ACL relationships and escalation paths. Run it defensively.', href: 'https://github.com/SpecterOps/BloodHound' },
           { label: 'PingCastle', note: 'AD security risk scoring and misconfiguration detection.', href: 'https://www.pingcastle.com/' },
-          { label: 'Microsoft — KRBTGT reset guidance', note: 'The vendor procedure. Use this, not a summary, when executing for real.', href: 'https://learn.microsoft.com/en-us/defender-for-identity/' },
+          { label: 'Microsoft — KRBTGT reset guidance', note: 'The vendor procedure. Use this, not a summary, when executing for real.', href: 'https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/forest-recovery-guide/ad-forest-recovery-reset-the-krbtgt-password' },
         ],
       },
     ],
@@ -480,9 +480,9 @@ export const session10: Session = {
           {
             ref: 'T1',
             minutes: 10,
-            title: 'Confirm the DCSync and establish scope',
+            title: 'Investigate the replication alert and establish scope',
             steps: [
-              'Find the Event ID 4662 entries with replication GUIDs from non-machine accounts.',
+              'Find Event ID4662 control-access entries with replication GUIDs; validate both machine and user account activity.',
               'Record the account, the source host and the time, and confirm the source is not a domain controller.',
               'Verify that directory service auditing is enabled, so you know what a clean result elsewhere means.',
               'State plainly what must now be presumed compromised, and why.',
@@ -554,7 +554,7 @@ export const session10: Session = {
             forTask: 'T1',
             tiers: [
               'The GUIDs are 1131f6aa and 1131f6ad in the Properties field.',
-              'Exclude accounts ending in $ — those are machine accounts and DC-to-DC replication is legitimate.',
+              'Validate source hosts and accounts against known DCs and authorised replication services. A $ suffix does not prove a legitimate DC source.',
               'The scope statement should name KRBTGT explicitly. That is what makes this different from any other credential theft.',
             ],
           },
@@ -562,7 +562,7 @@ export const session10: Session = {
             forTask: 'T2',
             tiers: [
               'Filter all events for the DCSync account and sort by time ascending. The whole chain is there.',
-              'For Pass-the-Hash, look for LogonType 3 with NTLM from a workstation source. The source host is where the hash came from.',
+              'For Pass-the-Hash, look for LogonType 3 with NTLM from a workstation source. The source host is a lead for investigating credential origin, not proof of the original theft location.',
               'For the original credential: go to the first source workstation and look for credential access evidence there. The chain starts before the first domain event.',
             ],
             },
@@ -682,8 +682,8 @@ export const session10: Session = {
         provenance: 'source',
         sources: [{ file: FILE, section: '13. Summary' }],
         takeaways: [
-          'AD is the highest-value target in a Windows estate. Compromising it bypasses every other control at once.',
-          'Kerberoasting is Event ID 4769 with RC4 for a non-machine account — one of the most precise rules available.',
+          'AD is the highest-value target in a Windows estate. Compromising it can undermine identity-based controls across the estate.',
+          'Event ID 4769 with unexpected RC4 is a Kerberoasting lead; service and account context remain necessary.',
           'Pass-the-Hash is a combination: 4624, LogonType 3, NTLM, unexpected source.',
           'DCSync is Event ID 4662 with replication GUIDs from a non-DC account, and it is the highest-impact AD detection.',
           'Event ID 5136 covers AdminSDHolder, ACL changes and GPO modification from one log source.',
@@ -705,11 +705,11 @@ export const session10: Session = {
   terms: [
     { term: 'Kerberoasting', definition: 'Requesting RC4-encrypted service tickets to crack offline. Event ID 4769 with TicketEncryptionType 0x17.' },
     { term: 'AS-REP Roasting', definition: 'Targeting accounts with Kerberos pre-authentication disabled. Event ID 4768 with PreAuthType 0.' },
-    { term: 'Golden Ticket', definition: 'A forged Ticket Granting Ticket made with the KRBTGT hash. Grants access as any user and survives password resets.' },
+    { term: 'Golden Ticket', definition: 'A forged Ticket Granting Ticket made with the KRBTGT hash. Can enable impersonation and survives ordinary user password resets while the compromised KRBTGT key remains usable.' },
     { term: 'Silver Ticket', definition: 'A forged service ticket bypassing the KDC. Hardest to detect — no ticket request event is generated.' },
     { term: 'Pass-the-Hash', definition: 'Authenticating with an NTLM hash instead of a password. Event ID 4624, LogonType 3, NTLM, unexpected source.' },
-    { term: 'DCSync', definition: 'Abusing directory replication rights to extract all domain credentials. Event ID 4662 with the replication GUIDs.' },
-    { term: 'KRBTGT', definition: 'The account whose key signs every Kerberos ticket in a domain. Its hash is the keys to the estate.' },
+    { term: 'DCSync', definition: 'Abusing directory replication rights to request credential data. Scope may include KRBTGT; validate Event ID4662 with auditing, access mask, object and source context.' },
+    { term: 'KRBTGT', definition: 'The account whose keys protect ticket-granting tickets in a domain. Its hash is the keys to the estate.' },
     { term: 'AdminSDHolder', definition: 'An AD object whose permissions propagate to all privileged accounts within about an hour. Event ID 5136.' },
     { term: 'SID History', definition: 'An attribute designed for domain migrations. Injecting a privileged SID grants invisible elevated access.' },
   ],

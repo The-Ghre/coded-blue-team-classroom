@@ -2,43 +2,14 @@ import { Fragment, type ReactNode } from 'react'
 import type { Block } from '@/types/content'
 import type { RenderMode } from '@/components/teaching/blocks'
 import { Duration, MonoLabel, ProvenanceTag, SourceRefs } from '@/components/brand/Brand'
-import { getSession } from '@/content'
 
 /* Shared pieces for this lesson's re-implemented blocks. They mirror the
    shared renderer's scaffolding (head, study-only detail, provenance
    footer) so nothing the shared renderer shows is lost. */
 
-const SLUG = 'active-directory-security'
-
-/** The block's position in its half, as a drawing reference: "05 / T". */
-export function sheetRef(id: string): { n: string; half: 'T' | 'P' } {
-  const s = getSession(SLUG)
-  if (!s) return { n: '—', half: 'T' }
-  const t = s.theory.blocks.findIndex((b) => b.id === id)
-  if (t >= 0) return { n: String(t + 1).padStart(2, '0'), half: 'T' }
-  const p = s.practical.blocks.findIndex((b) => b.id === id)
-  return { n: p >= 0 ? String(p + 1).padStart(2, '0') : '—', half: 'P' }
-}
-
-/** Detail bubble: the circle split by a rule, number over sheet. */
-export function Bubble({ id, size = 'md' }: { id: string; size?: 'md' | 'lg' }) {
-  const ref = sheetRef(id)
-  return (
-    <span className={`adw-bubble adw-bubble--${size}`} aria-hidden="true">
-      <span>{ref.n}</span>
-      <span>{ref.half}</span>
-    </span>
-  )
-}
-
-/**
- * A drawing title: bubble, the title lettered with a double rule, and the
- * kind of sheet written underneath as the scale line — never above it.
- */
 export function SheetHead({ block, kicker }: { block: Block; kicker: string }) {
   return (
     <header className="block__head adw-head">
-      <Bubble id={block.id} />
       <div className="adw-head__text">
         <h2 className="block__title">{block.title}</h2>
         <div className="adw-head__scale">

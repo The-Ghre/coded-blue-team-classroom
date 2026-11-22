@@ -17,16 +17,12 @@ $ sudo debsums -c
 /usr/bin/ps
 /usr/bin/netstat
 /usr/bin/ss
-
-$ rpm -Va  (equivalent output from the compatibility layer)
-S.5....T.    /usr/bin/ps
-S.5....T.    /usr/bin/netstat
-S.5....T.    /usr/bin/ss
 ```
 
-> Flag `5` is a hash mismatch: the file differs from what the package
-> manager installed. Decide what this means for every other Linux artefact
-> below before you use any of them.
+> This Ubuntu host uses Debian packages: `debsums -c` lists files whose
+> checksums differ from package records. Investigate these differences from
+> a trusted examination environment. A mismatch alone does not prove malware,
+> and local package metadata is not an independent trusted baseline.
 
 ## A2. Authentication log
 
@@ -83,7 +79,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQ...  admin@corp-jump-01      # pre-existing, Jan 2
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5...                        # added 2026-03-11 03:19
 ```
 
-## A5. Pivot evidence
+## A5. Candidate pivot evidence
 
 ```
 $ cat /root/.ssh/known_hosts

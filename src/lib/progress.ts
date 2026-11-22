@@ -16,6 +16,8 @@ export interface SessionProgress {
   completed: string[]
   /** Last block id viewed, for the resume control. */
   lastBlockId?: string
+  /** Stable authored presentation frame, independent of reading block IDs. */
+  lastSlideId?: string
   /** Which mode they were last in. */
   lastMode?: 'study' | 'present' | 'practical'
   /** ISO timestamp of the last interaction. */
@@ -121,15 +123,16 @@ export function useProgress() {
   }, [])
 
   const markViewed = useCallback(
-    (slug: string, blockId: string, mode: SessionProgress['lastMode']) => {
+    (slug: string, blockId: string, mode: SessionProgress['lastMode'], slideId?: string) => {
       const current = getState()
       const existing = current[slug] ?? { completed: [] }
-      if (existing.lastBlockId === blockId && existing.lastMode === mode) return
+      if (existing.lastBlockId === blockId && existing.lastMode === mode && existing.lastSlideId === slideId) return
       setState({
         ...current,
         [slug]: {
           ...existing,
           lastBlockId: blockId,
+          lastSlideId: slideId,
           lastMode: mode,
           updatedAt: new Date().toISOString(),
         },

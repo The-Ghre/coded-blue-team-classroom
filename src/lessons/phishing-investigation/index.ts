@@ -1,29 +1,22 @@
 import type { LessonKit } from '../types'
-import './theme.css'
-import { Water } from './Water'
 import { Hero } from './Hero'
+import { SourceBackdrop } from './SourceBackdrop'
 import { TitlePlate } from './blocks/TitlePlate'
-import { HeaderEvidence } from './blocks/HeaderEvidence'
-import { ConceptPlate } from './blocks/ConceptPlate'
-import { InteractionPlate } from './blocks/TriageSoundings'
+import { ReadingPane } from './blocks/ReadingPane'
+import './theme.css'
 
-/**
- * Lesson world: phishing-investigation — "The Lure".
- *
- * A phishing email is a lure: a painted counterfeit with a hook, on a line
- * held by someone the target cannot see. The world is lake water seen from
- * below; the investigation follows the line back to the hand.
- */
 const kit: LessonKit = {
   slug: 'phishing-investigation',
-  Backdrop: Water,
+  Backdrop: SourceBackdrop,
   Hero,
   blocks: {
     title: TitlePlate,
-    evidence: HeaderEvidence,
-    concept: ConceptPlate,
-    interaction: InteractionPlate,
+    objectives: ReadingPane, retrieval: ReadingPane, scenario: ReadingPane,
+    concept: ReadingPane, evidence: ReadingPane, compare: ReadingPane,
+    timeline: ReadingPane, query: ReadingPane, chain: ReadingPane, interaction: ReadingPane, check: ReadingPane,
+    recap: ReadingPane, brief: ReadingPane, tasks: ReadingPane,
+    hints: ReadingPane, deliverables: ReadingPane, assessment: ReadingPane,
+    debrief: ReadingPane,
   },
 }
-
 export default kit

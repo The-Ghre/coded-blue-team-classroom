@@ -10,7 +10,7 @@
 
 ## The report
 
-At 09:14 a user forwarded this message to the SOC inbox, correctly, as an
+At 09:40 a user forwarded this message to the SOC inbox, correctly, as an
 attachment — so the original headers are preserved.
 
 > "I got a strange email from Microsoft Support saying my account will be
@@ -27,23 +27,23 @@ The user has not said whether they typed anything.
 ```
 Return-Path: <bounce@micros0ft-support247[.]com>
 Received: from mail.ourcompany.com (10.0.0.25)
-        by mx1.ourcompany.com with ESMTPS; Mon, 12 Mar 2026 09:02:41 +0300
+        by mx1.ourcompany.com with ESMTPS; Thu, 12 Mar 2026 09:02:41 +0300
 Received: from smtp-relay-07.bulkmail-svc[.]net (198[.]51[.]100[.]77)
-        by mail.ourcompany.com with ESMTP; Mon, 12 Mar 2026 09:02:38 +0300
+        by mail.ourcompany.com with ESMTP; Thu, 12 Mar 2026 09:02:38 +0300
 Received: from [185[.]220[.]101[.]45]
-        by smtp-relay-07.bulkmail-svc[.]net with SMTP; Mon, 12 Mar 2026 09:02:31 +0300
+        by smtp-relay-07.bulkmail-svc[.]net with SMTP; Thu, 12 Mar 2026 09:02:31 +0300
 Authentication-Results: mx1.ourcompany.com;
         spf=pass (domain of micros0ft-support247[.]com designates
-             185[.]220[.]101[.]45 as permitted sender);
+             198[.]51[.]100[.]77 as permitted sender);
         dkim=pass header.d=micros0ft-support247[.]com;
         dmarc=pass
 X-Originating-IP: [185[.]220[.]101[.]45]
 Message-ID: <a71f2c99-bulk-0442@micros0ft-support247[.]com>
-From: Microsoft Support <support@microsoft.com>
+From: Microsoft Support <support@micros0ft-support247[.]com>
 Reply-To: account-team@micros0ft-support247[.]com
 To: s.alqattan@ourcompany.com
 Subject: Action required: your account will be deleted in 24 hours
-Date: Mon, 12 Mar 2026 09:02:28 +0300
+Date: Thu, 12 Mar 2026 09:02:28 +0300
 Content-Type: text/html; charset=UTF-8
 
 --- body (rendered text) ---
@@ -57,6 +57,16 @@ Microsoft Account Team
 
 ---
 
+### Evidence boundary for this synthetic message
+
+The gateway trusts its internal relay mail.ourcompany.com and its own
+Authentication-Results record. The internal relay records external peer
+198[.]51[.]100[.]77. The earlier claimed origin 185[.]220[.]101[.]45 and
+X-Originating-IP are unverified until a trusted relay record corroborates them.
+Use the claimed address as a labelled pivot lead, not a verified attribution.
+The visible From address uses the lookalike domain, allowing its aligned
+SPF/DKIM authentication to produce DMARC pass.
+
 ## 2. Mail gateway delivery log
 
 ```
@@ -69,11 +79,11 @@ SENDER DOMAIN: micros0ft-support247[.]com
 09:02:42  DELIVERED  f.alsalem@ourcompany.com
 09:02:43  DELIVERED  n.aldosari@ourcompany.com
 09:02:43  DELIVERED  y.almutairi@ourcompany.com
-... (41 further DELIVERED entries omitted for length)
+... (40 further DELIVERED entries omitted for length)
 09:03:12  DELIVERED  r.alenezi@ourcompany.com
 
 TOTAL DELIVERED: 47
-OPEN EVENTS RECORDED: 9
+OPEN SIGNALS RECORDED: 9  (tracking signals, not proof of nine human opens)
 ```
 
 ---
@@ -179,6 +189,20 @@ OPEN EVENTS RECORDED: 9
 ```
 
 ---
+
+### Asset/account mapping supplied for this exercise
+
+| Host | Assigned user account |
+|---|---|
+| 10.0.4.18 | s.alqattan |
+| 10.0.4.31 | m.alotaibi |
+| 10.0.5.07 | a.hassan |
+
+The page analysis below identifies a credential form. Requests to that form
+justify prompt precautionary containment of mapped accounts. The proxy log
+contains request metadata, not passwords or a captured request body. Distinguish
+likely credential exposure from a proven statement about the submitted values.
+DNS queries, tracking pixels and automated URL fetches do not prove a human click.
 
 ## 4. Authentication log (09:00–13:00, external sources only)
 

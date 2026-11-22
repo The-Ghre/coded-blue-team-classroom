@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { getSession, getSlides } from '@/content'
+import { getPresentationIndex } from '@/content/presentations'
 import { Eyebrow, EvidenceLegend, MonoLabel } from '@/components/brand/Brand'
 import { useProgress } from '@/lib/progress'
 import { useDocumentTitle } from '@/lib/hooks'
@@ -40,7 +41,7 @@ export function SessionOverview() {
           className="btn btn--ghost"
           to={
             progress.lastMode === 'present'
-              ? `/session/${session.slug}/present/${resumeIndex}`
+              ? `/session/${session.slug}/present/${Math.max(0, getPresentationIndex(session, progress.lastBlockId!, progress.lastSlideId))}`
               : `/session/${session.slug}/${
                   progress.lastMode === 'practical' ? 'practical' : 'study'
                 }#${progress.lastBlockId}`

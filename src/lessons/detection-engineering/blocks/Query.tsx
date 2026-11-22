@@ -4,16 +4,6 @@ import type { BlockOverrideProps } from '../../types'
 import { EvidenceChip, MonoLabel } from '@/components/brand/Brand'
 import { Detail, Footer, Head } from './shared'
 
-/* =========================================================================
-   QUERY — the Sigma walkthrough as a traced Light List entry
-   =========================================================================
-   Every walkthrough part is tied to the exact lines it explains. Choose a
-   part and those lines light up in the rule, the way a chart's light list
-   entry points at one symbol on the chart and nothing else. The mapping is
-   computed from the code and the part names, so a content edit keeps
-   working; a part that names nothing in the code simply highlights nothing.
-   ========================================================================= */
-
 /** Lines (0-based, inclusive ranges) that a walkthrough part refers to. */
 function rangesFor(part: string, lines: string[]): [number, number][] {
   const keys = part
@@ -79,7 +69,7 @@ export function Query({ block, mode }: BlockOverrideProps<QueryBlock>) {
   }
 
   return (
-    <section className="block block--query de-query" data-mode={mode}>
+    <section data-keys-own className="block block--query de-query" data-mode={mode}>
       <Head block={block} />
       {block.lead && <p className="lead de-lead">{block.lead}</p>}
 

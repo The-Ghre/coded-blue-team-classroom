@@ -199,7 +199,7 @@ export const session04: Session = {
         minutes: 18,
         component: 'rule-builder',
         lead:
-          'A labelled synthetic corpus of process-creation events: some genuinely malicious, most ordinary. Build a rule by selecting conditions, and watch precision and recall move in opposite directions.',
+          'A labelled synthetic corpus of process-creation events: some genuinely malicious, most ordinary. Build a rule by selecting conditions, and observe how precision and recall change.',
         teaches:
           'That tuning is a trade, not an improvement — every exclusion that removes a false positive also opens a path for an attacker who satisfies it, and the engineering judgement is knowing which trade is worth making.',
         provenance: 'source',
@@ -702,7 +702,7 @@ level: high`,
             forTask: 'T4',
             tiers: [
               'Validation has two halves: does it fire on the real thing, and how often does it fire on normal life. You need a plan for both.',
-              'Historical data gives you the false positive rate for free — run the rule over three months of clean production data and count.',
+              'Historical production data helps estimate alert volume. Review and label matches to estimate false positives; do not assume the entire historical period is clean.',
               'For the summary, name the phase rather than the number. Lateral Movement with no coverage is a sentence an executive can act on.',
             ],
           },

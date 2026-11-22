@@ -57,7 +57,13 @@ export function DoubleReset({ block, mode }: { block: ConceptBlock; mode: Render
   const expect = EXPECT[Math.min(stage, EXPECT.length - 1)]
   const complete = stage >= EXPECT.length - 1
   const replicated = held.every((h) => h === current)
-  const forgedAccepted = current === 0 || previous === 0
+  const forgedAccepted = current === 0 || previous === 0 || held.some((revision) => revision < 2)
+
+  useEffect(() => {
+    if (current === 2 && replicated) {
+      setFeedback({ tone: 'ok', text: 'Revision 2 issued. Revision 0 is now neither the current nor the retained key, so a ticket forged with it no longer validates.' })
+    }
+  }, [current, replicated])
 
   function replicate(rev: number) {
     timers.current.forEach((t) => window.clearTimeout(t))
@@ -121,7 +127,7 @@ export function DoubleReset({ block, mode }: { block: ConceptBlock; mode: Render
             tone: 'warn',
             text: `Revision 1 issued. A ticket forged with revision 0 still works. ${retainedWhy(block) ?? 'the previous key is retained.'}`,
           }
-        : { tone: 'ok', text: 'Revision 2 issued. Revision 0 is now neither the current nor the retained key, so a ticket forged with it no longer validates.' },
+        : { tone: 'warn', text: block.points[4] },
     )
   }
 
@@ -161,7 +167,7 @@ export function DoubleReset({ block, mode }: { block: ConceptBlock; mode: Render
         <div className="adw-reset__register" aria-label="KRBTGT key register, a simulation" role="group">
           <div className="adw-reset__register-head">
             <MonoLabel>KRBTGT key register</MonoLabel>
-            <span className="adw-reset__sim">Simulation · three DCs, illustrative</span>
+            <span className="adw-reset__sim">Simulation · three DCs; ticket-lifetime wait is compressed</span>
           </div>
 
           <div className="adw-reset__keys">

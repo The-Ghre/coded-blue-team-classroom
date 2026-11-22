@@ -70,16 +70,18 @@ Sequenced. Dependencies stated. Every step verified.
 | 9 | | | |
 | 10 | | | |
 
-### The KRBTGT procedure — six steps, not two
+### Coordinate KRBTGT recovery with the AD team
 
 | # | Step | Verification | Done |
 |---|---|---|---|
 | 1 | Confirm all DCs online and replicating | `repadmin /showrepl` — all success, 0 failures | ☐ |
 | 2 | Reset KRBTGT password (first) | | ☐ |
-| 3 | Wait for replication, then **verify** | | ☐ |
+| 3 | Wait the configured ticket-lifetime interval; verify first-reset replication | | ☐ |
 | 4 | Reset KRBTGT password (second) | | ☐ |
 | 5 | Wait for replication, then **verify** | | ☐ |
-| 6 | Coordinate helpdesk for domain-wide re-authentication | | ☐ |
+| 6 | Coordinate helpdesk and verify authentication impact | | ☐ |
+
+Follow the current Microsoft procedure. At default ticket lifetimes, allow at least ten hours between resets, longer if required by configured policy, and verify replication. Do not treat this worksheet as a live reset runbook.
 
 **Why twice, in your own words:**
 
